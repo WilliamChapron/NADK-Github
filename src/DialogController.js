@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import DialogComponent from './DialogComponent';
 
 const DialogController = ({ dialogOpenProp, onClose }) => {
-  const [dialogOpen, setDialogOpen] = useState(dialogOpenProp);
+  const [dialogOpen, setDialogOpen] = useState(null);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   const openDialog = () => {
@@ -21,6 +21,12 @@ const DialogController = ({ dialogOpenProp, onClose }) => {
     }
   };
 
+  const handlePreviousMessage = () => {
+    if (currentMessageIndex >= 0) {
+      setCurrentMessageIndex(currentMessageIndex - 1);
+    }
+  };
+
   const dialogMessages = ["Bonjour !", "Comment ça va ?", "C'est un beau jour.", "Autre message"];
 
   useEffect(() => {
@@ -35,6 +41,7 @@ const DialogController = ({ dialogOpenProp, onClose }) => {
           messages={dialogMessages}
           currentMessageIndex={currentMessageIndex}
           handleNextMessage={handleNextMessage}
+          handlePreviousMessage={handlePreviousMessage}
         />
       )}
     </div>

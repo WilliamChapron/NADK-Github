@@ -1,14 +1,16 @@
-// Canvas.js
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import UseSDK3DVerse from './UseSDK3DVerse';
 import { HandleKeyDown } from './HandleKeyDown';
 import ProgressBar from './ProgressBar';
 import DialogController from './DialogController';
+import PickupController from './PickupController';
+import ObjectiveController from './ObjectiveController';
 
 export const Canvas = () => {
   const status = UseSDK3DVerse();
   const canvasRef = useRef(null);
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
+  const [isInteractable, setIsInteractable] = useState(false); // Définir à true temporairement
 
   const initApp = useCallback(async () => {
     if (canvasRef.current && status === 'ready') {
@@ -26,6 +28,10 @@ export const Canvas = () => {
 
   useEffect(() => {
     initApp();
+    document.addEventListener('contextmenu', function (event) {
+      event.preventDefault();
+    });
+
     window.addEventListener('keydown', async (event) => {
       const key = await HandleKeyDown(event);
       if (key) {
@@ -45,8 +51,14 @@ export const Canvas = () => {
 
   return (
     <div>
-      <DialogController dialogOpenProp={lastKeyPressed === 'e'} onClose={resetLastKeyPressed} />
+      <DialogController dialogOpenProp={lastKeyPressed === 'a'} onClose={resetLastKeyPressed} />
+      <PickupController pickupInfo={["name", "Les infos de cette item sont la"]} isVisible={lastKeyPressed === 'g'} onClose={resetLastKeyPressed} />
       <ProgressBar value={50}>Kevlar</ProgressBar>
+
+      {isInteractable && (
+        <ObjectiveController currentObjective={"Aller dans la salle des coffres"} score={"345"} distanceToGoal={"1567 M"} />
+      )}
+
       <canvas
         ref={canvasRef}
         id='display-canvas'
