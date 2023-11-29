@@ -2,8 +2,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import UseSDK3DVerse from './UseSDK3DVerse';
 import { HandleKeyDown } from './HandleKeyDown';
-import ProgressBar from './ProgressBar';
-import DialogController from './DialogController';
+import ProgressBar from './components/ProgressBar';
+import DialogController from './components/DialogController';
 
 export const Canvas = () => {
   const status = UseSDK3DVerse();
