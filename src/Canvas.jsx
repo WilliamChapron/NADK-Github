@@ -1,15 +1,18 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { useScript } from '@uidotdev/usehooks';
+// Canvas.js
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import UseSDK3DVerse from './UseSDK3DVerse';
+import { HandleKeyDown } from './HandleKeyDown';
+import ProgressBar from './ProgressBar';
+import DialogController from './DialogController';
 
 export const Canvas = () => {
-  const status = useScript([
-    'https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js',
-  ]);
-
+  const status = UseSDK3DVerse();
   const canvasRef = useRef(null);
+  const [lastKeyPressed, setLastKeyPressed] = useState(null);
 
   const initApp = useCallback(async () => {
-    if (canvasRef.current) {
+    if (canvasRef.current && status === 'ready') {
+      const SDK3DVerse = window.SDK3DVerse;
       await SDK3DVerse.joinOrStartSession({
         userToken: 'public_iTYTst3Y4cmY3ca-',
         sceneUUID: '69497f59-c5c6-4c05-a77d-4b4f5d10454a',
@@ -19,67 +22,40 @@ export const Canvas = () => {
         },
       });
     }
-  }, []);
+  }, [status]);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-      const camera = viewports[0].getCamera();
-      const moveSpeed = 0.1;
-
-      const key = event.key.toLowerCase();
-
-      switch (key) {
-        case 'z':
-          console.log("it's")
-          moveCamera(camera, 0, 0, -moveSpeed);
-          break;
-        case 'q':
-          moveCamera(camera, -moveSpeed, 0, 0);
-          break;
-        case 's':
-          moveCamera(camera, 0, 0, moveSpeed);
-          break;
-        case 'd':
-          moveCamera(camera, moveSpeed, 0, 0);
-          break;
-        default:
-          break;
+    initApp();
+    window.addEventListener('keydown', async (event) => {
+      const key = await HandleKeyDown(event);
+      if (key) {
+        setLastKeyPressed(key);
       }
+    });
+  }, [initApp]);
 
-      SDK3DVerse.engineAPI.propagateChanges();
-    };
+  useEffect(() => {
+    console.log('lastKeyPressed a changé :', lastKeyPressed);
+  }, [lastKeyPressed]);
 
-    const moveCamera = (camera, x, y, z) => {
-      // const cameraPos = camera.getGlobalTransform().position;
-      // camera.setGlobalTransform({
-      //   position: [cameraPos.x + x, cameraPos.y + y, cameraPos.z + z],
-      //   rotation: [0, 0, 0, 1], // Assuming no rotation for simplicity
-      //   scale: [1, 1, 1], // Assuming no scaling for simplicity
-      // });
-    };
-
-    if (status === 'ready') {
-      initApp();
-
-      document.addEventListener('keydown', handleKeyDown);
-
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [status, initApp]);
+  // Fonction pour réinitialiser lastKeyPressed
+  const resetLastKeyPressed = () => {
+    setLastKeyPressed(null);
+  };
 
   return (
-    <canvas
-      ref={canvasRef}
-      id='display-canvas'
-      style={{
-        height: '100vh',
-        width: '100vw',
-        verticalAlign: 'middle',
-      }}
-    ></canvas>
+    <div>
+      <DialogController dialogOpenProp={lastKeyPressed === 'e'} onClose={resetLastKeyPressed} />
+      <ProgressBar value={50}>Kevlar</ProgressBar>
+      <canvas
+        ref={canvasRef}
+        id='display-canvas'
+        style={{
+          height: '100vh',
+          width: '100vw',
+          verticalAlign: 'middle',
+        }}
+      ></canvas>
+    </div>
   );
 };
