@@ -64,41 +64,41 @@ export const Canvas = () => {
     // lastUpdateTime = performance.now();
   }
 
-  // useEffect(() => {
-  //   initApp();
-  //   // document.addEventListener('contextmenu', function (event) {
-  //   //   event.preventDefault();
-  //   // });
+  useEffect(() => {
+    initApp();
+    // document.addEventListener('contextmenu', function (event) {
+    //   event.preventDefault();
+    // });
     
 
-  //   window.addEventListener('mousedown', () => SetFPSCameraController(document.getElementById('display-canvas')));
+    // window.addEventListener('mousedown', () => SetFPSCameraController(document.getElementById('display-canvas')));
 
 
-  //   // Nettoyer les écouteurs d'événements lors du démontage du composant
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // }, [initApp]);
+    // Nettoyer les écouteurs d'événements lors du démontage du composant
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [initApp]);
 
-  // useEffect(() => {
-  //   console.log('lastKeyPressed a changé :', lastKeyPressed);
-  // }, [lastKeyPressed]);
+  useEffect(() => {
+    console.log('lastKeyPressed a changé :', lastKeyPressed);
+  }, [lastKeyPressed]);
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   const updateLoop = async () => {
-  //     if (isSDK3DVerseInitialized) {
-  //       await update();
-  //     }
-  //     requestAnimationFrame(updateLoop);
-  //   };
+    const updateLoop = async () => {
+      if (isSDK3DVerseInitialized) {
+        await update();
+      }
+      requestAnimationFrame(updateLoop);
+    };
   
-  //   updateLoop();  
+    updateLoop();  
   
-  //   return () => {
+    return () => {
 
-  //   };
-  // }, [isSDK3DVerseInitialized]);
+    };
+  }, [isSDK3DVerseInitialized]);
 
   const resetLastKeyPressed = () => {
     setLastKeyPressed(null);
