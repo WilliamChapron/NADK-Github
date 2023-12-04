@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import DialogComponent from './DialogComponent';
 
-const DialogController = ({ dialogOpenProp, onClose }) => {
+const DialogController = ({ dialogOpenProp, dialogMessages,  onClose, shouldHaveActionButton }) => {
   const [dialogOpen, setDialogOpen] = useState(null);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
@@ -27,7 +27,10 @@ const DialogController = ({ dialogOpenProp, onClose }) => {
     }
   };
 
-  const dialogMessages = ["Bonjour !", "Comment ça va ?", "C'est un beau jour.", "Autre message"];
+  const handleActionButton = async () => {
+    
+  
+  };
 
   useEffect(() => {
     setDialogOpen(dialogOpenProp);
@@ -42,6 +45,8 @@ const DialogController = ({ dialogOpenProp, onClose }) => {
           currentMessageIndex={currentMessageIndex}
           handleNextMessage={handleNextMessage}
           handlePreviousMessage={handlePreviousMessage}
+          shouldHaveActionButton={shouldHaveActionButton}
+          handleActionButton={handleActionButton}
         />
       )}
     </div>

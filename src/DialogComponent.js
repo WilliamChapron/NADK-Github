@@ -1,7 +1,7 @@
 // DialogComponent.js
 import React from 'react';
 
-const DialogComponent = ({ onClose, messages, currentMessageIndex, handleNextMessage, handlePreviousMessage }) => {
+const DialogComponent = ({ onClose, messages, currentMessageIndex, handleNextMessage, handlePreviousMessage, shouldHaveActionButton, handleActionButton }) => {
   const overlayStyle = {
     position: 'fixed',
     top: '50%',
@@ -52,17 +52,40 @@ const DialogComponent = ({ onClose, messages, currentMessageIndex, handleNextMes
     outline: 'none',
   };
 
+  const actionButtonStyle = {
+    fontSize: '20px',
+    margin: '10px',
+    padding: '10px 20px',
+    cursor: 'pointer',
+    background: '#28a745', // Couleur du fond du bouton d'action
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    outline: 'none',
+  };
+
+
+
   return (
     <div style={overlayStyle}>
       <div style={dialogStyle}>
         <button style={closeButtonStyle} onClick={onClose}>X</button>
         <p style={messageStyle}>{messages[currentMessageIndex]}</p>
-        <button onClick={handlePreviousMessage} style={buttonStyle} disabled={currentMessageIndex === 0}>
-          Previous
-        </button>
-        <button onClick={handleNextMessage} style={buttonStyle} disabled={currentMessageIndex === messages.length - 1}>
-          Next
-        </button>
+        {currentMessageIndex > 0 && (
+          <button onClick={handlePreviousMessage} style={buttonStyle}>
+            Previous
+          </button>
+        )}
+        {currentMessageIndex < messages.length - 1 && (
+          <button onClick={handleNextMessage} style={buttonStyle}>
+            Next
+          </button>
+        )}
+        {shouldHaveActionButton && currentMessageIndex === messages.length - 1 && (
+          <button onClick={handleActionButton} style={actionButtonStyle}>
+            Action
+          </button>
+        )}
       </div>
     </div>
   );
