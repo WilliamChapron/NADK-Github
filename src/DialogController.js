@@ -2,17 +2,25 @@
 import React, { useState, useEffect } from 'react';
 import DialogComponent from './DialogComponent';
 
-const DialogController = ({ dialogOpenProp, dialogMessages,  onClose, shouldHaveActionButton }) => {
-  const [dialogOpen, setDialogOpen] = useState(null);
+const DialogController = ({ dialogOpenProp, dialogMessages,  onClose, shouldHaveActionButton, resetFPSCameraController, setFPSCameraController }) => {
+  const [dialogOpen, setDialogOpen] = useState(dialogOpenProp);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+
+  useEffect(() => {
+    if (dialogOpenProp) {
+      openDialog();
+    }
+  }, [dialogOpenProp]);
 
   const openDialog = () => {
     setDialogOpen(true);
+    resetFPSCameraController(document.getElementById('display-canvas'));
   };
 
   const closeDialog = () => {
     setDialogOpen(false);
     onClose();
+    setFPSCameraController(document.getElementById('display-canvas'));
   };
 
   const handleNextMessage = () => {
@@ -28,18 +36,14 @@ const DialogController = ({ dialogOpenProp, dialogMessages,  onClose, shouldHave
   };
 
   const handleActionButton = async () => {
-    
-  
-  };
 
-  useEffect(() => {
-    setDialogOpen(dialogOpenProp);
-  }, [dialogOpenProp]);
+  };
 
   return (
     <div>
       {dialogOpen && (
         <DialogComponent
+          dialogOpen={dialogOpen}
           onClose={closeDialog}
           messages={dialogMessages}
           currentMessageIndex={currentMessageIndex}

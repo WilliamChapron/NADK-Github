@@ -9,10 +9,14 @@ import { HandleKeyDown } from './HandleKeyDown';
 // import { InitFirstPersonController } from './InitFirstPersonController';
 import { SetFPSCameraController,ResetFPSCameraController } from './SetFPSCameraController';
 
-// // Controller
+// Component Controller
 import DialogController from './DialogController';
 import PickupController from './PickupController';
 import ObjectiveController from './ObjectiveController';
+
+// Game Controller
+
+import { gameData, incrementScore, addDiscoverCountry, setGameMode, resetGame, gameUpdate } from './GameManager';
 
 
 import {
@@ -26,6 +30,7 @@ export const Canvas = () => {
   const canvasRef = useRef(null);
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
   const [isInteractable, setIsInteractable] = useState(true);
+  const [isSDK3DVerseInitialized, setIsSDK3DVerseInitialized] = useState(false);
   let lastUpdateTime = performance.now();
   
   const status = useScript(
@@ -34,7 +39,31 @@ export const Canvas = () => {
       removeOnUnmount: false,
     }
   );
-  
+
+  const update = async () => {
+    // const speed = 100; 
+    // const deltaTime = performance.now() - lastUpdateTime;
+    // const distance = (speed * deltaTime) / 1000; 
+    // lastUpdateTime = performance.now();
+    gameUpdate();
+
+
+
+  }
+
+  useEffect(() => {
+  const updateLoop = async () => {
+    if (isSDK3DVerseInitialized) {
+      await update();
+    }
+  };
+
+  const intervalId = setInterval(updateLoop, 4000); // 1000 milliseconds, adjust as needed
+
+  return () => {
+    clearInterval(intervalId); // Clear the interval when the component unmounts
+  };
+}, [isSDK3DVerseInitialized]);
 
   const handleKeyDown = async (event) => {
     const key = await HandleKeyDown(event);
@@ -62,8 +91,7 @@ export const Canvas = () => {
         startSimulation: "on-assets-loaded",
       });
       await InitFirstPersonController(characterControllerSceneUUID);
-      window.addEventListener('mousedown', () => SetFPSCameraController(document.getElementById('display-canvas')));
-      window.addEventListener('keydown', handleKeyDown);
+      setIsSDK3DVerseInitialized(true);
     }
   
 
@@ -112,8 +140,18 @@ export const Canvas = () => {
     SDK3DVerse.setMainCamera(firstPersonCamera);
   }
 
+
+  const handleClickForFPSController = () => {
+    SetFPSCameraController(document.getElementById('display-canvas'));
+  
+    // Remove the event listener after it's been triggered
+    window.removeEventListener('mousedown', handleClickForFPSController);
+  };
+  
   window.addEventListener("load", async () => {
     await initApp();
+    window.addEventListener('keydown', handleKeyDown); // Catch key press
+    window.addEventListener('mousedown', handleClickForFPSController); // Catch one time click to Set FPS Controller
   });
   
 
@@ -130,6 +168,8 @@ export const Canvas = () => {
         ]}
         onClose={resetLastKeyPressed}
         shouldHaveActionButton={true}
+        resetFPSCameraController={ResetFPSCameraController}    
+        setFPSCameraController={SetFPSCameraController} 
       />
       <PickupController
         pickupInfo={['name', 'Les infos de cette item sont la']}
