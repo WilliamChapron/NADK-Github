@@ -1,6 +1,19 @@
-import { useCallback, useEffect } from 'react';
+// IMPORT 
+
+// React
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useScript } from '@uidotdev/usehooks';
-import { SetFPSCameraController } from './SetFPSCameraController';
+
+// Functions
+import { HandleKeyDown } from './HandleKeyDown';
+// import { InitFirstPersonController } from './InitFirstPersonController';
+import { SetFPSCameraController,ResetFPSCameraController } from './SetFPSCameraController';
+
+// // Controller
+import DialogController from './DialogController';
+import PickupController from './PickupController';
+import ObjectiveController from './ObjectiveController';
+
 
 import {
   publicToken,
@@ -9,6 +22,12 @@ import {
 } from "./config.js";
 
 export const Canvas = () => {
+
+  const canvasRef = useRef(null);
+  const [lastKeyPressed, setLastKeyPressed] = useState(null);
+  const [isInteractable, setIsInteractable] = useState(true);
+  let lastUpdateTime = performance.now();
+  
   const status = useScript(
     `https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js`,
     {
@@ -17,7 +36,20 @@ export const Canvas = () => {
   );
   
 
+  const handleKeyDown = async (event) => {
+    const key = await HandleKeyDown(event);
+    if (key) {
+      setLastKeyPressed(key);
+    }
+  };
 
+  const resetLastKeyPressed = () => {
+    setLastKeyPressed(null);
+  };
+
+  useEffect(() => {
+    console.log('lastKeyPressed a changé :', lastKeyPressed);
+  }, [lastKeyPressed]);
   
   
   const initApp = async () => {
@@ -31,6 +63,7 @@ export const Canvas = () => {
       });
       await InitFirstPersonController(characterControllerSceneUUID);
       window.addEventListener('mousedown', () => SetFPSCameraController(document.getElementById('display-canvas')));
+      window.addEventListener('keydown', handleKeyDown);
     }
   
 
@@ -86,6 +119,31 @@ export const Canvas = () => {
 
   return (
     <>
+
+      <DialogController
+        dialogOpenProp={lastKeyPressed === 'a'}
+        dialogMessages={[
+          'Bonjour !',
+          'Comment ça va ?',
+          "C'est un beau jour.",
+          'Autre message',
+        ]}
+        onClose={resetLastKeyPressed}
+        shouldHaveActionButton={true}
+      />
+      <PickupController
+        pickupInfo={['name', 'Les infos de cette item sont la']}
+        isVisible={lastKeyPressed === 'g'}
+        onClose={resetLastKeyPressed}
+      />
+
+      {isInteractable && (
+        <ObjectiveController
+          currentObjective={'Aller dans la salle des coffres'}
+          score={'345'}
+          distanceToGoal={'1567 M'}
+        />
+      )}
       <canvas
         id='display-canvas'
         style={{

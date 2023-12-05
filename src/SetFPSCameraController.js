@@ -16,4 +16,22 @@ async function SetFPSCameraController(canvas){
     canvas.requestPointerLock();
 };
 
-export { SetFPSCameraController };
+
+async function ResetFPSCameraController(canvas) {
+    // Restore the default actions for LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and LOOK_DOWN.
+    SDK3DVerse.actionMap.values["LOOK_LEFT"][0] = ["MOUSE_CLICK"];
+    SDK3DVerse.actionMap.values["LOOK_RIGHT"][0] = ["MOUSE_CLICK"];
+    SDK3DVerse.actionMap.values["LOOK_DOWN"][0] = ["MOUSE_CLICK"];
+    SDK3DVerse.actionMap.values["LOOK_UP"][0] = ["MOUSE_CLICK"];
+    SDK3DVerse.actionMap.propagate();
+  
+    // Release the pointer lock.
+    canvas.exitPointerLock = (
+        canvas.exitPointerLock
+      || canvas.mozExitPointerLock
+      || canvas.webkitExitPointerLock
+    );
+    canvas.exitPointerLock();
+}
+
+export { SetFPSCameraController, ResetFPSCameraController  };
