@@ -15,6 +15,9 @@ import PickupController from './PickupController';
 import ObjectiveController from './ObjectiveController';
 import MobileButtons from './MobileButtons';
 
+// Component
+import LoadingScreen from './LoadingScreen';
+
 // Game Controller
 
 import { gameData, incrementScore, addDiscoverCountry, setGameMode, resetGame, gameUpdate } from './GameManager';
@@ -37,13 +40,12 @@ export const Canvas = () => {
   // Key one press
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
 
-
   const [isInteractable, setIsInteractable] = useState(true);
-
 
   // 3D VERSE States
   const [is3DVerseLoad, setIs3DVerseLoad] = useState(false);
 
+  const [startingState, setStartingState] = useState(0);
   // DT
   let lastUpdateTime = performance.now();
 
@@ -59,18 +61,15 @@ export const Canvas = () => {
   );
   
 
-
+  // Update
   const update = async () => {
-    // const speed = 100; 
-    // const deltaTime = performance.now() - lastUpdateTime;
-    // const distance = (speed * deltaTime) / 1000; 
-    // lastUpdateTime = performance.now();
     gameUpdate();
 
 
 
   }
 
+  // Use Effect Game Loop
   useEffect(() => {
     const updateLoop = async () => {
       if (is3DVerseLoad) {
@@ -86,6 +85,7 @@ export const Canvas = () => {
 
   }, [is3DVerseLoad]);
 
+  // Si touche pressé
   const handleKeyDown = async (event) => {
     const key = await HandleKeyDown(event);
     if (key) {
@@ -93,18 +93,24 @@ export const Canvas = () => {
     }
   };
 
+  // Reset last key press
   const resetLastKeyPressed = () => {
     setLastKeyPressed(null);
   };
-
   useEffect(() => {
     console.log('lastKeyPressed a changé :', lastKeyPressed);
-  }, [lastKeyPressed]);
   
+    const fetchData = async () => {
+      if (status === 'ready') {
+        await handleInitialClick();
+      }
+    };
+  
+    fetchData();
+  }, [lastKeyPressed, status]);
   
   const initApp = async () => {
     if (status === 'ready') {
-      
       await SDK3DVerse.joinOrStartSession({
         userToken: publicToken,
         sceneUUID: mainSceneUUID,
@@ -122,7 +128,7 @@ export const Canvas = () => {
   //------------------------------------------------------------------------------
   
 
-
+  // Managing Single Click for First Active of Moving in space
   const handleClickForFPSController = async () => {
     if (!isFPSControllerClick) {
       window.removeEventListener('mousedown', handleClickForFPSController );
@@ -132,20 +138,30 @@ export const Canvas = () => {
   };
   
 
-  
+  // Managing Single Click for First Click to start the App with 3d verse Instead of the load
   const handleInitialClick = async () => {
     if (!isInitialClick) {
-      setIsInitialClick(true);
-      console.log("remove listenere HERE")
+      setIsInitialClick(true); // Var for single click
       window.removeEventListener('click', handleInitialClick);
-      console.log("L'ERREUR EST LA ")
       if (!is3DVerseLoad) {
-        console.log("ready");
         await initApp();
         
-        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keydown', handleKeyDown); // Catch all key press
 
-        window.addEventListener('mousedown', handleClickForFPSController);
+        window.addEventListener('mousedown', handleClickForFPSController); // Single click to active FPS Controller
+
+
+
+        const clickEvent = new MouseEvent('mousedown', {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        });
+        // Lancer l'événement de clic sur l'élément approprié
+        const element = document.getElementById('display-canvas');
+        element.dispatchEvent(clickEvent);
+
+
         
 
 
@@ -173,14 +189,8 @@ export const Canvas = () => {
   };
 
   // Ajoutez l'événement click à la fenêtre
-  window.addEventListener('click', handleInitialClick);
-
-  window.addEventListener("load", async () => {
-    // console.log("ready")
-    // await initApp();
-    // window.addEventListener('keydown', handleKeyDown); // Catch key press
-    // window.addEventListener('mousedown', handleClickForFPSController); // Catch one time click to Set FPS Controller
-  });
+  // window.addEventListener('click', handleInitialClick);
+  // window.addEventListener('load', handleInitialClick);
 
   
 
@@ -196,8 +206,8 @@ export const Canvas = () => {
         tabIndex="1"
         onContextMenu={event => event.preventDefault()}
       ></canvas>
-
-      {is3DVerseLoad && (
+  
+      {is3DVerseLoad ? (
         <>
           <DialogController
             dialogOpenProp={lastKeyPressed === 'a'}
@@ -225,10 +235,13 @@ export const Canvas = () => {
             />
           )}
           <MobileButtons />
-        </> // Close Game Interface
-      )} 
-    </> // Close global balise
-  ); // Close return component
+        </>
+      ) : (
+        <LoadingScreen />
+      )}
+    </>
+  );
+  
 
 
 };
