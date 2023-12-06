@@ -1,55 +1,55 @@
-
 import { WritePositionToFile } from './CinematicWriter';
 
+class GameManager {
+  constructor() {
+    this.gameData = {
+      score: 0,
+      discoveredCountries: [],
+      gameMode: 'inGame',
+    };
+  }
 
-let gameData = {
-    score: 0,
-    discoveredCountries: [],
-    gameMode: 'inGame',
-};
+  incrementScore(points) {
+    this.gameData.score += points;
+  }
 
-const incrementScore = (points) => {
-    gameData.score += points;
-};
+  addDiscoverCountry(country) {
+    if (!this.gameData.discoveredCountries.includes(country)) {
+      this.gameData.discoveredCountries.push(country);
+    }
+  }
 
-const addDiscoverCountry = (country) => {
-    if (!gameData.discoveredCountries.includes(country)) {
-        gameData.discoveredCountries.push(country);    }
-};
+  setGameMode(mode) {
+    this.gameData.gameMode = mode;
+  }
 
-const setGameMode = (mode) => {
-    gameData.gameMode = mode;
-};
+  async gameUpdate() {
+    
+    const SDK3DVerse = window.SDK3DVerse;
 
-const gameUpdate = async () => {
-    const SDK3DVerse = window.SDK3DVerse
+    const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    const cameraEntity = player[0].getCamera();
 
-    const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
-    const cameraEntity = player[0].getCamera()
+    console.log(cameraEntity);
 
-    console.log(cameraEntity)
+    const transform = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
 
-    // SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0],[-1.71,0.92,-1.71], [0,1,0,0], 100);
-
-    const transform = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
-
-    const position = await transform[0].getTransform().position
+    const position = await transform[0].getTransform().position;
 
     // WritePositionToFile(position);
+  }
 
-
-
-    
-
-};
-
-const resetGame = () => {
-    gameData = {
-        score: 0,
-        discoveredCountries: [],
-        gameMode: 'inGame',
+  resetGame() {
+    this.gameData = {
+      score: 0,
+      discoveredCountries: [],
+      gameMode: 'inGame',
     };
-};
-  
-export { gameData, incrementScore, addDiscoverCountry, setGameMode, resetGame, gameUpdate};
-  
+  }
+}
+
+// Créer une instance unique du gestionnaire de jeu
+const gameManagerInstance = new GameManager();
+
+// Exporter l'instance unique du gestionnaire de jeu
+export default gameManagerInstance;

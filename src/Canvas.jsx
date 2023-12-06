@@ -17,10 +17,11 @@ import MobileButtons from './MobileButtons';
 
 // Component
 import LoadingScreen from './LoadingScreen';
+import ClickMessagePointerLockOverlay from './ClickMessagePointerLockOverlay';
 
 // Game Controller
 
-import { gameData, incrementScore, addDiscoverCountry, setGameMode, resetGame, gameUpdate } from './GameManager';
+import gameManagerInstance from './GameManager'; 
 
 // Cinematic 
 
@@ -45,7 +46,7 @@ export const Canvas = () => {
   // 3D VERSE States
   const [is3DVerseLoad, setIs3DVerseLoad] = useState(false);
 
-  const [startingState, setStartingState] = useState(0);
+  const [isPointerLockInitialWasClick, setIsPointerLockInitialWasClick] = useState(false);
   // DT
   let lastUpdateTime = performance.now();
 
@@ -63,7 +64,7 @@ export const Canvas = () => {
 
   // Update
   const update = async () => {
-    gameUpdate();
+    gameManagerInstance.gameUpdate();
 
 
 
@@ -77,7 +78,7 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 4000); // 1000 milliseconds, adjust as needed
+    const intervalId = setInterval(updateLoop, 1000); // 1000 milliseconds, adjust as needed
 
     return () => {
       clearInterval(intervalId); // Clear the interval when the component unmounts
@@ -131,9 +132,10 @@ export const Canvas = () => {
   // Managing Single Click for First Active of Moving in space
   const handleClickForFPSController = async () => {
     if (!isFPSControllerClick) {
-      window.removeEventListener('mousedown', handleClickForFPSController );
+      window.removeEventListener('click', handleClickForFPSController );
       SetFPSCameraController(document.getElementById('display-canvas'));
       setIsFPSControllerClick(true);
+      setIsPointerLockInitialWasClick(true)
     }
   };
   
@@ -148,18 +150,18 @@ export const Canvas = () => {
         
         window.addEventListener('keydown', handleKeyDown); // Catch all key press
 
-        window.addEventListener('mousedown', handleClickForFPSController); // Single click to active FPS Controller
+        window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
 
 
 
-        const clickEvent = new MouseEvent('mousedown', {
-          bubbles: true,
-          cancelable: true,
-          view: window,
-        });
-        // Lancer l'événement de clic sur l'élément approprié
-        const element = document.getElementById('display-canvas');
-        element.dispatchEvent(clickEvent);
+        // const clickEvent = new MouseEvent('click', {
+        //   bubbles: true,
+        //   cancelable: true,
+        //   view: window,
+        // });
+        // // Lancer l'événement de clic sur l'élément approprié
+        // const element = document.getElementById('display-canvas');
+        // element.dispatchEvent(clickEvent);
 
 
         
@@ -239,9 +241,67 @@ export const Canvas = () => {
       ) : (
         <LoadingScreen />
       )}
+
+      
     </>
   );
   
 
 
 };
+
+
+
+// return (
+//   <>
+//     <canvas
+//       id='display-canvas'
+//       style={{
+//         height: '100vh',
+//         width: '100vw',
+//         verticalAlign: 'middle',
+//       }}
+//       tabIndex="1"
+//       onContextMenu={event => event.preventDefault()}
+//     ></canvas>
+
+//     {is3DVerseLoad && isPointerLockInitialWasClick ? (
+//       <>
+//         <DialogController
+//           dialogOpenProp={lastKeyPressed === 'a'}
+//           dialogMessages={[
+//             'Bonjour !',
+//             'Comment ça va ?',
+//             "C'est un beau jour.",
+//             'Autre message',
+//           ]}
+//           onClose={resetLastKeyPressed}
+//           shouldHaveActionButton={true}
+//           resetFPSCameraController={ResetFPSCameraController}
+//           setFPSCameraController={SetFPSCameraController}
+//         />
+//         <PickupController
+//           pickupInfo={['name', 'Les infos de cette item sont là']}
+//           isVisible={lastKeyPressed === 'g'}
+//           onClose={resetLastKeyPressed}
+//         />
+//         {isInteractable && (
+//           <ObjectiveController
+//             currentObjective={'Aller dans la salle des coffres'}
+//             score={'345'}
+//             distanceToGoal={'1567 M'}
+//           />
+//         )}
+//         <MobileButtons />
+//       </>
+//     ) : (
+//       <LoadingScreen />
+//     )}
+
+//     {is3DVerseLoad && !isPointerLockInitialWasClick ? (
+//       <>
+//         <ClickMessagePointerLockOverlay />
+//       </>
+//     ) : null} {/* Ajout de la condition pour éviter un rendu inutile si isPointerLockInitialWasClick est true */}
+//   </>
+// );
