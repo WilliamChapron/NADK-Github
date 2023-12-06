@@ -1,33 +1,67 @@
-const fs = require('fs');
 
-// Fonction pour obtenir la position du personnage (à remplacer par votre propre logique)
-function getPlayerPosition() {
-  // Mettez votre logique pour obtenir la position du personnage ici
-  // Exemple : retourner une position factice pour cet exemple
-  return { x: 10, y: 20, z: 30 };
-}
+async function GetPositions() {
+  const apiUrl = 'http://localhost:4444/api/data'; 
 
-// Fonction pour écrire la position dans le fichier JSON
-function writePositionToFile(position) {
-  const data = JSON.stringify(position);
+  try {
+    const response = await fetch(apiUrl);
 
-  fs.writeFile('player_position.json', data, (err) => {
-    if (err) {
-      console.error('Erreur lors de l\'écriture dans le fichier :', err);
-    } else {
-      console.log('Position enregistrée dans player_position.json');
+    if (!response.ok) {
+      throw new Error(`Erreur lors de la requête : ${response.statusText}`);
     }
-  });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des positions :', error);
+    throw error; 
+  }
 }
 
-// Intervalle pour capturer la position et l'écrire toutes les 1000 millisecondes (1 seconde)
-const captureInterval = setInterval(() => {
-  const playerPosition = getPlayerPosition();
-  writePositionToFile(playerPosition);
-}, 1000);
+function WritePositionToFile(position) {
+  const apiUrl = 'http://localhost:4444/api/data'; 
 
-// Arrêtez l'intervalle après une certaine période (par exemple, 10 secondes pour cet exemple)
-setTimeout(() => {
-  clearInterval(captureInterval);
-  console.log('Arrêt de la capture de position.');
-}, 10000);
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(position),
+  };
+
+
+  fetch(apiUrl, options)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erreur lors de la requête : ${response.statusText}`);
+      }
+      console.log('Position enregistrée avec succès');
+    })
+    .catch(error => {
+      console.error('Erreur lors de l\'enregistrement de la position :', error);
+    });
+}
+
+async function StartCinematic() {
+  // CINEMATIC 
+  try {
+    const positions = await GetPositions();
+
+
+    for (const position of positions) {
+      const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+
+      const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], position, [0, 1, 0, 0], 10);
+
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    console.log('Parcours terminé');
+  } 
+  catch (error) {
+    console.error('Erreur lors du parcours des positions :', error);
+  }
+}
+
+export { WritePositionToFile, GetPositions, StartCinematic };

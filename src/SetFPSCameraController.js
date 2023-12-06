@@ -1,3 +1,5 @@
+
+
 async function SetFPSCameraController(canvas){
     const SDK3DVerse = window.SDK3DVerse
 
@@ -16,6 +18,7 @@ async function SetFPSCameraController(canvas){
       || canvas.webkitPointerLockElement
     );
     canvas.requestPointerLock();
+    canvas.focus();
 };
 
 
@@ -40,6 +43,12 @@ async function ResetFPSCameraController(canvas) {
         || document.webkitExitPointerLock
     );
     document.exitPointerLock();
+
+
+
+
 }
+
+
 
 export { SetFPSCameraController, ResetFPSCameraController  };

@@ -6,17 +6,22 @@ import { useScript } from '@uidotdev/usehooks';
 
 // Functions
 import { HandleKeyDown } from './HandleKeyDown';
-// import { InitFirstPersonController } from './InitFirstPersonController';
-import { SetFPSCameraController,ResetFPSCameraController } from './SetFPSCameraController';
+import { InitFirstPersonController } from './InitFirstPersonController';
+import { SetFPSCameraController, ResetFPSCameraController } from './SetFPSCameraController';
 
 // Component Controller
 import DialogController from './DialogController';
 import PickupController from './PickupController';
 import ObjectiveController from './ObjectiveController';
+import MobileButtons from './MobileButtons';
 
 // Game Controller
 
 import { gameData, incrementScore, addDiscoverCountry, setGameMode, resetGame, gameUpdate } from './GameManager';
+
+// Cinematic 
+
+import { StartCinematic } from './CinematicWriter.js';
 
 
 import {
@@ -28,10 +33,23 @@ import {
 export const Canvas = () => {
 
   const canvasRef = useRef(null);
+
+  // Key one press
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
+
+
   const [isInteractable, setIsInteractable] = useState(true);
-  const [isSDK3DVerseInitialized, setIsSDK3DVerseInitialized] = useState(false);
+
+
+  // 3D VERSE States
+  const [is3DVerseLoad, setIs3DVerseLoad] = useState(false);
+
+  // DT
   let lastUpdateTime = performance.now();
+
+  // JS Event States 
+  const [isInitialClick, setIsInitialClick] = useState(false);
+  const [isFPSControllerClick, setIsFPSControllerClick] = useState(false);
   
   const status = useScript(
     `https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js`,
@@ -39,6 +57,8 @@ export const Canvas = () => {
       removeOnUnmount: false,
     }
   );
+  
+
 
   const update = async () => {
     // const speed = 100; 
@@ -52,18 +72,19 @@ export const Canvas = () => {
   }
 
   useEffect(() => {
-  const updateLoop = async () => {
-    if (isSDK3DVerseInitialized) {
-      await update();
-    }
-  };
+    const updateLoop = async () => {
+      if (is3DVerseLoad) {
+        await update();
+      }
+    };
 
-  const intervalId = setInterval(updateLoop, 4000); // 1000 milliseconds, adjust as needed
+    const intervalId = setInterval(updateLoop, 4000); // 1000 milliseconds, adjust as needed
 
-  return () => {
-    clearInterval(intervalId); // Clear the interval when the component unmounts
-  };
-}, [isSDK3DVerseInitialized]);
+    return () => {
+      clearInterval(intervalId); // Clear the interval when the component unmounts
+    };
+
+  }, [is3DVerseLoad]);
 
   const handleKeyDown = async (event) => {
     const key = await HandleKeyDown(event);
@@ -83,6 +104,7 @@ export const Canvas = () => {
   
   const initApp = async () => {
     if (status === 'ready') {
+      
       await SDK3DVerse.joinOrStartSession({
         userToken: publicToken,
         sceneUUID: mainSceneUUID,
@@ -91,99 +113,79 @@ export const Canvas = () => {
         startSimulation: "on-assets-loaded",
       });
       await InitFirstPersonController(characterControllerSceneUUID);
-      setIsSDK3DVerseInitialized(true);
+      setIs3DVerseLoad(true);
     }
-  
-
   };
+
+
   
   //------------------------------------------------------------------------------
-  async function InitFirstPersonController(charCtlSceneUUID) {
-    // To spawn an entity we need to create an EntityTempllate and specify the
-    // components we want to attach to it. In this case we only want a scene_ref
-    // that points to the character controller scene.
-    const playerTemplate = new SDK3DVerse.EntityTemplate();
-    playerTemplate.attachComponent("scene_ref", { value: charCtlSceneUUID });
   
-    // Passing null as parent entity will instantiate our new entity at the root
-    // of the main scene.
-    const parentEntity = null;
-    // Setting this option to true will ensure that our entity will be destroyed
-    // when the client is disconnected from the session, making sure we don't
-    // leave our 'dead' player body behind.
-    const deleteOnClientDisconnection = true;
-    // We don't want the player to be saved forever in the scene, so we
-    // instantiate a transient entity.
-    // Note that an entity template can be instantiated multiple times.
-    // Each instantiation results in a new entity.
-    const playerSceneEntity = await playerTemplate.instantiateTransientEntity(
-      "Player",
-      parentEntity,
-      deleteOnClientDisconnection
-    );
-  
-    // The character controller scene is setup as having a single entity at its
-    // root which is the first person controller itself.
-    const firstPersonController = (await playerSceneEntity.getChildren())[0];
-    // Look for the first person camera in the children of the controller.
-    const children = await firstPersonController.getChildren();
-    const firstPersonCamera = children.find((child) =>
-      child.isAttached("camera")
-    );
-  
-    // We need to assign the current client to the first person controller
-    // script which is attached to the firstPersonController entity.
-    // This allows the script to know which client inputs it should read.
-    SDK3DVerse.engineAPI.assignClientToScripts(firstPersonController);
-  
-    // Finally set the first person camera as the main camera.
-    SDK3DVerse.setMainCamera(firstPersonCamera);
-  }
 
 
-  const handleClickForFPSController = () => {
-    SetFPSCameraController(document.getElementById('display-canvas'));
-  
-    // Remove the event listener after it's been triggered
-    window.removeEventListener('mousedown', handleClickForFPSController);
+  const handleClickForFPSController = async () => {
+    if (!isFPSControllerClick) {
+      window.removeEventListener('mousedown', handleClickForFPSController );
+      SetFPSCameraController(document.getElementById('display-canvas'));
+      setIsFPSControllerClick(true);
+    }
   };
   
+
+  
+  const handleInitialClick = async () => {
+    if (!isInitialClick) {
+      setIsInitialClick(true);
+      console.log("remove listenere HERE")
+      window.removeEventListener('click', handleInitialClick);
+      console.log("L'ERREUR EST LA ")
+      if (!is3DVerseLoad) {
+        console.log("ready");
+        await initApp();
+        
+        window.addEventListener('keydown', handleKeyDown);
+
+        window.addEventListener('mousedown', handleClickForFPSController);
+        
+
+
+        // const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+        // const cameraEntity = player[0];
+
+        // const block = await SDK3DVerse.engineAPI.findEntitiesByEUID("109c1226-637f-411e-b896-d02140baae1f");
+
+        // SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
+        //   console.log("TRIGGER");
+        //   // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
+        // });
+
+        // StartCinematic()
+
+
+
+        
+
+
+        
+      }
+    }
+
+  };
+
+  // Ajoutez l'événement click à la fenêtre
+  window.addEventListener('click', handleInitialClick);
+
   window.addEventListener("load", async () => {
-    await initApp();
-    window.addEventListener('keydown', handleKeyDown); // Catch key press
-    window.addEventListener('mousedown', handleClickForFPSController); // Catch one time click to Set FPS Controller
+    // console.log("ready")
+    // await initApp();
+    // window.addEventListener('keydown', handleKeyDown); // Catch key press
+    // window.addEventListener('mousedown', handleClickForFPSController); // Catch one time click to Set FPS Controller
   });
+
   
 
   return (
     <>
-
-      <DialogController
-        dialogOpenProp={lastKeyPressed === 'a'}
-        dialogMessages={[
-          'Bonjour !',
-          'Comment ça va ?',
-          "C'est un beau jour.",
-          'Autre message',
-        ]}
-        onClose={resetLastKeyPressed}
-        shouldHaveActionButton={true}
-        resetFPSCameraController={ResetFPSCameraController}    
-        setFPSCameraController={SetFPSCameraController} 
-      />
-      <PickupController
-        pickupInfo={['name', 'Les infos de cette item sont la']}
-        isVisible={lastKeyPressed === 'g'}
-        onClose={resetLastKeyPressed}
-      />
-
-      {isInteractable && (
-        <ObjectiveController
-          currentObjective={'Aller dans la salle des coffres'}
-          score={'345'}
-          distanceToGoal={'1567 M'}
-        />
-      )}
       <canvas
         id='display-canvas'
         style={{
@@ -194,6 +196,39 @@ export const Canvas = () => {
         tabIndex="1"
         onContextMenu={event => event.preventDefault()}
       ></canvas>
-    </>
-  );
+
+      {is3DVerseLoad && (
+        <>
+          <DialogController
+            dialogOpenProp={lastKeyPressed === 'a'}
+            dialogMessages={[
+              'Bonjour !',
+              'Comment ça va ?',
+              "C'est un beau jour.",
+              'Autre message',
+            ]}
+            onClose={resetLastKeyPressed}
+            shouldHaveActionButton={true}
+            resetFPSCameraController={ResetFPSCameraController}
+            setFPSCameraController={SetFPSCameraController}
+          />
+          <PickupController
+            pickupInfo={['name', 'Les infos de cette item sont là']}
+            isVisible={lastKeyPressed === 'g'}
+            onClose={resetLastKeyPressed}
+          />
+          {isInteractable && (
+            <ObjectiveController
+              currentObjective={'Aller dans la salle des coffres'}
+              score={'345'}
+              distanceToGoal={'1567 M'}
+            />
+          )}
+          <MobileButtons />
+        </> // Close Game Interface
+      )} 
+    </> // Close global balise
+  ); // Close return component
+
+
 };
