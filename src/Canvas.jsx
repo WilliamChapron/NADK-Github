@@ -38,6 +38,12 @@ export const Canvas = () => {
 
   const canvasRef = useRef(null);
 
+  // 
+  const [currentObjectiveMeters, setCurrentObjectiveMeters] = useState(0);
+  const [currentObjectiveMetersHeight, setCurrentObjectiveMetersHeight] = useState(0);
+
+  
+
   // Key one press
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
 
@@ -67,7 +73,10 @@ export const Canvas = () => {
 
   // Update
   const update = async () => {
-    gameManagerInstance.gameUpdate();
+    await gameManagerInstance.gameUpdate();
+    setCurrentObjectiveMeters(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].meters)
+    setCurrentObjectiveMetersHeight(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].heightMeters)
+    
 
 
 
@@ -81,7 +90,7 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 1000); // 1000 milliseconds, adjust as needed
+    const intervalId = setInterval(updateLoop, 10); // 1000 milliseconds, adjust as needed
 
     return () => {
       clearInterval(intervalId); // Clear the interval when the component unmounts
@@ -101,6 +110,8 @@ export const Canvas = () => {
   const resetLastKeyPressed = () => {
     setLastKeyPressed(null);
   };
+
+
   useEffect(() => {
     console.log('lastKeyPressed a changé :', lastKeyPressed);
   
@@ -128,6 +139,9 @@ export const Canvas = () => {
   };
 
 
+
+
+
   
   //------------------------------------------------------------------------------
   
@@ -141,6 +155,9 @@ export const Canvas = () => {
       setIsPointerLockInitialWasClick(true)
     }
   };
+
+
+
   
 
   // Managing Single Click for First Click to start the App with 3d verse Instead of the load
@@ -212,7 +229,7 @@ export const Canvas = () => {
         onContextMenu={event => event.preventDefault()}
       ></canvas>
   
-      {is3DVerseLoad ? (
+      {is3DVerseLoad && isPointerLockInitialWasClick && (
         <>
           <DialogController
             dialogOpenProp={lastKeyPressed === 'a'}
@@ -236,18 +253,28 @@ export const Canvas = () => {
             <ObjectiveController
               currentObjective={'Aller dans la salle des coffres'}
               score={'345'}
-              distanceToGoal={'1567 M'}
+              distanceToGoal={currentObjectiveMeters}
+              distanceToGoalInHeight={currentObjectiveMetersHeight}
             />
           )}
-          <MobileButtons />
+          {/* <MobileButtons /> */}
         </>
-      ) : (
-        <LoadingScreen />
       )}
-
-      
+  
+      {!is3DVerseLoad && (
+        <>
+          <LoadingScreen />
+        </>
+      )}
+  
+      {is3DVerseLoad && !isPointerLockInitialWasClick && (
+        <>
+          <ClickMessagePointerLockOverlay />
+        </>
+      )}
     </>
   );
+  
   
 
 
@@ -255,56 +282,3 @@ export const Canvas = () => {
 
 
 
-// return (
-//   <>
-//     <canvas
-//       id='display-canvas'
-//       style={{
-//         height: '100vh',
-//         width: '100vw',
-//         verticalAlign: 'middle',
-//       }}
-//       tabIndex="1"
-//       onContextMenu={event => event.preventDefault()}
-//     ></canvas>
-
-//     {is3DVerseLoad && isPointerLockInitialWasClick ? (
-//       <>
-//         <DialogController
-//           dialogOpenProp={lastKeyPressed === 'a'}
-//           dialogMessages={[
-//             'Bonjour !',
-//             'Comment ça va ?',
-//             "C'est un beau jour.",
-//             'Autre message',
-//           ]}
-//           onClose={resetLastKeyPressed}
-//           shouldHaveActionButton={true}
-//           resetFPSCameraController={ResetFPSCameraController}
-//           setFPSCameraController={SetFPSCameraController}
-//         />
-//         <PickupController
-//           pickupInfo={['name', 'Les infos de cette item sont là']}
-//           isVisible={lastKeyPressed === 'g'}
-//           onClose={resetLastKeyPressed}
-//         />
-//         {isInteractable && (
-//           <ObjectiveController
-//             currentObjective={'Aller dans la salle des coffres'}
-//             score={'345'}
-//             distanceToGoal={'1567 M'}
-//           />
-//         )}
-//         <MobileButtons />
-//       </>
-//     ) : (
-//       <LoadingScreen />
-//     )}
-
-//     {is3DVerseLoad && !isPointerLockInitialWasClick ? (
-//       <>
-//         <ClickMessagePointerLockOverlay />
-//       </>
-//     ) : null} {/* Ajout de la condition pour éviter un rendu inutile si isPointerLockInitialWasClick est true */}
-//   </>
-// );

@@ -9,6 +9,8 @@ class ObjectiveManager {
     const newObjective = {
       description: description,
       position: position,
+      meters: 0,
+      heightMeters: 0,
       isCompleted: false,
     };
     this.objectives.push(newObjective);
@@ -24,21 +26,40 @@ class ObjectiveManager {
     return this.objectives[this.currentObjectiveIndex];
   }
 
-  // Définir l'état d'achèvement de l'objectif actuel
-  setCompletionCurrentObjective(bool) {
-    this.objectives[this.currentObjectiveIndex].isCompleted = bool;
+  async getMetersFromPlayer() {
+    const SDK3DVerse = window.SDK3DVerse;
+
+    const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+
+    const playerPosition = await camera[0].getTransform().position;
+  
+
+    const dx = this.objectives[this.currentObjectiveIndex].position[0] - playerPosition[0];
+    const dz =this.objectives[this.currentObjectiveIndex].position[2] - playerPosition[2];
+  
+
+    const distance = Math.round(Math.sqrt(dx * dx + dz * dz));
+
+    this.objectives[this.currentObjectiveIndex].meters = distance;
   }
 
-  // Obtenir l'état d'achèvement de l'objectif actuel
-  getCompletionCurrentObjective() {
-    return this.objectives[this.currentObjectiveIndex].isCompleted;
+  async getMetersFromPlayerHeight() {
+    const SDK3DVerse = window.SDK3DVerse;
+
+    const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+
+    const playerPosition = await camera[0].getTransform().position;
+  
+
+
+    const dy = this.objectives[this.currentObjectiveIndex].position[1] - playerPosition[1];
+  
+
+    const distance = Math.round(dy)
+
+    this.objectives[this.currentObjectiveIndex].heightMeters = distance;
   }
 }
 
-// Exemple d'utilisation :
-const objectiveManager = new ObjectiveManager();
 
-// Ajouter plusieurs objectifs
-objectiveManager.addObjective("Description de l'objectif 1", [1, 2, 3]);
-objectiveManager.addObjective("Description de l'objectif 2", [4, 5, 6]);
-// Ajouter plus d'objectifs au besoin
+export default ObjectiveManager;

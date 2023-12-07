@@ -1,12 +1,20 @@
 import { WritePositionToFile } from './CinematicWriter';
 
+import ObjectiveManager from './ObjectiveManager'
+
 class GameManager {
   constructor() {
     this.gameData = {
       score: 0,
       discoveredCountries: [],
       gameMode: 'inGame',
+      objectiveInstance: new ObjectiveManager(),
     };
+
+    this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5]);
+    this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15]);
+
+    
   }
 
   incrementScore(points) {
@@ -24,17 +32,26 @@ class GameManager {
   }
 
   async gameUpdate() {
+
+
+    await this.gameData.objectiveInstance.getMetersFromPlayer()
+
+    await this.gameData.objectiveInstance.getMetersFromPlayerHeight()
+
+
+
+    // GET POSITION FOR WRITE POSITION IN API
     
-    const SDK3DVerse = window.SDK3DVerse;
+    // const SDK3DVerse = window.SDK3DVerse;
 
-    const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-    const cameraEntity = player[0].getCamera();
+    // const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    // const cameraEntity = player[0].getCamera();
 
-    console.log(cameraEntity);
+    // console.log(cameraEntity);
 
-    const transform = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    // const transform = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
 
-    const position = await transform[0].getTransform().position;
+    // const position = await transform[0].getTransform().position;
 
     // WritePositionToFile(position);
   }

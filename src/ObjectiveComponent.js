@@ -1,7 +1,7 @@
 // ObjectiveSystem.js
 import React from 'react';
 
-const ObjectiveComponent = ({ currentObjective, score, distanceToGoal }) => {
+const ObjectiveComponent = ({ currentObjective, score, distanceToGoal, distanceToGoalInHeight }) => {
   const objectiveStyle = {
     position: 'fixed',  // Changez 'absolute' à 'fixed'
     top: '20px',
@@ -35,6 +35,8 @@ const ObjectiveComponent = ({ currentObjective, score, distanceToGoal }) => {
       <p style={infoStyle}>{score}</p>
       <p style={headingStyle}>Distance jusqu'à l'objectif:</p>
       <p style={infoStyle}>{distanceToGoal} mètres</p>
+      <p style={headingStyle}>Distance en hauteurs</p>
+      <p style={infoStyle}>{distanceToGoalInHeight} mètres</p>
     </div>
   );
 };
