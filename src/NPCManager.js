@@ -22,6 +22,8 @@ class NPCManager {
   }
 }
 
+export default NPCManager;
+
 // // Exemple d'utilisation :
 // const npcManager = new NPCManager();
 

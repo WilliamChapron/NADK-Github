@@ -1,6 +1,8 @@
 import { WritePositionToFile } from './CinematicWriter';
 
 import ObjectiveManager from './ObjectiveManager'
+import PickupManager from './PickupManager'
+import NPCManager from './NPCManager'
 
 class GameManager {
   constructor() {
@@ -9,10 +11,17 @@ class GameManager {
       discoveredCountries: [],
       gameMode: 'inGame',
       objectiveInstance: new ObjectiveManager(),
+      pickupInstance: new PickupManager(),
+      NPCInstance: new NPCManager(),
     };
 
+    // Init Objectives for game 
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5]);
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15]);
+
+    // Init Objects to pickup for game 
+
+    // Init NPC for Game
 
     
   }

@@ -69,6 +69,19 @@ export const Canvas = () => {
       removeOnUnmount: false,
     }
   );
+
+  // useEffect(() => {
+  //   const startExtension = async () => {
+  //     if (status == "ready") {
+  //       const joysticksElement = document.getElementById('joysticks');
+  //       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
+  //     }
+  //   }
+  //   startExtension()
+    
+    
+  // }, [status]); // Empty dependency array ensures useEffect runs only once when the component mounts
+
   
 
   // Update
@@ -134,6 +147,8 @@ export const Canvas = () => {
         startSimulation: "on-assets-loaded",
       });
       await InitFirstPersonController(characterControllerSceneUUID);
+      const joysticksElement = document.getElementById('joysticks');
+      SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
       setIs3DVerseLoad(true);
     }
   };
@@ -171,6 +186,9 @@ export const Canvas = () => {
         window.addEventListener('keydown', handleKeyDown); // Catch all key press
 
         window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
+
+
+
 
 
 

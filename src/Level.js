@@ -1,12 +1,15 @@
+import ObjectiveManager from './ObjectiveManager'
+import PickupManager from './PickupManager'
+import NPCManager from './NPCManager'
+
 class Level {
     constructor(name) {
       this.name = name;
-      this.npcs = [];
-      this.objectives = [];
-      this.pickups = [];
-
-      const defaultNPC = new NPC('Default NPC');
-      const defaultObjective = new Objective('Default Objective', 100);
-      const defaultPickup = new Pickup('Default Pickup', 50);
+      this.objectiveInstance = new ObjectiveManager();
+      this.NPCInstance = new NPCManager();
+      this.pickupInstance = new PickupManager();
     }
+
+
 }
+

@@ -21,6 +21,9 @@ class PickupManager {
       await template.instantiateTransientEntity(name, null, true);
     }
 }
+
+export default PickupManager;
+
   
   // // Exemple d'utilisation :
   // const pickupManager = new PickupManager();
