@@ -53,6 +53,9 @@ export const Canvas = () => {
   // JS Event States 
   const [isInitialClick, setIsInitialClick] = useState(false);
   const [isFPSControllerClick, setIsFPSControllerClick] = useState(false);
+
+  // Cinematic 
+  const [isCinematicEnd, setIsCinematicEnd] = useState(false);
   
   const status = useScript(
     `https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js`,
