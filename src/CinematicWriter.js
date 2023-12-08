@@ -46,26 +46,37 @@ async function StartCinematic() {
   // CINEMATIC 
     const positions = await GetPositions();
 
+    // const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
 
-    for (const position of positions) {
-      const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+    // const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], position, [0, 1, 0, 0], 3);
+    // SDK3DVerse.engineAPI.cameraAPI.stopTravel()
 
-      const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], position, [0, 1, 0, 0], 3);
-      SDK3DVerse.engineAPI.cameraAPI.stopTravel()
-
-      const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer")
-
-      const transform =
-      {
-          position : position,
-          orientation : [0,0,0,1],
-          scale : [1,1,1]
-      };
-      await player[0].setGlobalTransform(transform)
+    const cameraEntity = await SDK3DVerse.engineAPI.findEntitiesByEUID("4d3eeea5-40ac-4b76-bfb3-835fbc4294b1")
+    
+  
+    // Finally set the first person camera as the main camera.
+    await SDK3DVerse.setMainCamera(cameraEntity);
 
 
-    }
-    console.log('Parcours terminé');
+
+    // for (const position of positions) {
+
+
+    //   const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer")
+
+    //   console.log(position)
+
+    //   const transform =
+    //   {
+    //       position : [position[0],position[1],position[2]],
+    //       orientation : [0,0,0,1],
+    //       scale : [1,1,1]
+    //   };
+    //   await player[0].setGlobalTransform(transform)
+
+
+    // }
+    // console.log('Parcours terminé');
 }
 
 export { WritePositionToFile, GetPositions, StartCinematic };

@@ -13,6 +13,7 @@ class GameManager {
       objectiveInstance: new ObjectiveManager(),
       pickupInstance: new PickupManager(),
       NPCInstance: new NPCManager(),
+      canWriteCinematic: false,
     };
 
     // Init Objectives for game 
@@ -65,11 +66,15 @@ class GameManager {
 
     // console.log(cameraEntity);
 
-    // const transform = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    const transform = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
 
-    // const position = await transform[0].getTransform().position;
+    const position = await transform[0].getTransform().position;
 
-    // WritePositionToFile(position);
+    // Event to allow to write posiiton in cinematic
+    if (this.gameData.canWriteCinematic) {
+      WritePositionToFile(position);
+    }
+
   }
 
   resetGame() {

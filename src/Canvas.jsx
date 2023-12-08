@@ -56,8 +56,8 @@ export const Canvas = () => {
   const [is3DVerseLoad, setIs3DVerseLoad] = useState(false);
 
   const [isPointerLockInitialWasClick, setIsPointerLockInitialWasClick] = useState(false);
+
   // DT
-  let lastUpdateTime = performance.now();
 
   // JS Event States 
   const [isInitialClick, setIsInitialClick] = useState(false);
@@ -65,6 +65,10 @@ export const Canvas = () => {
 
   // Cinematic 
   const [isCinematicEnd, setIsCinematicEnd] = useState(false);
+
+  // Timeout
+
+  
   
   const status = useScript(
     `https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js`,
@@ -94,7 +98,7 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 10); // 1000 milliseconds, adjust as needed
+    const intervalId = setInterval(updateLoop, 1); // 1000 milliseconds, adjust as needed
 
     return () => {
       clearInterval(intervalId); // Clear the interval when the component unmounts
@@ -102,35 +106,54 @@ export const Canvas = () => {
 
   }, [is3DVerseLoad]);
 
-  // Si touche pressé
+
+
+  let lastKeyPressTime = 0;
+
+  // Si touche pressé alors Evenements liées aux interactions
   const handleKeyDown = async (event) => {
-    const key = await HandleKeyDown(event);
-  
-    if (key) {
-      setLastKeyPressed(key);
-    }
-  
-    if (key === "e") {
-      const canvasElement = document.getElementById('display-canvas'); // Remplacez 'mon-canvas' par l'ID réel de votre élément canvas
-      const canvasRect = canvasElement.getBoundingClientRect();
-  
-      // Calcul du centre du canvas
-      const centerX = canvasRect.left + canvasRect.width / 2;
-      const centerY = canvasRect.top + canvasRect.height / 2;
-  
-      console.log("Position du centre du canvas :", centerX, centerY);
-  
-      // Reste du code ici...
-      const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, true);
-      entity ? console.log('Selected entity', entity.getName()) : console.log('No entity selected');
-      // const materialUUID = '5fc59ab5-8b6f-4534-b4b7-a064aab56a30';
-      // const materialRef = { value: materialUUID };
-      // entity.setComponent('material_ref', materialRef);
-      // entity.detachComponent('mesh_ref');
-  
-      resetLastKeyPressed();
+    const currentTime = new Date().getTime();
+
+    // Vérifier si le temps écoulé depuis la dernière pression de touche est supérieur à 2000 millisecondes (2 secondes)
+    if (currentTime - lastKeyPressTime > 200) {
+
+      console.log(currentTime, "", lastKeyPressTime)
+
+      console.log()
+      const key = await HandleKeyDown(event);
+
+      if (key) {
+        setLastKeyPressed(key);
+      }
+
+      if (key === "f") {
+        if (gameManagerInstance.gameData.canWriteCinematic) {
+          gameManagerInstance.gameData.canWriteCinematic = false;
+        }
+        else if (gameManagerInstance.gameData.canWriteCinematic == false) {
+          gameManagerInstance.gameData.canWriteCinematic = true;
+        }
+        resetLastKeyPressed();
+      }
+
+      if (key === "e") {
+        const canvasElement = document.getElementById('display-canvas');
+        const canvasRect = canvasElement.getBoundingClientRect();
+
+        const centerX = canvasRect.left + canvasRect.width / 2;
+        const centerY = canvasRect.top + canvasRect.height / 2;
+
+        console.log("Position du centre du canvas :", centerX, centerY);
+
+        const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, true);
+        entity ? console.log('Selected entity', entity.getName()) : console.log('No entity selected');
+        resetLastKeyPressed();
+      }
+
+      lastKeyPressTime = currentTime;
     }
   };
+  
 
   
 
@@ -149,6 +172,7 @@ export const Canvas = () => {
       if (status === 'ready') {
         await handleInitialClick();
         await gameManagerInstance.initGame();
+        await StartCinematic()
       }
     };
   
@@ -240,7 +264,7 @@ export const Canvas = () => {
         //   // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
         // });
 
-        await StartCinematic()
+
 
 
 
