@@ -15,6 +15,9 @@ import PickupController from './PickupController';
 import ObjectiveController from './ObjectiveController';
 import MobileButtons from './MobileButtons';
 
+import CrossHair from './CrossHair';
+
+
 // Component
 import LoadingScreen from './LoadingScreen';
 import ClickMessagePointerLockOverlay from './ClickMessagePointerLockOverlay';
@@ -70,18 +73,6 @@ export const Canvas = () => {
     }
   );
 
-  // useEffect(() => {
-  //   const startExtension = async () => {
-  //     if (status == "ready") {
-  //       const joysticksElement = document.getElementById('joysticks');
-  //       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
-  //     }
-  //   }
-  //   startExtension()
-    
-    
-  // }, [status]); // Empty dependency array ensures useEffect runs only once when the component mounts
-
   
 
   // Update
@@ -114,10 +105,36 @@ export const Canvas = () => {
   // Si touche pressé
   const handleKeyDown = async (event) => {
     const key = await HandleKeyDown(event);
+  
     if (key) {
       setLastKeyPressed(key);
     }
+  
+    if (key === "e") {
+      const canvasElement = document.getElementById('display-canvas'); // Remplacez 'mon-canvas' par l'ID réel de votre élément canvas
+      const canvasRect = canvasElement.getBoundingClientRect();
+  
+      // Calcul du centre du canvas
+      const centerX = canvasRect.left + canvasRect.width / 2;
+      const centerY = canvasRect.top + canvasRect.height / 2;
+  
+      console.log("Position du centre du canvas :", centerX, centerY);
+  
+      // Reste du code ici...
+      const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, true);
+      entity ? console.log('Selected entity', entity.getName()) : console.log('No entity selected');
+      // const materialUUID = '5fc59ab5-8b6f-4534-b4b7-a064aab56a30';
+      // const materialRef = { value: materialUUID };
+      // entity.setComponent('material_ref', materialRef);
+      // entity.detachComponent('mesh_ref');
+  
+      resetLastKeyPressed();
+    }
   };
+
+  
+
+  
 
   // Reset last key press
   const resetLastKeyPressed = () => {
@@ -125,17 +142,22 @@ export const Canvas = () => {
   };
 
 
+
+  // Start Actions when 3DVerse is Ready
   useEffect(() => {
-    console.log('lastKeyPressed a changé :', lastKeyPressed);
-  
-    const fetchData = async () => {
+    const fetchDataReady = async () => {
       if (status === 'ready') {
         await handleInitialClick();
+        await gameManagerInstance.initGame();
       }
     };
   
-    fetchData();
-  }, [lastKeyPressed, status]);
+    fetchDataReady();
+  }, [status]);
+
+
+
+  
   
   const initApp = async () => {
     if (status === 'ready') {
@@ -218,7 +240,7 @@ export const Canvas = () => {
         //   // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
         // });
 
-        // StartCinematic()
+        await StartCinematic()
 
 
 
@@ -265,6 +287,7 @@ export const Canvas = () => {
   
       {is3DVerseLoad && isPointerLockInitialWasClick && (
         <>
+          <CrossHair/>
           <DialogController
             dialogOpenProp={lastKeyPressed === 'a'}
             dialogMessages={[

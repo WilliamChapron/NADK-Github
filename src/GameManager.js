@@ -16,14 +16,22 @@ class GameManager {
     };
 
     // Init Objectives for game 
-    this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5]);
-    this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15]);
 
+    
     // Init Objects to pickup for game 
 
     // Init NPC for Game
 
     
+  }
+
+  async initGame() {
+
+    this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5]);
+    this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15]);
+
+
+    await this.gameData.NPCInstance.addNPC("NPC2", ["Bonjour", "Tu peux te téléporter si tu veux", "clique sur le bouton "], [0, 0, -3]);
   }
 
   incrementScore(points) {
@@ -51,7 +59,6 @@ class GameManager {
 
     // GET POSITION FOR WRITE POSITION IN API
     
-    // const SDK3DVerse = window.SDK3DVerse;
 
     // const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
     // const cameraEntity = player[0].getCamera();

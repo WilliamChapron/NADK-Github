@@ -3,15 +3,15 @@ class NPCManager {
     this.npcs = [];
   }
 
-  addNPC(name, dialogues, actions, position) {
+  async addNPC(name, dialogues, position) {
     const newNPC = {
       name: name,
       dialogues: dialogues,
-      actions: actions,
+      // actions: actions,
       position: position,
     };
     this.npcs.push(newNPC);
-    this.initNPC(name, position);
+    await this.initNPC(name, position);
   }
 
   async initNPC(name, position) {

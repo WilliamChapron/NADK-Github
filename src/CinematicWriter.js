@@ -44,24 +44,28 @@ function WritePositionToFile(position) {
 
 async function StartCinematic() {
   // CINEMATIC 
-  try {
     const positions = await GetPositions();
 
 
     for (const position of positions) {
       const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
 
-      const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], position, [0, 1, 0, 0], 10);
+      const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], position, [0, 1, 0, 0], 3);
+      SDK3DVerse.engineAPI.cameraAPI.stopTravel()
+
+      const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer")
+
+      const transform =
+      {
+          position : position,
+          orientation : [0,0,0,1],
+          scale : [1,1,1]
+      };
+      await player[0].setGlobalTransform(transform)
 
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
     }
-
     console.log('Parcours terminé');
-  } 
-  catch (error) {
-    console.error('Erreur lors du parcours des positions :', error);
-  }
 }
 
 export { WritePositionToFile, GetPositions, StartCinematic };
