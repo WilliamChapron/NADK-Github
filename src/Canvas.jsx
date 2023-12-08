@@ -28,7 +28,7 @@ import gameManagerInstance from './GameManager';
 
 // Cinematic 
 
-import { StartCinematic } from './CinematicWriter.js';
+import { StartCinematic, WritePositionToFile } from './CinematicWriter.js';
 
 
 import {
@@ -81,6 +81,9 @@ export const Canvas = () => {
 
   // Update
   const update = async () => {
+
+
+
     await gameManagerInstance.gameUpdate();
     setCurrentObjectiveMeters(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].meters)
     setCurrentObjectiveMetersHeight(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].heightMeters)
@@ -136,6 +139,11 @@ export const Canvas = () => {
         resetLastKeyPressed();
       }
 
+      
+
+
+      // WritePositionToFile(position);
+
       if (key === "e") {
         const canvasElement = document.getElementById('display-canvas');
         const canvasRect = canvasElement.getBoundingClientRect();
@@ -164,7 +172,32 @@ export const Canvas = () => {
     setLastKeyPressed(null);
   };
 
+  let positionsAndOrientationToWrite = []
 
+  const updateRender = async () => {
+    StartCinematic()
+
+    if (positionsAndOrientationToWrite.length > 100) {
+      WritePositionToFile(positionsAndOrientationToWrite);
+      console.log(positionsAndOrientationToWrite)
+      positionsAndOrientationToWrite.splice(0, positionsAndOrientationToWrite.length);
+      console.log(positionsAndOrientationToWrite)
+    }
+
+
+    // Event to allow to write posiiton in cinematic
+    if (gameManagerInstance.gameData.canWriteCinematic) {
+      const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+      const transform = await camera[0].getTransform();
+      const textToPush = {
+        position: transform.position,
+        orientation: transform.orientation
+      };
+      positionsAndOrientationToWrite.push(textToPush);
+    }
+
+    
+  }
 
   // Start Actions when 3DVerse is Ready
   useEffect(() => {
@@ -172,7 +205,7 @@ export const Canvas = () => {
       if (status === 'ready') {
         await handleInitialClick();
         await gameManagerInstance.initGame();
-        await StartCinematic()
+        SDK3DVerse.notifier.on('onFramePostRender', updateRender);
       }
     };
   
@@ -195,9 +228,6 @@ export const Canvas = () => {
       await InitFirstPersonController(characterControllerSceneUUID);
       const joysticksElement = document.getElementById('joysticks');
       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
-      
-      
-
       setIs3DVerseLoad(true);
     }
   };
@@ -221,7 +251,7 @@ export const Canvas = () => {
   };
 
 
-
+  
   
 
   // Managing Single Click for First Click to start the App with 3d verse Instead of the load
@@ -237,22 +267,8 @@ export const Canvas = () => {
         window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
 
 
-
-
-
-
-        // const clickEvent = new MouseEvent('click', {
-        //   bubbles: true,
-        //   cancelable: true,
-        //   view: window,
-        // });
-        // // Lancer l'événement de clic sur l'élément approprié
-        // const element = document.getElementById('display-canvas');
-        // element.dispatchEvent(clickEvent);
-
-
         
-
+        SDK3DVerse.notifier.on('onFramePreRender', update);
 
         // const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
         // const cameraEntity = player[0];
@@ -263,12 +279,6 @@ export const Canvas = () => {
         //   console.log("TRIGGER");
         //   // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
         // });
-
-
-
-
-
-        
 
 
         
@@ -363,3 +373,17 @@ export const Canvas = () => {
 
 
 
+
+
+
+
+
+
+        // const clickEvent = new MouseEvent('click', {
+        //   bubbles: true,
+        //   cancelable: true,
+        //   view: window,
+        // });
+        // // Lancer l'événement de clic sur l'élément approprié
+        // const element = document.getElementById('display-canvas');
+        // element.dispatchEvent(clickEvent);

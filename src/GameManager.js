@@ -66,14 +66,7 @@ class GameManager {
 
     // console.log(cameraEntity);
 
-    const transform = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
 
-    const position = await transform[0].getTransform().position;
-
-    // Event to allow to write posiiton in cinematic
-    if (this.gameData.canWriteCinematic) {
-      WritePositionToFile(position);
-    }
 
   }
 

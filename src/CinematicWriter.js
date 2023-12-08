@@ -17,7 +17,8 @@ async function GetPositions() {
   }
 }
 
-function WritePositionToFile(position) {
+
+function WritePositionToFile(positions) {
   const apiUrl = 'http://localhost:4444/api/data'; 
 
 
@@ -26,7 +27,7 @@ function WritePositionToFile(position) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(position),
+    body: JSON.stringify(positions),
   };
 
 
@@ -42,41 +43,59 @@ function WritePositionToFile(position) {
     });
 }
 
-async function StartCinematic() {
-  // CINEMATIC 
-    const positions = await GetPositions();
 
-    // const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+const positionsArray = await GetPositions();
+let currentIndex = 0;
+
+async function MoveCamera() {
+
+      // const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
 
     // const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], position, [0, 1, 0, 0], 3);
     // SDK3DVerse.engineAPI.cameraAPI.stopTravel()
 
-    const cameraEntity = await SDK3DVerse.engineAPI.findEntitiesByEUID("4d3eeea5-40ac-4b76-bfb3-835fbc4294b1")
+    const cameraEntity = await SDK3DVerse.engineAPI.findEntitiesByEUID("92a9a522-0c50-4780-8073-743b96395e31")
     
   
     // Finally set the first person camera as the main camera.
-    await SDK3DVerse.setMainCamera(cameraEntity);
+    await SDK3DVerse.setMainCamera(cameraEntity[0]);
+}
+
+
+async function MovePlayer() {
+
+  const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer");
+
+  const positionData = positionsArray[currentIndex]; // Supposons que `positionArray` soit une variable globale ou accessible dans la portée de cette fonction
+  const { position, orientation } = positionData;
+
+  const transform = {
+    position: position,
+    orientation: orientation,
+    scale: [1, 1, 1],
+  };
+
+  await player[0].setGlobalTransform(transform);
+
+  // // Log pour vérifier les données déplacées
+  // console.log("Position déplacée :", position);
+  // console.log("Orientation déplacée :", orientation);
+}
 
 
 
-    // for (const position of positions) {
+async function StartCinematic() {
+  console.log(currentIndex, positionsArray.length)
+  if (currentIndex <= positionsArray.length) {
+    await MovePlayer()
+    currentIndex += 1
+  }
+  MoveCamera()
 
-
-    //   const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer")
-
-    //   console.log(position)
-
-    //   const transform =
-    //   {
-    //       position : [position[0],position[1],position[2]],
-    //       orientation : [0,0,0,1],
-    //       scale : [1,1,1]
-    //   };
-    //   await player[0].setGlobalTransform(transform)
-
-
-    // }
-    // console.log('Parcours terminé');
 }
 
 export { WritePositionToFile, GetPositions, StartCinematic };
+
+
+
+
