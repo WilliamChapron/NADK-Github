@@ -49,16 +49,26 @@ let currentIndex = 0;
 
 async function MoveCamera() {
 
-      // const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
 
-    // const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], position, [0, 1, 0, 0], 3);
-    // SDK3DVerse.engineAPI.cameraAPI.stopTravel()
+  const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+  const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [15,3,15], [0, 1, 0, 0], 3);
+  SDK3DVerse.engineAPI.cameraAPI.stopTravel()
 
-    const cameraEntity = await SDK3DVerse.engineAPI.findEntitiesByEUID("92a9a522-0c50-4780-8073-743b96395e31")
+
+
+
+}
+
+async function InitCamera() {
+  const cameraEntity = await SDK3DVerse.engineAPI.findEntitiesByEUID("92a9a522-0c50-4780-8073-743b96395e31")
+
+
     
   
-    // Finally set the first person camera as the main camera.
-    await SDK3DVerse.setMainCamera(cameraEntity[0]);
+  // Finally set the first person camera as the main camera.
+  await SDK3DVerse.setMainCamera(cameraEntity[0]);
+
+
 }
 
 
@@ -76,10 +86,6 @@ async function MovePlayer() {
   };
 
   await player[0].setGlobalTransform(transform);
-
-  // // Log pour vérifier les données déplacées
-  // console.log("Position déplacée :", position);
-  // console.log("Orientation déplacée :", orientation);
 }
 
 
@@ -90,7 +96,7 @@ async function StartCinematic() {
     await MovePlayer()
     currentIndex += 1
   }
-  MoveCamera()
+  await MoveCamera()
 
 }
 
