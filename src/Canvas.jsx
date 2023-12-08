@@ -149,6 +149,9 @@ export const Canvas = () => {
       await InitFirstPersonController(characterControllerSceneUUID);
       const joysticksElement = document.getElementById('joysticks');
       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
+      
+      
+
       setIs3DVerseLoad(true);
     }
   };
@@ -232,10 +235,23 @@ export const Canvas = () => {
   // window.addEventListener('click', handleInitialClick);
   // window.addEventListener('load', handleInitialClick);
 
-  
+  const fullscreenButtonStyle = {
+    position: 'fixed',
+    top: '20px', // Ajustez la position verticale selon vos besoins
+    left: '20px', // Ajustez la position horizontale selon vos besoins
+    padding: '10px 15px',
+    backgroundColor: '#3498db', // Couleur de fond
+    color: '#fff', // Couleur du texte
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '16px',
+  };
 
   return (
     <>
+
+
       <canvas
         id='display-canvas'
         style={{
