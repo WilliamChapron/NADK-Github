@@ -268,7 +268,6 @@ export const Canvas = () => {
 
 
         
-        SDK3DVerse.notifier.on('onFramePreRender', update);
 
         // const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
         // const cameraEntity = player[0];

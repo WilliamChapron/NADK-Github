@@ -49,10 +49,10 @@ let currentIndex = 0;
 
 async function MoveCamera() {
 
-
-  const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
-  const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [15,3,15], [0, 1, 0, 0], 3);
-  SDK3DVerse.engineAPI.cameraAPI.stopTravel()
+  // Set position de la caméra
+  // const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+  // const travel = await SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [15,3,15], [0, 1, 0, 0], 3);
+  // SDK3DVerse.engineAPI.cameraAPI.stopTravel()
 
 
 
@@ -96,6 +96,7 @@ async function StartCinematic() {
     await MovePlayer()
     currentIndex += 1
   }
+  await InitCamera()
   await MoveCamera()
 
 }
