@@ -50,7 +50,7 @@ class NPCManager {
   }
 
   async setCurrentNpc(name) {
-    const npcIndex = this.npcs.findIndex(npc => npc.name === `NPC_${name}`);
+    const npcIndex = this.npcs.findIndex(npc => `NPC_${npc.name}` === name);
     
     if (npcIndex !== -1) {
       this.currentNpcIndex = npcIndex;

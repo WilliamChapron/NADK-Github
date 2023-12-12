@@ -146,6 +146,11 @@ export const Canvas = () => {
   }
   
 
+  // useEffect(() => {
+  //   console.log('Dernière touche appuyée :', lastKeyPressed);
+  // }, [lastKeyPressed]); // Effect déclenché chaque fois que lastKeyPressed change
+
+
 
 
   let lastKeyPressTime = 0;
@@ -153,6 +158,7 @@ export const Canvas = () => {
   // Si touche pressé alors Evenements liées aux interactions
   const handleKeyDown = async (event) => {
     const currentTime = new Date().getTime();
+    
 
     // Vérifier si le temps écoulé depuis la dernière pression de touche est supérieur à 2000 millisecondes (2 secondes)
     if (currentTime - lastKeyPressTime > 200) {
@@ -432,7 +438,7 @@ export const Canvas = () => {
           />
           <PickupController
             pickupInfo={[currentPickupName, currentPickupDescription]}
-            isVisible={currentPickupName && currentPickupDescription}
+            isVisible={currentPickupName !== "" && currentPickupDescription !== ""}
             onClose={resetCurrentPickup}
           />
           {isInteractable && (

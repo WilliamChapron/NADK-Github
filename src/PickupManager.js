@@ -46,8 +46,11 @@ class PickupManager {
   }
 
   async setCurrentPickup(name) {
-    const pickupIndex = this.pickups.findIndex(pickup => pickup.name === `Object_${name}`);
-  
+    const pickupIndex = this.pickups.findIndex(pickup => `Object_${pickup.name}` === name);
+    console.log("Pickups array:", this.pickups);
+    console.log("Searching for pickup:", `Object_${name}`);
+    console.log("Found pickup index:", pickupIndex);
+
     if (pickupIndex !== -1) {
       this.currentPickupIndex = pickupIndex;  
       console.log(`Le Pickup actuel a été défini sur ${name}`);
