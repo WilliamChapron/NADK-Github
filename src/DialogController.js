@@ -2,15 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import DialogComponent from './DialogComponent';
 
-const DialogController = ({ dialogOpenProp, dialogMessages,  onClose, shouldHaveActionButton, resetFPSCameraController, setFPSCameraController }) => {
-  const [dialogOpen, setDialogOpen] = useState(dialogOpenProp);
+const DialogController = ({ isVisible, dialogMessages,  onClose, shouldHaveActionButton, resetFPSCameraController, setFPSCameraController }) => {
+  const [dialogOpen, setDialogOpen] = useState(isVisible);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   useEffect(() => {
-    if (dialogOpenProp) {
+    if (isVisible) {
       openDialog();
     }
-  }, [dialogOpenProp]);
+  }, [isVisible]);
 
   const openDialog = () => {
     setDialogOpen(true);

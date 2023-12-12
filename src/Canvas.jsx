@@ -55,6 +55,7 @@ export const Canvas = () => {
 
   const [currentNPCName, setCurrentNPCName] = useState("");
   const [currentNPCDialog, setCurrentNPCDialog] = useState([]);
+  const [currentNPCAction, setCurrentNPCAction] = useState(null);
 
 
   
@@ -131,6 +132,20 @@ export const Canvas = () => {
 
   }, [is3DVerseLoad]);
 
+  async function getHighestAncestor(entity) {
+    const ancestors = await entity.getAncestors();
+  
+    if (ancestors && ancestors.length > 0) {
+      // Récupère le dernier ancêtre dans la liste (le plus haut dans la hiérarchie)
+      const highestAncestor = ancestors[ancestors.length - 1];
+      return highestAncestor;
+    } else {
+      // Si l'entité n'a pas d'ancêtres, elle est déjà la plus haute
+      return entity;
+    }
+  }
+  
+
 
 
   let lastKeyPressTime = 0;
@@ -142,9 +157,9 @@ export const Canvas = () => {
     // Vérifier si le temps écoulé depuis la dernière pression de touche est supérieur à 2000 millisecondes (2 secondes)
     if (currentTime - lastKeyPressTime > 200) {
 
-      console.log(currentTime, "", lastKeyPressTime)
+      // console.log(currentTime, "", lastKeyPressTime)
 
-      console.log()
+
       const key = await HandleKeyDown(event);
 
       if (key) {
@@ -175,10 +190,49 @@ export const Canvas = () => {
         const centerX = canvasRect.left + canvasRect.width / 2;
         const centerY = canvasRect.top + canvasRect.height / 2;
 
-        console.log("Position du centre du canvas :", centerX, centerY);
+        // console.log("Position du centre du canvas :", centerX, centerY);
 
         const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, true);
-        entity ? console.log('Selected entity', entity.getName()) : console.log('No entity selected');
+        // entity ? console.log('Selected entity', entity.getName()) : console.log('No entity selected');
+
+
+
+
+        const highestAncestor = await getHighestAncestor(entity);
+        const nameOfEntity = await highestAncestor.getName();
+
+        console.log(nameOfEntity);
+
+        if (nameOfEntity.match(/^NPC/)) {
+
+          // Set current npc for dialog interface
+          await gameManagerInstance.gameData.NPCInstance.setCurrentNpc(nameOfEntity);
+          // Get current npc to set use state var
+          const NPC = await gameManagerInstance.gameData.NPCInstance.getCurrentNpc()
+
+          // console.log(NPC)
+          const currentNPCdialog = await gameManagerInstance.gameData.NPCInstance.getCurrentNPCDialog()
+
+          setCurrentNPCName(NPC.name);
+          setCurrentNPCDialog(currentNPCdialog)
+          // setCurrentNPCAction(currentNPCdialog.action)
+
+          
+        } else if (nameOfEntity.match(/^Object/)) {
+          
+          // Set current npc for dialog interface
+          await gameManagerInstance.gameData.pickupInstance.setCurrentPickup(nameOfEntity);
+          // Get current npc to set use state var
+          const Pickup = await gameManagerInstance.gameData.pickupInstance.getCurrentPickup()
+
+
+          setCurrentPickupName(Pickup.name);
+          setCurrentPickupDescription(Pickup.description);
+          // setCurrentNPCAction(currentNPCdialog.action)
+
+        } else {
+          console.log("Le nom de l'entité ne commence ni par 'NPC' ni par 'Object'");
+        }
         resetLastKeyPressed();
       }
 
@@ -191,7 +245,24 @@ export const Canvas = () => {
 
   
 
-  // Reset last key press
+  // Reset INFO npc at null
+  const resetCurrentNPC = () => {
+    resetLastKeyPressed()
+
+    setCurrentNPCName("");
+    setCurrentNPCDialog([])
+    setCurrentNPCAction(null)
+
+  };
+
+  const resetCurrentPickup = () => {
+    resetLastKeyPressed()
+
+    setCurrentPickupName("")
+    setCurrentPickupDescription("")
+
+  };
+
   const resetLastKeyPressed = () => {
     setLastKeyPressed(null);
   };
@@ -352,22 +423,17 @@ export const Canvas = () => {
         <>
           <CrossHair/>
           <DialogController
-            dialogOpenProp={lastKeyPressed === 'a'}
-            dialogMessages={[
-              'Bonjour !',
-              'Comment ça va ?',
-              "C'est un beau jour.",
-              'Autre message',
-            ]}
-            onClose={resetLastKeyPressed}
+            isVisible={currentNPCDialog && currentNPCDialog.length > 0}
+            dialogMessages={currentNPCDialog}
+            onClose={resetCurrentNPC}
             shouldHaveActionButton={true}
             resetFPSCameraController={ResetFPSCameraController}
             setFPSCameraController={SetFPSCameraController}
           />
           <PickupController
-            pickupInfo={['name', 'Les infos de cette item sont là']}
-            isVisible={lastKeyPressed === 'g'}
-            onClose={resetLastKeyPressed}
+            pickupInfo={[currentPickupName, currentPickupDescription]}
+            isVisible={currentPickupName && currentPickupDescription}
+            onClose={resetCurrentPickup}
           />
           {isInteractable && (
             <ObjectiveController

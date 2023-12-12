@@ -1,35 +1,64 @@
 class PickupManager {
-    constructor() {
-      this.pickups = [];
+  constructor() {
+    this.pickups = [];
+    this.currentPickupIndex = 0;
+  }
+
+  async addPickup(name, description, score, position) {
+    const newPickup = {
+      name: name,
+      description: description,
+      score: score,
+      position: position,
+    };
+    this.pickups.push(newPickup);
+
+    // Ajoutez la vérification et le spawn du côté du serveur
+    await this.checkAndSpawnPickup(name, position);
+  }
+
+  async checkAndSpawnPickup(name, position) {
+    // En ligne, vérifiez si le Pickup n'est pas déjà apparu
+    const response = await fetch(`http://localhost:4444/api/check-and-spawn-pickup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ pickupName: name }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la vérification et du spawn du Pickup');
     }
+
+    const data = await response.json();
+
+    if (data.action === 'SPAWN_PICKUP') {
+      await this.initPickup(name, position);
+    }
+  }
+
+  async initPickup(name, position) {
+    let template = new SDK3DVerse.EntityTemplate();
+    template.attachComponent('scene_ref', { value: "13bb84dd-d6d2-48fc-add4-b5a6ff632cfc" }); 
+    template.attachComponent('local_transform', { position: position });
+    await template.instantiateTransientEntity(`Object_${name}`, null, false);
+  }
+
+  async setCurrentPickup(name) {
+    const pickupIndex = this.pickups.findIndex(pickup => pickup.name === `Object_${name}`);
   
-    addPickup(name, description, score, position) {
-      const newPickup = {
-        name: name,
-        description: description,
-        score: score,
-        position: position,
-      };
-      this.pickups.push(newPickup);
-      this.initPickup(name, position);
+    if (pickupIndex !== -1) {
+      this.currentPickupIndex = pickupIndex;  
+      console.log(`Le Pickup actuel a été défini sur ${name}`);
+    } else {
+      console.error(`Aucun Pickup trouvé avec le nom ${name}`);
     }
-  
-    async initPickup(name, position) {
-      let template = new SDK3DVerse.EntityTemplate();
-      template.attachComponent('scene_ref', { value: "pickup_template_scene_id" }); // Remplacez "pickup_template_scene_id" par l'ID de votre scène de modèle de pickup
-      template.attachComponent('local_transform', { position: position });
-      await template.instantiateTransientEntity(name, null, true);
-    }
+  }
+
+  getCurrentPickup() {
+    return this.pickups[this.currentPickupIndex];
+  }
 }
 
 export default PickupManager;
-
-  
-  // // Exemple d'utilisation :
-  // const pickupManager = new PickupManager();
-  
-  // // Ajouter plusieurs Pickups avec leurs descriptions, valeurs et positions
-  // pickupManager.addPickup("Pickup1", "Un objet à ramasser", 50, [0, 0, -3]);
-  // pickupManager.addPickup("Pickup2", "Un autre objet à ramasser", 75, [0, 0, -3]);
-  // // Ajouter plus de Pickups au besoin
-  

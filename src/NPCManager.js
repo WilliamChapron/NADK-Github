@@ -9,7 +9,6 @@ class NPCManager {
       name: name,
       dialogs: dialogs,
       currentDialog: "default",
-      actions: actions,
       position: position,
     };
     this.npcs.push(newNPC);
@@ -17,15 +16,23 @@ class NPCManager {
   }
 
   async checkAndSpawnNPC(name, position) {
-    // In online, we want check the npc is not already spawn because logic is on all client instance
-    const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc?npcName=${name}`);
 
+    // En ligne, nous voulons vérifier que le NPC n'est pas déjà apparu car la logique est sur toutes les instances clients
+    const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ npcName: name }),
+    });
+  
     if (!response.ok) {
       throw new Error('Erreur lors de la vérification et du spawn du NPC');
     }
-
+  
     const data = await response.json();
-
+    console.log(data)
+  
     if (data.action === 'SPAWN_NPC') {
       await this.initNPC(name, position); 
     }
@@ -35,21 +42,34 @@ class NPCManager {
     let template = new SDK3DVerse.EntityTemplate();
     template.attachComponent('scene_ref', { value: "e58390b7-01c0-42d6-9049-40d93ab3e4e2" });
     template.attachComponent('local_transform', { position: position });
-    await template.instantiateTransientEntity(name, null, true);
+    await template.instantiateTransientEntity(`NPC_${name}`, null, false);
   }
 
   async getCurrentNpc() {
     return this.npcs[this.currentNpcIndex];
   }
 
+  async setCurrentNpc(name) {
+    const npcIndex = this.npcs.findIndex(npc => npc.name === `NPC_${name}`);
+    
+    if (npcIndex !== -1) {
+      this.currentNpcIndex = npcIndex;
+      console.log(`Le NPC actuel a été défini sur ${name}`);
+    } else {
+      console.error(`Aucun NPC trouvé avec le nom ${name}`);
+    }
+  }
+
   async getCurrentNPCDialog() {
-    // Get current npc dialog
-    return this.npcs[this.currentNpcIndex].dialogs[this.npcs[this.currentNpcIndex].currentDialog];
+    const currentDialogName = this.npcs[this.currentNpcIndex].currentDialog;
+    
+    // Find dialog item for current dialog name
+    const currentDialog = this.npcs[this.currentNpcIndex].dialogs.find(dialog => dialog.dialogName === currentDialogName);
+  
+    return currentDialog ? currentDialog.sentences : null;
   }
 
   async setCurrentDialog(name) {
-    // Set the index of the current dialog, will influence the get of current npc dialog
-    // Basically, it's the game manage dialog switch
     this.npcs[this.currentNpcIndex].currentDialog = name
   }
 
@@ -57,11 +77,3 @@ class NPCManager {
 
 export default NPCManager;
 
-// // Exemple d'utilisation :
-// const npcManager = new NPCManager();
-
-// // Ajouter plusieurs NPCs avec leurs dialogues et actions
-// npcManager.addNPC("NPC2", ["Bonjour", "Tu peux te téléporter si tu veux", "clique sur le bouton "], [function2(), function1()], [0, 0, -3]);
-
-// npcManager.addNPC("NPC3", ["Bonjour", "Tu peux te téléporter si tu veux", "clique sur le bouton "], [function2(), function1()], [0, 0, -3]);
-// // Ajouter plus de NPCs au besoin

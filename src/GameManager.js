@@ -3,6 +3,12 @@ import { WritePositionToFile } from './CinematicWriter';
 import ObjectiveManager from './ObjectiveManager'
 import PickupManager from './PickupManager'
 import NPCManager from './NPCManager'
+import Level from './Level'
+
+function function2() {
+  console.log("action npc")
+  
+}
 
 class GameManager {
   constructor() {
@@ -13,6 +19,7 @@ class GameManager {
       objectiveInstance: new ObjectiveManager(),
       pickupInstance: new PickupManager(),
       NPCInstance: new NPCManager(),
+      levelInstance: new Level(),
       canWriteCinematic: false,
     };
 
@@ -26,29 +33,45 @@ class GameManager {
     
   }
 
-  test() {
-    
-  }
+  
 
   async initGame() {
 
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5]);
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15]);
 
+    await this.gameData.pickupInstance.addPickup("1", "Restaure la santé", 10, [0, 0, -3]);
+    await this.gameData.pickupInstance.addPickup("2", "Fournit des munitions", 20, [2, 0, -3]);
 
-    await this.gameData.NPCInstance.addNPC("NPC2", [
+
+
+    await this.gameData.NPCInstance.addNPC("1", [
       {
         dialogName: "default",
-        sentences: ["sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd"],
+        sentences: ["Salut, comment ça va?", "Bienvenue dans notre monde!", "C'est une journée ensoleillée."],
+        action: function2()
+      },
+      {
+        dialogName: "custom",
+        sentences: ["C'est un plaisir de te voir!", "Nous avons beaucoup à explorer ici.", "Si tu as des questions, n'hésite pas."],
+        action: function2()
+      }
+    ], [0, 0, 5]);
+    
+    await this.gameData.NPCInstance.addNPC("2", [
+      {
+        dialogName: "default",
+        sentences: ["Bonjour, aventurier!", "La quête t'attend.", "Prends garde aux créatures!"],
         action: null
       },
       {
         dialogName: "custom",
-        sentences: ["sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd"],
+        sentences: ["Bienvenue dans notre royaume!", "Nous avons besoin de ton aide.", "Es-tu prêt pour l'aventure?"],
         action: function2()
-      },
-      // ... Ajoutez autant d'objets de dialogues que nécessaire
-    ], [0, 0, -3]);
+      }
+    ], [0, 0, 0]);
+
+
   }
 
   incrementScore(points) {
