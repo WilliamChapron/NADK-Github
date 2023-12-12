@@ -41,9 +41,21 @@ export const Canvas = () => {
 
   const canvasRef = useRef(null);
 
-  // 
+  // Objectives Current values
   const [currentObjectiveMeters, setCurrentObjectiveMeters] = useState(0);
   const [currentObjectiveMetersHeight, setCurrentObjectiveMetersHeight] = useState(0);
+
+  const [currentObjectiveDescription, setCurrentObjectiveDescription] = useState("");
+
+  // Pickup values 
+  const [currentPickupName, setCurrentPickupName] = useState("");
+  const [currentPickupDescription, setCurrentPickupDescription] = useState("");
+
+  // Npc values
+
+  const [currentNPCName, setCurrentNPCName] = useState("");
+  const [currentNPCDialog, setCurrentNPCDialog] = useState([]);
+
 
   
 
@@ -77,16 +89,26 @@ export const Canvas = () => {
     }
   );
 
+
+
   
 
   // Update
   const update = async () => {
 
+    // Project point 3d to 2d 
 
+    // const playerviewPort = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+
+    // const project = await playerviewPort[0].project([0,0,0])
+
+
+    // console.log("Project POINT", project)
 
     await gameManagerInstance.gameUpdate();
     setCurrentObjectiveMeters(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].meters)
     setCurrentObjectiveMetersHeight(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].heightMeters)
+
     
 
 
@@ -144,6 +166,8 @@ export const Canvas = () => {
 
       // WritePositionToFile(position);
 
+
+      // Interaction with npc and objects
       if (key === "e") {
         const canvasElement = document.getElementById('display-canvas');
         const canvasRect = canvasElement.getBoundingClientRect();
@@ -175,8 +199,11 @@ export const Canvas = () => {
   let positionsAndOrientationToWrite = []
 
   const updateRender = async () => {
-    StartCinematic()
+    // StartCinematic()
 
+    // # TODO Place in functions
+
+    // Write position if Write list is over 100
     if (positionsAndOrientationToWrite.length > 100) {
       WritePositionToFile(positionsAndOrientationToWrite);
       console.log(positionsAndOrientationToWrite)
@@ -185,7 +212,7 @@ export const Canvas = () => {
     }
 
 
-    // Event to allow to write posiiton in cinematic
+    // Event to allow to write posiiton in cinematic and push the list
     if (gameManagerInstance.gameData.canWriteCinematic) {
       const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
       const transform = await camera[0].getTransform();
@@ -198,6 +225,9 @@ export const Canvas = () => {
 
     
   }
+
+
+
 
   // Start Actions when 3DVerse is Ready
   useEffect(() => {

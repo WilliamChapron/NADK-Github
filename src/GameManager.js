@@ -26,13 +26,29 @@ class GameManager {
     
   }
 
+  test() {
+    
+  }
+
   async initGame() {
 
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5]);
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15]);
 
 
-    await this.gameData.NPCInstance.addNPC("NPC2", ["Bonjour", "Tu peux te téléporter si tu veux", "clique sur le bouton "], [0, 0, -3]);
+    await this.gameData.NPCInstance.addNPC("NPC2", [
+      {
+        dialogName: "default",
+        sentences: ["sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd"],
+        action: null
+      },
+      {
+        dialogName: "custom",
+        sentences: ["sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd", "sdsdsdd", "sdsdsdsdd"],
+        action: function2()
+      },
+      // ... Ajoutez autant d'objets de dialogues que nécessaire
+    ], [0, 0, -3]);
   }
 
   incrementScore(points) {

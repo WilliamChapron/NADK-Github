@@ -44,8 +44,8 @@ function WritePositionToFile(positions) {
 }
 
 
-const positionsArray = await GetPositions();
-let currentIndex = 0;
+// const positionsArray = await GetPositions();
+// let currentIndex = 0;
 
 async function MoveCamera() {
 
@@ -74,30 +74,30 @@ async function InitCamera() {
 
 async function MovePlayer() {
 
-  const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer");
+  // const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer");
 
-  const positionData = positionsArray[currentIndex]; // Supposons que `positionArray` soit une variable globale ou accessible dans la portée de cette fonction
-  const { position, orientation } = positionData;
+  // const positionData = positionsArray[currentIndex]; // Supposons que `positionArray` soit une variable globale ou accessible dans la portée de cette fonction
+  // const { position, orientation } = positionData;
 
-  const transform = {
-    position: position,
-    orientation: orientation,
-    scale: [1, 1, 1],
-  };
+  // const transform = {
+  //   position: position,
+  //   orientation: orientation,
+  //   scale: [1, 1, 1],
+  // };
 
-  await player[0].setGlobalTransform(transform);
+  // await player[0].setGlobalTransform(transform);
 }
 
 
 
 async function StartCinematic() {
-  console.log(currentIndex, positionsArray.length)
-  if (currentIndex <= positionsArray.length) {
-    await MovePlayer()
-    currentIndex += 1
-  }
-  await InitCamera()
-  await MoveCamera()
+  // console.log(currentIndex, positionsArray.length)
+  // if (currentIndex <= positionsArray.length) {
+  //   await MovePlayer()
+  //   currentIndex += 1
+  // }
+  // await InitCamera()
+  // await MoveCamera()
 
 }
 

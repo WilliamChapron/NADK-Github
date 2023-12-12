@@ -16,8 +16,14 @@ async function InitFirstPersonController(charCtlSceneUUID) {
     // instantiate a transient entity.
     // Note that an entity template can be instantiated multiple times.
     // Each instantiation results in a new entity.
+
+    const clientUUID = await SDK3DVerse.getClientUUID() 
+    const playerName = `Player_${clientUUID}`;
+
+    console.log(playerName)
+
     const playerSceneEntity = await playerTemplate.instantiateTransientEntity(
-      "MonPlayer",
+      playerName,
       parentEntity,
       deleteOnClientDisconnection
     );
