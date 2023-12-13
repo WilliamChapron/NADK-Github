@@ -198,24 +198,24 @@ export const Canvas = () => {
 
       // Interaction with npc and objects
       if (key === "e") {
+
+
+
         const canvasElement = document.getElementById('display-canvas');
         const canvasRect = canvasElement.getBoundingClientRect();
 
         const centerX = canvasRect.left + canvasRect.width / 2;
         const centerY = canvasRect.top + canvasRect.height / 2;
 
-        // console.log("Position du centre du canvas :", centerX, centerY);
-
+        // Pick pos
         const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
-        // entity ? console.log('Selected entity', entity.getName()) : console.log('No entity selected');
-
-
-
 
         const highestAncestor = await getHighestAncestor(entity);
         const nameOfEntity = await highestAncestor.getName();
 
         console.log(nameOfEntity);
+
+
 
         if (nameOfEntity.match(/^NPC/)) {
 
@@ -231,6 +231,8 @@ export const Canvas = () => {
           setCurrentNPCDialog(currentNPCdialog)
           // setCurrentNPCAction(currentNPCdialog.action)
 
+          SDK3DVerse.disableInputs()
+
           
         } else if (nameOfEntity.match(/^Object/)) {
           
@@ -242,6 +244,8 @@ export const Canvas = () => {
 
           setCurrentPickupName(Pickup.name);
           setCurrentPickupDescription(Pickup.description);
+
+          
           // setCurrentNPCAction(currentNPCdialog.action)
 
         } else {
@@ -261,8 +265,8 @@ export const Canvas = () => {
 
   // Reset INFO npc at null
   const resetCurrentNPC = () => {
+    SDK3DVerse.enableInputs()
     resetLastKeyPressed()
-
     setCurrentNPCName("");
     setCurrentNPCDialog([])
     setCurrentNPCAction(null)
