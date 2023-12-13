@@ -63,7 +63,15 @@ export const Canvas = () => {
   // Key one press
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
 
-  const [isInteractable, setIsInteractable] = useState(true);
+  // Don't display objectives if popup for pickup find is open
+  const [isPickupComponentOpen, setIsPickupComponentOpen] = useState(false);
+
+
+
+
+
+
+
 
   // 3D VERSE States
   const [is3DVerseLoad, setIs3DVerseLoad] = useState(false);
@@ -124,7 +132,7 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 1); // 1000 milliseconds, adjust as needed
+    const intervalId = setInterval(updateLoop, 1000); // 1000 milliseconds, adjust as needed
 
     return () => {
       clearInterval(intervalId); // Clear the interval when the component unmounts
@@ -198,7 +206,7 @@ export const Canvas = () => {
 
         // console.log("Position du centre du canvas :", centerX, centerY);
 
-        const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, true);
+        const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
         // entity ? console.log('Selected entity', entity.getName()) : console.log('No entity selected');
 
 
@@ -263,6 +271,8 @@ export const Canvas = () => {
 
   const resetCurrentPickup = () => {
     resetLastKeyPressed()
+
+    setIsPickupComponentOpen(false) // Don't display objective when pickup popup is active
 
     setCurrentPickupName("")
     setCurrentPickupDescription("")
@@ -397,18 +407,10 @@ export const Canvas = () => {
   // window.addEventListener('click', handleInitialClick);
   // window.addEventListener('load', handleInitialClick);
 
-  const fullscreenButtonStyle = {
-    position: 'fixed',
-    top: '20px', // Ajustez la position verticale selon vos besoins
-    left: '20px', // Ajustez la position horizontale selon vos besoins
-    padding: '10px 15px',
-    backgroundColor: '#3498db', // Couleur de fond
-    color: '#fff', // Couleur du texte
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontSize: '16px',
-  };
+
+
+
+
 
   return (
     <>
@@ -439,9 +441,10 @@ export const Canvas = () => {
           <PickupController
             pickupInfo={[currentPickupName, currentPickupDescription]}
             isVisible={currentPickupName !== "" && currentPickupDescription !== ""}
+            onOpen={() => setIsPickupComponentOpen(true)} 
             onClose={resetCurrentPickup}
           />
-          {isInteractable && (
+          {!isPickupComponentOpen && (
             <ObjectiveController
               currentObjective={'Aller dans la salle des coffres'}
               score={'345'}

@@ -1,23 +1,26 @@
-// PickupController.js
 import React, { useState, useEffect } from 'react';
 import PickupComponent from './PickupComponent';
 
-const PickupController = ({ pickupInfo, isVisible, onClose }) => {
+const PickupController = ({ pickupInfo, isVisible, onOpen, onClose }) => {
   const [pickupVisible, setPickupVisible] = useState(isVisible);
+  const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
     setPickupVisible(isVisible);
 
     if (isVisible) {
-      const timeoutId = setTimeout(() => {
+      onOpen()
+      const newTimeoutId = setTimeout(() => {
+        console.log("on ferme le Popup")
         setPickupVisible(false);
         onClose();
-      }, 5000);
+      }, 1000);
 
-      return () => {
-        clearTimeout(timeoutId);
-      };
+      setTimeoutId(newTimeoutId);
     }
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [isVisible, onClose, pickupInfo]);
 
   return pickupVisible && <PickupComponent pickupInfo={pickupInfo} />;

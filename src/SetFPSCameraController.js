@@ -35,6 +35,14 @@ async function ResetFPSCameraController(canvas) {
     SDK3DVerse.actionMap.propagate();
 
 
+
+    // const clientUUID = await SDK3DVerse.getClientUUID()
+
+    // const player = await SDK3DVerse.engineAPI.findEntitiesByNames(`Player_${clientUUID}`);
+
+    // await player[0].setOrientation([1,1,1,1]);
+
+
   
     // Release the pointer lock.
     document.exitPointerLock = (
