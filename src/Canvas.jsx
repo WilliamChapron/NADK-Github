@@ -1,4 +1,3 @@
-// IMPORT 
 
 // React
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -14,125 +13,73 @@ import PickupController from './PickupController';
 import ObjectiveController from './ObjectiveController';
 import EntityHeadLabelDisplayController from "./EntityHeadLabelDisplayController"
 
-import SubtitleComponent from "./SubtitleComponent"
-
-
-
-import CrossHair from './CrossHair';
-
-
 // Component
 import LoadingScreen from './LoadingScreen';
 import ClickMessagePointerLockOverlay from './ClickMessagePointerLockOverlay';
+import SubtitleComponent from "./SubtitleComponent"
+import CrossHair from './CrossHair';
 
 // Game Controller
-
 import gameManagerInstance from './GameManager'; 
 
 // Cinematic 
-
 import { StartCinematic, WritePositionToFile } from './CinematicWriter.js';
 
-
+// Config
 import {
   publicToken,
   mainSceneUUID,
   characterControllerSceneUUID,
 } from "./config.js";
 
+
+// Canva / Main
 export const Canvas = () => {
 
   const canvasRef = useRef(null);
-
   // Objectives Current values
   const [currentObjectiveMeters, setCurrentObjectiveMeters] = useState(0);
   const [currentObjectiveMetersHeight, setCurrentObjectiveMetersHeight] = useState(0);
-
   const [currentObjectiveDescription, setCurrentObjectiveDescription] = useState("");
   const [currentScore, setCurrentScore] = useState("");
-
   // Pickup values 
   const [currentPickupName, setCurrentPickupName] = useState("");
   const [currentPickupDescription, setCurrentPickupDescription] = useState("");
-
   // Npc values
-
   const [currentNPCName, setCurrentNPCName] = useState("");
   const [currentNPCDialog, setCurrentNPCDialog] = useState([]);
   const [currentNPCAction, setCurrentNPCAction] = useState(null);
-
-
   // Init Game
   const [isGameLoad, setIsGameLoad] = useState(false);
-
-
   const [isCameraOrientationChanged, setIsCameraOrientationChanged] = useState(null);
-
   const [isFirstUpdateRender, setIsFirstUpdateRender] = useState(false);
-
-
   // Key one press
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
-
   // Don't display objectives if popup for pickup find is open
   const [isPickupComponentOpen, setIsPickupComponentOpen] = useState(false);
-
-
-
-
-
-
-
-
   // 3D VERSE States
   const [is3DVerseLoad, setIs3DVerseLoad] = useState(false);
-
   const [isPointerLockInitialWasClick, setIsPointerLockInitialWasClick] = useState(false);
-
-  // DT
-
   // JS Event States 
   const [isInitialClick, setIsInitialClick] = useState(false);
   const [isFPSControllerClick, setIsFPSControllerClick] = useState(false);
-
   // Cinematic 
   const [isCinematicEnd, setIsCinematicEnd] = useState(false);
 
-  // Timeout
-
-  
-  
   const status = useScript(
     `https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js`,
     {
       removeOnUnmount: false,
     }
   );
-
-
-
-  
-
   
   // UPDATE
   const update = async () => {
-
-
-
-    
-
-
     await gameManagerInstance.gameUpdate();
     setCurrentScore(gameManagerInstance.gameData.score)
     setCurrentObjectiveMeters(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].meters)
     setCurrentObjectiveMetersHeight(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].heightMeters)
   }
-
-  // UPDATE
-
-  // useEffect(() => {
-  //   console.log(isCameraOrientationChanged)
-  // }, [isCameraOrientationChanged]);
 
   // Use Effect Game Loop
   useEffect(() => {
@@ -149,7 +96,10 @@ export const Canvas = () => {
     };
 
   }, [is3DVerseLoad]);
+  //
 
+
+  // Get Highest Ancestor
   async function getHighestAncestor(entity) {
     const ancestors = await entity.getAncestors();
   
@@ -162,22 +112,12 @@ export const Canvas = () => {
       return entity;
     }
   }
-  
-
-  // useEffect(() => {
-  //   console.log('Dernière touche appuyée :', lastKeyPressed);
-  // }, [lastKeyPressed]); // Effect déclenché chaque fois que lastKeyPressed change
+  //
 
 
-  // Catch when mouse move to update some things
-
-
-
-
-  // Time wait to press any key
+  // Var Time wait to press any key
   let lastKeyPressTime = 0;
-
-  // Si touche pressé alors Evenements liées aux interactions
+  // If key press, interactions start
   const handleKeyDown = async (event) => {
     const currentTime = new Date().getTime();
     if (currentTime - lastKeyPressTime > 200) {
@@ -265,50 +205,41 @@ export const Canvas = () => {
       lastKeyPressTime = currentTime;
     }
   };
-  
+  //
 
-  
-
-  
-
-  // Reset INFO npc at null
+  // Reset INFO For interface
   const resetCurrentNPC = () => {
     SDK3DVerse.enableInputs()
     resetLastKeyPressed()
     setCurrentNPCName("");
     setCurrentNPCDialog([])
     setCurrentNPCAction(null)
-
   };
-
   const resetCurrentPickup = () => {
     resetLastKeyPressed()
-
     setIsPickupComponentOpen(false) // Don't display objective when pickup popup is active
-
     setCurrentPickupName("")
     setCurrentPickupDescription("")
 
   };
-
   const resetLastKeyPressed = () => {
     setLastKeyPressed(null);
   };
 
+
+  // Var for store value for create cinematics
   let positionsAndOrientationToWrite = []
 
 
-
-
+  // Var for catch movement for Head Label
   let cameraState = {
     orientation: null,
     position: null
   };
-  
   let isFirstUpdate = false;
 
-  const updateRender = async () => {
-    StartCinematic()
+  const checkPlayerTransformChange = async () => {
+    // #TODO REPLACE CHECKING WITH ORIENTATION(ROTATION) BY checking WITH CHANGING LOOK AT USING CAST ON SCREEN RAY
 
     // Utils / Compare Value in quaternion
     const quaternionsAreEqual = (quat1, quat2) => {
@@ -360,10 +291,10 @@ export const Canvas = () => {
         position: newTransform.position
       };
     }
+  }
 
 
-
-    // # TODO Place in functions
+  const writeYourOwnCinematic = async () => {
 
     // Write position if Write list is over 100
     if (positionsAndOrientationToWrite.length > 100) {
@@ -398,10 +329,15 @@ export const Canvas = () => {
       positionsAndOrientationToWrite.push(textToPush);
     }
 
-    
   }
 
 
+  // Update at PostFrameRender
+  const updateRender = async () => {
+    StartCinematic()
+    checkPlayerTransformChange()
+    writeYourOwnCinematic()
+  }
 
 
   // Start Actions when 3DVerse is Ready
@@ -418,10 +354,7 @@ export const Canvas = () => {
     fetchDataReady();
   }, [status]);
 
-
-
-  
-  
+  // Init Session and Player Controller And mobile extension
   const initApp = async () => {
     if (status === 'ready') {
       await SDK3DVerse.joinOrStartSession({
@@ -437,13 +370,7 @@ export const Canvas = () => {
       setIs3DVerseLoad(true);
     }
   };
-
-
-
-
-
-  
-  //------------------------------------------------------------------------------
+  //
   
 
   // Managing Single Click for First Active of Moving in space
@@ -455,10 +382,7 @@ export const Canvas = () => {
       setIsPointerLockInitialWasClick(true)
     }
   };
-
-
-  
-  
+  //
 
   // Managing Single Click for First Click to start the App with 3d verse Instead of the load
   const handleInitialClick = async () => {
@@ -467,40 +391,19 @@ export const Canvas = () => {
       window.removeEventListener('click', handleInitialClick);
       if (!is3DVerseLoad) {
         await initApp();
-        
         window.addEventListener('keydown', handleKeyDown); // Catch all key press
-
         window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
-
-
-        
-
-        // const player = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-        // const cameraEntity = player[0];
-
-        // const block = await SDK3DVerse.engineAPI.findEntitiesByEUID("109c1226-637f-411e-b896-d02140baae1f");
-
         // SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
         //   console.log("TRIGGER");
         //   // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
         // });
-
-
-        
       }
     }
 
   };
-
   // Ajoutez l'événement click à la fenêtre
   // window.addEventListener('click', handleInitialClick);
   // window.addEventListener('load', handleInitialClick);
-
-
-
-
-
-
   return (
     <>
 
@@ -561,12 +464,16 @@ export const Canvas = () => {
       )}
     </>
   );
-  
-  
-
-
 };
 
+// const clickEvent = new MouseEvent('click', {
+//   bubbles: true,
+//   cancelable: true,
+//   view: window,
+// });
+// // Lancer l'événement de clic sur l'élément approprié
+// const element = document.getElementById('display-canvas');
+// element.dispatchEvent(clickEvent);
 
 
 
@@ -575,11 +482,6 @@ export const Canvas = () => {
 
 
 
-        // const clickEvent = new MouseEvent('click', {
-        //   bubbles: true,
-        //   cancelable: true,
-        //   view: window,
-        // });
-        // // Lancer l'événement de clic sur l'élément approprié
-        // const element = document.getElementById('display-canvas');
-        // element.dispatchEvent(clickEvent);
+
+
+        
