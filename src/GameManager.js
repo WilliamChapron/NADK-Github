@@ -36,12 +36,13 @@ class GameManager {
   
 
   async initGame() {
-
+    // this.gameData.objectiveInstance.addObjective("Va chercher JSP", [0, 0, -3], true);
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5], true);
-    this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15], true);
+    // this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15], true);
 
-    await this.gameData.pickupInstance.addPickup("Totem", "Restaure la santé", 10, [0, 0, -3]);
-    await this.gameData.pickupInstance.addPickup("Tableau", "Fournit des munitions", 20, [2, 0, -3]);
+    await this.gameData.pickupInstance.addPickup("Totem", "Restaure la santé", 10, [5, 0, 5]);
+    // await this.gameData.pickupInstance.addPickup("Tableau", "Fournit des munitions", 20, [2, 0, -3]);
+    // await this.gameData.pickupInstance.addPickup("Arme", "Fournit des munitions", 20, [0, 0, 0]);
 
 
 

@@ -20,15 +20,18 @@ const SubtitleComponent = ({ text, duration }) => {
         bottom: '20px',
         left: '50%',
         transform: 'translateX(-50%)',
-        padding: '10px',
-        background: 'rgba(0, 0, 0, 0.7)',
+        padding: '15px', // Augmentation de la taille du padding
+        background: 'rgba(0, 0, 0, 0.7)', // Fond plus sombre
         color: '#fff',
-        borderRadius: '5px',
-        display: isVisible ? 'block' : 'none',
+        borderRadius: '8px', // Coins plus arrondis
+        display: isVisible ? 'flex' : 'none', // Utilisation de flex pour centrer le texte
+        flexDirection: 'column', // Afficher le texte en colonnes
+        alignItems: 'center', // Centrer le texte horizontalement
         zIndex: '1000',
+        animation: 'fadeInOut 1s ease-in-out', // Ajout d'une animation de fondu
       }}
     >
-      <p style={{ margin: '0' }}>{text}</p>
+      <div style={{ margin: '0', fontSize: '18px', fontWeight: 'bold', fontStyle: 'italic' }}>{text} ...</div>
     </div>
   );
 };

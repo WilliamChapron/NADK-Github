@@ -45,6 +45,7 @@ export const Canvas = () => {
   // Pickup values 
   const [currentPickupName, setCurrentPickupName] = useState("");
   const [currentPickupDescription, setCurrentPickupDescription] = useState("");
+  const [currentPickupScore, setCurrentPickupScore] = useState(0);
   // Npc values
   const [currentNPCName, setCurrentNPCName] = useState("");
   const [currentNPCDialog, setCurrentNPCDialog] = useState([]);
@@ -76,7 +77,9 @@ export const Canvas = () => {
   // UPDATE
   const update = async () => {
     await gameManagerInstance.gameUpdate();
+    // Only logic correspond to interface // all logic, condition variable specific to game logic is contain in Game Manager / Or in some specific fonctionnalities controller
     setCurrentScore(gameManagerInstance.gameData.score)
+    setCurrentObjectiveDescription(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].description)
     setCurrentObjectiveMeters(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].meters)
     setCurrentObjectiveMetersHeight(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].heightMeters)
   }
@@ -89,10 +92,10 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 2000); // 1000 milliseconds, adjust as needed
+    const intervalId = setInterval(updateLoop, 1); 
 
     return () => {
-      clearInterval(intervalId); // Clear the interval when the component unmounts
+      clearInterval(intervalId); // Clear on unmount
     };
 
   }, [is3DVerseLoad]);
@@ -192,6 +195,7 @@ export const Canvas = () => {
 
           setCurrentPickupName(Pickup.name);
           setCurrentPickupDescription(Pickup.description);
+          setCurrentPickupScore(Pickup.score)
 
           
           // setCurrentNPCAction(currentNPCdialog.action)
@@ -220,6 +224,7 @@ export const Canvas = () => {
     setIsPickupComponentOpen(false) // Don't display objective when pickup popup is active
     setCurrentPickupName("")
     setCurrentPickupDescription("")
+    setCurrentPickupScore(0)
 
   };
   const resetLastKeyPressed = () => {
@@ -404,9 +409,12 @@ export const Canvas = () => {
   // Ajoutez l'événement click à la fenêtre
   // window.addEventListener('click', handleInitialClick);
   // window.addEventListener('load', handleInitialClick);
+
+  // # TODO Pickup doesn't work
   return (
     <>
 
+    
 
       <canvas
         id='display-canvas'
@@ -434,15 +442,15 @@ export const Canvas = () => {
             setFPSCameraController={SetFPSCameraController}
           />
           <PickupController
-            pickupInfo={[currentPickupName, currentPickupDescription]}
+            pickupInfo={[currentPickupName, currentPickupDescription, currentPickupScore]}
             isVisible={currentPickupName !== "" && currentPickupDescription !== ""}
             onOpen={() => setIsPickupComponentOpen(true)} 
             onClose={resetCurrentPickup}
           />
-          <SubtitleComponent text={"Bonjour je suis le gerant du Globe"} duration={10000}/>
+          <SubtitleComponent text={"Bonjour je suis le gerant du Globe"} duration={8000}/>
           {!isPickupComponentOpen && (
             <ObjectiveController
-              currentObjective={'Aller dans la salle des coffres'}
+              currentObjective={currentObjectiveDescription}
               score={currentScore}
               distanceToGoal={currentObjectiveMeters}
               distanceToGoalInHeight={currentObjectiveMetersHeight}

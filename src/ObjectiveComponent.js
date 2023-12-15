@@ -5,27 +5,33 @@ const ObjectiveComponent = ({ currentObjective, score, distanceToGoal, distanceT
     position: 'fixed',
     top: '20px',
     right: '20px',
-    padding: '10px', // Réduire la taille de la boîte
+    padding: '10px',
     background: 'linear-gradient(to right, #1a1a1a, #333, #1a1a1a)',
     color: '#fff',
-    borderRadius: '8px', // Coins plus arrondis
+    borderRadius: '8px',
     border: '2px solid #fff',
     fontFamily: 'Arial, sans-serif',
-    fontSize: '14px', // Réduire la taille de la police
+    fontSize: '14px',
     boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.5)',
     zIndex: '1000',
   };
 
   const headingStyle = {
-    fontSize: '13px', // Réduire la taille de la police du titre
+    fontSize: '13px',
     fontWeight: 'bold',
-    marginBottom: '5px', // Réduire l'espace entre le titre et le texte
+    marginBottom: '5px',
   };
 
   const infoStyle = {
-    fontSize: '12px', // Nouvelle taille de police
-    marginBottom: '5px', // Réduire l'espace entre les éléments d'information
-    color: 'rgb(225, 225, 225, 255)', // Couleur du texte
+    fontSize: '12px',
+    marginBottom: '5px',
+    color: 'rgb(225, 225, 225, 255)',
+  };
+
+  // Styles for when the goal is reached
+  const goalReachedStyle = {
+    color: 'green', // Change the color to green when the goal is reached
+    fontWeight: 'bold', // Add bold style
   };
 
   return (
@@ -34,16 +40,34 @@ const ObjectiveComponent = ({ currentObjective, score, distanceToGoal, distanceT
       <p style={infoStyle}>{currentObjective}</p>
       <p style={headingStyle}>Score:</p>
       <p style={infoStyle}>{score}</p>
-      {distanceToGoal > 0 && (
-      <>
-        <p style={headingStyle}>Distance jusqu'à l'objectif:</p>
-        <p style={infoStyle}>{distanceToGoal} mètres</p>
-      </>
-      )}
-      {distanceToGoalInHeight > 0 && (
+      {distanceToGoal !== -1 && (
         <>
-          <p style={headingStyle}>Distance en hauteurs</p>
-          <p style={infoStyle}>{distanceToGoalInHeight} mètres</p>
+          {distanceToGoal >= 0 && distanceToGoal <= 2 ? (
+            <>
+              <p style={{ ...headingStyle, ...goalReachedStyle }}>Distance atteinte</p>
+              <p style={infoStyle}></p>
+            </>
+          ) : (
+            <>
+              <p style={headingStyle}>Distance jusqu'à l'objectif:</p>
+              <p style={infoStyle}>{distanceToGoal} mètres</p>
+            </>
+          )}
+        </>
+      )}
+      {distanceToGoalInHeight !== -1 && (
+        <>
+          {distanceToGoalInHeight >= -1 && distanceToGoalInHeight <= 1 ? (
+            <>
+              <p style={{ ...headingStyle, ...goalReachedStyle }}>Hauteur atteinte</p>
+              <p style={infoStyle}></p>
+            </>
+          ) : (
+            <>
+              <p style={headingStyle}>Distance en hauteurs</p>
+              <p style={infoStyle}>{distanceToGoalInHeight} mètres</p>
+            </>
+          )}
         </>
       )}
     </div>

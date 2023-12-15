@@ -1,7 +1,6 @@
 class ObjectiveManager {
   constructor() {
     this.currentObjectiveIndex = 0;
-
     this.objectives = [];
 
   }
@@ -11,10 +10,10 @@ class ObjectiveManager {
     const newObjective = {
       description: description,
       position: position,
-      meters: 0,
-      heightMeters: 0,
+      meters: -1,
+      heightMeters: -1,
       isCompleted: false,
-      currentObjectiveHasPointToFollow: hasPointToFollow
+      hasPointToFollow: hasPointToFollow
     };
     this.objectives.push(newObjective);
   }
@@ -32,7 +31,7 @@ class ObjectiveManager {
   // Get distance between player and objective
   async getMetersFromPlayer() {
 
-    if (this.currentObjectiveHasPointToFollow) {
+    if (this.objectives[this.currentObjectiveIndex].hasPointToFollow) {
       const SDK3DVerse = window.SDK3DVerse;
       const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
 
@@ -45,7 +44,7 @@ class ObjectiveManager {
       const dz = this.objectives[this.currentObjectiveIndex].position[2] - playerPosition[2];
     
 
-      const distance = Math.round(Math.sqrt(dx * dx + dz * dz));
+      const distance = Math.floor(Math.sqrt(dx * dx + dz * dz));
 
       this.objectives[this.currentObjectiveIndex].meters = distance;
     }
@@ -54,7 +53,7 @@ class ObjectiveManager {
 
   // Get distance between player and objective in height
   async getMetersFromPlayerHeight() {
-    if (this.currentObjectiveHasPointToFollow) {
+    if (this.objectives[this.currentObjectiveIndex].hasPointToFollow) {
       const SDK3DVerse = window.SDK3DVerse;
 
       const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
