@@ -1,5 +1,6 @@
 
 async function GetPositions() {
+  console.log("get positions")
   const apiUrl = 'http://localhost:4444/api/data'; 
 
   try {
@@ -20,6 +21,8 @@ async function GetPositions() {
 
 function WritePositionToFile(positions) {
   const apiUrl = 'http://localhost:4444/api/data'; 
+
+  console.log("write")
 
 
   const options = {
@@ -44,8 +47,8 @@ function WritePositionToFile(positions) {
 }
 
 
-// const positionsArray = await GetPositions();
-// let currentIndex = 0;
+const positionsArray = await GetPositions();
+let currentIndex = 0;
 
 async function MoveCamera() {
 
@@ -60,13 +63,13 @@ async function MoveCamera() {
 }
 
 async function InitCamera() {
-  const cameraEntity = await SDK3DVerse.engineAPI.findEntitiesByEUID("92a9a522-0c50-4780-8073-743b96395e31")
+  // const cameraEntity = await SDK3DVerse.engineAPI.findEntitiesByEUID("92a9a522-0c50-4780-8073-743b96395e31")
 
 
-    
   
-  // Finally set the first person camera as the main camera.
-  await SDK3DVerse.setMainCamera(cameraEntity[0]);
+  
+  // // Finally set the first person camera as the main camera.
+  // await SDK3DVerse.setMainCamera(cameraEntity[0]);
 
 
 }
@@ -74,27 +77,37 @@ async function InitCamera() {
 
 async function MovePlayer() {
 
-  // const player = await SDK3DVerse.engineAPI.findEntitiesByNames("MonPlayer");
+  const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+  const clientUUID = await SDK3DVerse.getClientUUID() 
+  const playerName = `Player_${clientUUID}`;
+  const player = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
 
-  // const positionData = positionsArray[currentIndex]; // Supposons que `positionArray` soit une variable globale ou accessible dans la portée de cette fonction
-  // const { position, orientation } = positionData;
 
-  // const transform = {
-  //   position: position,
-  //   orientation: orientation,
-  //   scale: [1, 1, 1],
-  // };
 
-  // await player[0].setGlobalTransform(transform);
+
+
+  // # TODO CAN'T GET ROTATION / Orientation of player
+  const transform = {
+    position: positionsArray[currentIndex].position,
+    orientation: [0,0,0,1], // Just rotation named orientation
+    scale: [1, 1, 1],
+  };
+
+  // 3 point (orientation)
+  await player[0].lookAt([15,15,15])
+  await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0].lookAt([15,15,15])
+  
+
+  await player[0].setGlobalTransform(transform);
+  currentIndex++
 }
 
 
 
 async function StartCinematic() {
-  // console.log(currentIndex, positionsArray.length)
-  // if (currentIndex <= positionsArray.length) {
+  // SDK3DVerse.disableInputs()
+  // if (currentIndex < positionsArray.length) {
   //   await MovePlayer()
-  //   currentIndex += 1
   // }
   // await InitCamera()
   // await MoveCamera()

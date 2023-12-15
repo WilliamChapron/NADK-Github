@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useScript } from '@uidotdev/usehooks';
 
 // Functions
-import { HandleKeyDown } from './HandleKeyDown';
 import { InitFirstPersonController } from './InitFirstPersonController';
 import { SetFPSCameraController, ResetFPSCameraController } from './SetFPSCameraController';
 
@@ -13,7 +12,11 @@ import { SetFPSCameraController, ResetFPSCameraController } from './SetFPSCamera
 import DialogController from './DialogController';
 import PickupController from './PickupController';
 import ObjectiveController from './ObjectiveController';
-import MobileButtons from './MobileButtons';
+import EntityHeadLabelDisplayController from "./EntityHeadLabelDisplayController"
+
+import SubtitleComponent from "./SubtitleComponent"
+
+
 
 import CrossHair from './CrossHair';
 
@@ -46,6 +49,7 @@ export const Canvas = () => {
   const [currentObjectiveMetersHeight, setCurrentObjectiveMetersHeight] = useState(0);
 
   const [currentObjectiveDescription, setCurrentObjectiveDescription] = useState("");
+  const [currentScore, setCurrentScore] = useState("");
 
   // Pickup values 
   const [currentPickupName, setCurrentPickupName] = useState("");
@@ -58,7 +62,14 @@ export const Canvas = () => {
   const [currentNPCAction, setCurrentNPCAction] = useState(null);
 
 
-  
+  // Init Game
+  const [isGameLoad, setIsGameLoad] = useState(false);
+
+
+  const [isCameraOrientationChanged, setIsCameraOrientationChanged] = useState(null);
+
+  const [isFirstUpdateRender, setIsFirstUpdateRender] = useState(false);
+
 
   // Key one press
   const [lastKeyPressed, setLastKeyPressed] = useState(null);
@@ -102,27 +113,26 @@ export const Canvas = () => {
 
   
 
-  // Update
+  
+  // UPDATE
   const update = async () => {
 
-    // Project point 3d to 2d 
 
-    // const playerviewPort = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
-
-    // const project = await playerviewPort[0].project([0,0,0])
-
-
-    // console.log("Project POINT", project)
-
-    await gameManagerInstance.gameUpdate();
-    setCurrentObjectiveMeters(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].meters)
-    setCurrentObjectiveMetersHeight(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].heightMeters)
 
     
 
 
-
+    await gameManagerInstance.gameUpdate();
+    setCurrentScore(gameManagerInstance.gameData.score)
+    setCurrentObjectiveMeters(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].meters)
+    setCurrentObjectiveMetersHeight(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].heightMeters)
   }
+
+  // UPDATE
+
+  // useEffect(() => {
+  //   console.log(isCameraOrientationChanged)
+  // }, [isCameraOrientationChanged]);
 
   // Use Effect Game Loop
   useEffect(() => {
@@ -132,7 +142,7 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 1000); // 1000 milliseconds, adjust as needed
+    const intervalId = setInterval(updateLoop, 2000); // 1000 milliseconds, adjust as needed
 
     return () => {
       clearInterval(intervalId); // Clear the interval when the component unmounts
@@ -159,22 +169,24 @@ export const Canvas = () => {
   // }, [lastKeyPressed]); // Effect déclenché chaque fois que lastKeyPressed change
 
 
+  // Catch when mouse move to update some things
 
 
+
+
+  // Time wait to press any key
   let lastKeyPressTime = 0;
 
   // Si touche pressé alors Evenements liées aux interactions
   const handleKeyDown = async (event) => {
     const currentTime = new Date().getTime();
-    
-
-    // Vérifier si le temps écoulé depuis la dernière pression de touche est supérieur à 2000 millisecondes (2 secondes)
     if (currentTime - lastKeyPressTime > 200) {
 
       // console.log(currentTime, "", lastKeyPressTime)
 
 
-      const key = await HandleKeyDown(event);
+      const key = event.key.toLowerCase();
+
 
       if (key) {
         setLastKeyPressed(key);
@@ -189,10 +201,6 @@ export const Canvas = () => {
         }
         resetLastKeyPressed();
       }
-
-      
-
-
       // WritePositionToFile(position);
 
 
@@ -289,8 +297,71 @@ export const Canvas = () => {
 
   let positionsAndOrientationToWrite = []
 
+
+
+
+  let cameraState = {
+    orientation: null,
+    position: null
+  };
+  
+  let isFirstUpdate = false;
+
   const updateRender = async () => {
-    // StartCinematic()
+    StartCinematic()
+
+    // Utils / Compare Value in quaternion
+    const quaternionsAreEqual = (quat1, quat2) => {
+      // Vérifier si l'un des quaternions est null
+      for (let i = 0; i < 4; i++) {
+        if (quat1[i] !== quat2[i]) {
+          // console.log("Camera Move");
+          setIsCameraOrientationChanged(true)
+          return false;
+        }
+      }
+      // console.log("Camera Stay");
+      setIsCameraOrientationChanged(false)
+      return true;
+    };
+
+    const positionsAreEqual = (pos1, pos2) => {
+      for (let i = 0; i < 3; i++) {
+        if (pos1[i] !== pos2[i]) {
+          // console.log("Camera Move");
+          setIsCameraOrientationChanged(true)
+          return false;
+        }
+      }
+      // console.log("Camera Stay");
+      setIsCameraOrientationChanged(false)
+      return true;
+    };
+
+    if (!isFirstUpdate) {
+      // First execution we set base orientation and position to compare after
+      const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+      const transform = await camera[0].getTransform();
+      cameraState = {
+        orientation: transform.orientation,
+        position: transform.position
+      };
+      isFirstUpdate = true;
+    }
+
+    // Refresh component that counts on Camera move changement / Update new old orientation and position
+    const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    const newTransform = await camera[0].getTransform();
+
+    if (!quaternionsAreEqual(cameraState.orientation, newTransform.orientation) || !positionsAreEqual(cameraState.position, newTransform.position)) {
+      // Update old orientation and position
+      cameraState = {
+        orientation: newTransform.orientation,
+        position: newTransform.position
+      };
+    }
+
+
 
     // # TODO Place in functions
 
@@ -304,12 +375,25 @@ export const Canvas = () => {
 
 
     // Event to allow to write posiiton in cinematic and push the list
+    // # TODO CAN'T GET ROTATION / Orientation of player
     if (gameManagerInstance.gameData.canWriteCinematic) {
       const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
       const transform = await camera[0].getTransform();
+
+      const canvasElement = document.getElementById('display-canvas');
+      const canvasRect = canvasElement.getBoundingClientRect();
+
+      const centerX = canvasRect.left + canvasRect.width / 2;
+      const centerY = canvasRect.top + canvasRect.height / 2;
+
+      // Pick pos
+      const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
+
+      console.log(pickedPosition)
+
       const textToPush = {
         position: transform.position,
-        orientation: transform.orientation
+        orientation: pickedPosition
       };
       positionsAndOrientationToWrite.push(textToPush);
     }
@@ -326,6 +410,7 @@ export const Canvas = () => {
       if (status === 'ready') {
         await handleInitialClick();
         await gameManagerInstance.initGame();
+        setIsGameLoad(true)
         SDK3DVerse.notifier.on('onFramePostRender', updateRender);
       }
     };
@@ -424,8 +509,9 @@ export const Canvas = () => {
         id='display-canvas'
         style={{
           height: '100vh',
-          width: '100vw',
+          width: '100%',
           verticalAlign: 'middle',
+          overflowY: 'hidden',
         }}
         tabIndex="1"
         onContextMenu={event => event.preventDefault()}
@@ -434,6 +520,8 @@ export const Canvas = () => {
       {is3DVerseLoad && isPointerLockInitialWasClick && (
         <>
           <CrossHair/>
+          {isGameLoad && <EntityHeadLabelDisplayController isCameraOrientationChanged={isCameraOrientationChanged} />} {/*  Send position When Mouse move to refresh component, but this var is not use*/}
+          
           <DialogController
             isVisible={currentNPCDialog && currentNPCDialog.length > 0}
             dialogMessages={currentNPCDialog}
@@ -448,15 +536,15 @@ export const Canvas = () => {
             onOpen={() => setIsPickupComponentOpen(true)} 
             onClose={resetCurrentPickup}
           />
+          <SubtitleComponent text={"Bonjour je suis le gerant du Globe"} duration={10000}/>
           {!isPickupComponentOpen && (
             <ObjectiveController
               currentObjective={'Aller dans la salle des coffres'}
-              score={'345'}
+              score={currentScore}
               distanceToGoal={currentObjectiveMeters}
               distanceToGoalInHeight={currentObjectiveMetersHeight}
             />
           )}
-          {/* <MobileButtons /> */}
         </>
       )}
   

@@ -73,6 +73,10 @@ class NPCManager {
     this.npcs[this.currentNpcIndex].currentDialog = name
   }
 
+  getNPCs() {
+    return this.npcs;
+  }
+
 }
 
 export default NPCManager;

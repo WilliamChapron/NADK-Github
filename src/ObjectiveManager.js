@@ -1,17 +1,20 @@
 class ObjectiveManager {
   constructor() {
     this.currentObjectiveIndex = 0;
+
     this.objectives = [];
+
   }
 
   // Ajouter un nouvel objectif
-  addObjective(description, position) {
+  addObjective(description, position, hasPointToFollow) {
     const newObjective = {
       description: description,
       position: position,
       meters: 0,
       heightMeters: 0,
       isCompleted: false,
+      currentObjectiveHasPointToFollow: hasPointToFollow
     };
     this.objectives.push(newObjective);
   }
@@ -26,39 +29,50 @@ class ObjectiveManager {
     return this.objectives[this.currentObjectiveIndex];
   }
 
+  // Get distance between player and objective
   async getMetersFromPlayer() {
-    const SDK3DVerse = window.SDK3DVerse;
 
-    const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    if (this.currentObjectiveHasPointToFollow) {
+      const SDK3DVerse = window.SDK3DVerse;
+      const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
 
-    const playerPosition = await camera[0].getTransform().position;
-  
+      const playerPosition = await camera[0].getTransform().position;
 
-    const dx = this.objectives[this.currentObjectiveIndex].position[0] - playerPosition[0];
-    const dz =this.objectives[this.currentObjectiveIndex].position[2] - playerPosition[2];
-  
+      // console.log(playerPosition)
+    
 
-    const distance = Math.round(Math.sqrt(dx * dx + dz * dz));
+      const dx = this.objectives[this.currentObjectiveIndex].position[0] - playerPosition[0];
+      const dz = this.objectives[this.currentObjectiveIndex].position[2] - playerPosition[2];
+    
 
-    this.objectives[this.currentObjectiveIndex].meters = distance;
+      const distance = Math.round(Math.sqrt(dx * dx + dz * dz));
+
+      this.objectives[this.currentObjectiveIndex].meters = distance;
+    }
+
   }
 
+  // Get distance between player and objective in height
   async getMetersFromPlayerHeight() {
-    const SDK3DVerse = window.SDK3DVerse;
+    if (this.currentObjectiveHasPointToFollow) {
+      const SDK3DVerse = window.SDK3DVerse;
 
-    const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+      const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
 
-    const playerPosition = await camera[0].getTransform().position;
-  
+      const playerPosition = await camera[0].getTransform().position;
+    
 
 
-    const dy = this.objectives[this.currentObjectiveIndex].position[1] - playerPosition[1];
-  
+      const dy = this.objectives[this.currentObjectiveIndex].position[1] - playerPosition[1];
+    
 
-    const distance = Math.round(dy)
+      const distance = Math.round(dy)
 
-    this.objectives[this.currentObjectiveIndex].heightMeters = distance;
+      this.objectives[this.currentObjectiveIndex].heightMeters = distance;
+    }
   }
+
+
 }
 
 

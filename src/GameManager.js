@@ -37,15 +37,15 @@ class GameManager {
 
   async initGame() {
 
-    this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5]);
-    this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15]);
+    this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5], true);
+    this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15], true);
 
-    await this.gameData.pickupInstance.addPickup("1", "Restaure la santé", 10, [0, 0, -3]);
-    await this.gameData.pickupInstance.addPickup("2", "Fournit des munitions", 20, [2, 0, -3]);
+    await this.gameData.pickupInstance.addPickup("Totem", "Restaure la santé", 10, [0, 0, -3]);
+    await this.gameData.pickupInstance.addPickup("Tableau", "Fournit des munitions", 20, [2, 0, -3]);
 
 
 
-    await this.gameData.NPCInstance.addNPC("1", [
+    await this.gameData.NPCInstance.addNPC("Mickeal", [
       {
         dialogName: "default",
         sentences: ["Salut, comment ça va?", "Bienvenue dans notre monde!", "C'est une journée ensoleillée."],
@@ -58,7 +58,7 @@ class GameManager {
       }
     ], [0, 0, 5]);
     
-    await this.gameData.NPCInstance.addNPC("2", [
+    await this.gameData.NPCInstance.addNPC("George", [
       {
         dialogName: "default",
         sentences: ["Bonjour, aventurier!", "La quête t'attend.", "Prends garde aux créatures!"],

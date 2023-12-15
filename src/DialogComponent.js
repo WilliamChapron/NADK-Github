@@ -8,48 +8,50 @@ const DialogComponent = ({ dialogOpen, onClose, messages, currentMessageIndex, h
     left: '50%',
     transform: 'translate(-50%, -50%)',
     borderRadius: '10px',
-    backdropFilter: 'blur(5px)', // Augmentation du flou
-    background: 'rgba(0, 0, 0, 0.8)', // Fond plus sombre
+    background: 'rgba(0, 0, 0, 0.8)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     zIndex: '1000',
     padding: '20px',
+    border: '2px solid #3498db', // Bordure bleue
+    boxShadow: '0px 0px 20px rgba(52, 152, 219, 0.8)', // Ombre bleue
   };
 
   const dialogStyle = {
-    width: '100%', // Ajustement de la largeur
-    maxWidth: '600px', // Augmentation de la largeur maximale
+    width: '100%',
+    maxWidth: '600px',
     textAlign: 'center',
   };
 
   const closeButtonStyle = {
     position: 'absolute',
-    top: '10px', // Augmentation de la distance par rapport au haut
-    right: '10px', // Augmentation de la distance par rapport à la droite
+    top: '10px',
+    right: '10px',
     cursor: 'pointer',
-    fontSize: '18px', // Augmentation de la taille de la police
+    fontSize: '18px',
     color: '#fff',
     background: 'none',
     border: 'none',
   };
 
   const messageStyle = {
-    fontSize: '24px', // Augmentation de la taille du texte
-    marginBottom: '20px', // Augmentation de la marge en bas
+    fontSize: '24px',
+    marginBottom: '20px',
     color: '#fff',
   };
 
   const buttonStyle = {
-    fontSize: '20px', // Ajustement de la taille des boutons
-    margin: '10px', // Ajout de marges aux boutons
-    padding: '10px 20px', // Ajout de padding aux boutons
+    fontSize: '20px',
+    margin: '10px',
+    padding: '10px 20px',
     cursor: 'pointer',
-    background: '#007BFF', // Couleur du fond
-    color: '#fff', // Couleur du texte
+    background: '#3498db', // Couleur de fond bleue
+    color: '#fff',
     border: 'none',
     borderRadius: '5px',
     outline: 'none',
+    transition: 'background 0.3s ease', // Animation de transition
   };
 
   const actionButtonStyle = {
@@ -57,40 +59,43 @@ const DialogComponent = ({ dialogOpen, onClose, messages, currentMessageIndex, h
     margin: '10px',
     padding: '10px 20px',
     cursor: 'pointer',
-    background: '#28a745', // Couleur du fond du bouton d'action
+    background: '#e74c3c', // Couleur de fond rouge pour le bouton d'action
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
     outline: 'none',
+    transition: 'background 0.3s ease', // Animation de transition
   };
 
-
-
-  return <>
-    {dialogOpen && (
-      <div style={overlayStyle}>
-        <div style={dialogStyle}>
-          <button style={closeButtonStyle} onClick={onClose}>X</button>
-          <p style={messageStyle}>{messages[currentMessageIndex]}</p>
-          {currentMessageIndex > 0 && (
-            <button onClick={handlePreviousMessage} style={buttonStyle}>
-              Previous
+  return (
+    <>
+      {dialogOpen && (
+        <div style={overlayStyle}>
+          <div style={dialogStyle}>
+            <button style={closeButtonStyle} onClick={onClose}>
+              X
             </button>
-          )}
-          {currentMessageIndex < messages.length - 1 && (
-            <button onClick={handleNextMessage} style={buttonStyle}>
-              Next
-            </button>
-          )}
-          {shouldHaveActionButton && currentMessageIndex === messages.length - 1 && (
-            <button onClick={handleActionButton} style={actionButtonStyle}>
-              Action
-            </button>
-          )}
+            <p style={messageStyle}>{messages[currentMessageIndex]}</p>
+            {currentMessageIndex > 0 && (
+              <button onClick={handlePreviousMessage} style={buttonStyle}>
+                Previous
+              </button>
+            )}
+            {currentMessageIndex < messages.length - 1 && (
+              <button onClick={handleNextMessage} style={buttonStyle}>
+                Next
+              </button>
+            )}
+            {shouldHaveActionButton && currentMessageIndex === messages.length - 1 && (
+              <button onClick={handleActionButton} style={actionButtonStyle}>
+                Action
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-    )}
-  </>
+      )}
+    </>
+  );
 };
 
 export default DialogComponent;
