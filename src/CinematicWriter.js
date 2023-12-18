@@ -47,8 +47,8 @@ function WritePositionToFile(positions) {
 }
 
 
-const positionsArray = await GetPositions();
-let currentIndex = 0;
+// const positionsArray = await GetPositions();
+// let currentIndex = 0;
 
 async function MoveCamera() {
 
@@ -77,29 +77,29 @@ async function InitCamera() {
 
 async function MovePlayer() {
 
-  const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
-  const clientUUID = await SDK3DVerse.getClientUUID() 
-  const playerName = `Player_${clientUUID}`;
-  const player = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
+  // const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
+  // const clientUUID = await SDK3DVerse.getClientUUID() 
+  // const playerName = `Player_${clientUUID}`;
+  // const player = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
 
 
 
 
 
   // # TODO CAN'T GET ROTATION / Orientation of player
-  const transform = {
-    position: positionsArray[currentIndex].position,
-    orientation: [0,0,0,1], // Just rotation named orientation
-    scale: [1, 1, 1],
-  };
+//   const transform = {
+//     position: positionsArray[currentIndex].position,
+//     orientation: [0,0,0,1], // Just rotation named orientation
+//     scale: [1, 1, 1],
+//   };
 
-  // 3 point (orientation)
-  await player[0].lookAt([15,15,15])
-  await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0].lookAt([15,15,15])
+//   // 3 point (orientation)
+//   await player[0].lookAt([15,15,15])
+//   await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0].lookAt([15,15,15])
   
 
-  await player[0].setGlobalTransform(transform);
-  currentIndex++
+//   await player[0].setGlobalTransform(transform);
+//   currentIndex++
 }
 
 

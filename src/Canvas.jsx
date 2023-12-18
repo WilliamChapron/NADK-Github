@@ -372,6 +372,10 @@ export const Canvas = () => {
       await InitFirstPersonController(characterControllerSceneUUID);
       const joysticksElement = document.getElementById('joysticks');
       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
+      // SDK3DVerse.engineAPI.onEnterTrigger((emitterEntity, triggerEntity) =>
+      // {
+      //     console.log(emitterEntity, " entered trigger of ", triggerEntity);
+      // });
       setIs3DVerseLoad(true);
     }
   };
@@ -398,14 +402,23 @@ export const Canvas = () => {
         await initApp();
         window.addEventListener('keydown', handleKeyDown); // Catch all key press
         window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
-        // SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
-        //   console.log("TRIGGER");
-        //   // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
-        // });
+        const cinématique = await SDK3DVerse.engineAPI.findEntitiesByEUID('b5b98ad6-7343-4343-bce0-c2021ab1d82b')
+        SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
+          //SDK3DVerse.cameraControllerType.none;
+          SDK3DVerse.engineAPI.detachClientFromScripts(cameraEntity);
+          SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
+          SDK3DVerse.setMainCamera(cinématique[0])
+          SDK3DVerse.engineAPI.playAnimationSequence('fdfae4d7-6703-4ab6-9e38-a64bf36b6e01', { playbackSpeed : 0.1 });
+          console.log('trigger');
+          // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
+        });
       }
     }
-
   };
+
+
+
+
   // Ajoutez l'événement click à la fenêtre
   // window.addEventListener('click', handleInitialClick);
   // window.addEventListener('load', handleInitialClick);
