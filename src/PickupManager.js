@@ -4,12 +4,15 @@ class PickupManager {
     this.currentPickupIndex = 0;
   }
 
-  async addPickup(name, description, score, position) {
+  async addPickup(name, description, score, position, offsetX, offsetY, offsetZ) {
     const newPickup = {
       name: name,
       description: description,
       score: score,
       position: position,
+      offsetX: offsetX,
+      offsetY: offsetY,
+      offsetZ: offsetZ,
     };
     this.pickups.push(newPickup);
 
@@ -61,6 +64,10 @@ class PickupManager {
 
   getCurrentPickup() {
     return this.pickups[this.currentPickupIndex];
+  }
+
+  getPickups() {
+    return this.pickups;
   }
 }
 

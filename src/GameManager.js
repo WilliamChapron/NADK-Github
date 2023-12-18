@@ -40,7 +40,7 @@ class GameManager {
     this.gameData.objectiveInstance.addObjective("Description de l'objectif 1", [5, 3, 5], true);
     // this.gameData.objectiveInstance.addObjective("Description de l'objectif 2", [15, 15, 15], true);
 
-    await this.gameData.pickupInstance.addPickup("Totem", "Restaure la santé", 10, [5, 0, 5]);
+    await this.gameData.pickupInstance.addPickup("Totem", "Restaure la santé", 10, [5, 0, 5], 0.5, 1.5, 0.5);
     // await this.gameData.pickupInstance.addPickup("Tableau", "Fournit des munitions", 20, [2, 0, -3]);
     // await this.gameData.pickupInstance.addPickup("Arme", "Fournit des munitions", 20, [0, 0, 0]);
 
@@ -57,7 +57,7 @@ class GameManager {
         sentences: ["C'est un plaisir de te voir!", "Nous avons beaucoup à explorer ici.", "Si tu as des questions, n'hésite pas."],
         action: function2()
       }
-    ], [0, 0, 5]);
+    ], [0, 0, 5], 0, 1.8, 0.3);
     
     await this.gameData.NPCInstance.addNPC("George", [
       {
@@ -70,7 +70,7 @@ class GameManager {
         sentences: ["Bienvenue dans notre royaume!", "Nous avons besoin de ton aide.", "Es-tu prêt pour l'aventure?"],
         action: function2()
       }
-    ], [0, 0, 0]);
+    ], [0, 0, 0], 0, 1.8, 0.3);
 
 
   }

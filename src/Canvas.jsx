@@ -361,7 +361,7 @@ export const Canvas = () => {
         await handleInitialClick();
         await gameManagerInstance.initGame();
         setIsGameLoad(true)
-        // StartCinematic()
+        StartCinematic()
         SDK3DVerse.notifier.on('onFramePostRender', updateRender);
       }
     };

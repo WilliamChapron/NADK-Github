@@ -7,6 +7,7 @@ import gameManagerInstance from './GameManager';
 
 const EntityHeadLabelDisplayController = (bool) => {
   const [npcs, setNPCs] = useState([]);
+  const [pickups, setPickups] = useState([]);
 
   function subtractVectors(a, b) {
     return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
@@ -49,88 +50,74 @@ const EntityHeadLabelDisplayController = (bool) => {
   }
 
   const isEntityInPlayerView = (entityPosition, playerPosition, playerOrientation, fieldOfView) => {
-    // Calculez le vecteur de direction du joueur
     const playerForwardVector = calculatePlayerForwardVector(playerOrientation);
-  
-    // Calculez le vecteur distance normalisé du joueur vers l'entité
     const directionToEntity = subtractVectors(entityPosition, playerPosition);
     normalizeVector(directionToEntity);
-  
-    // Calculez le produit scalaire entre le vecteur avant du joueur et le vecteur direction normalisé de l'entité
     const dotProduct = dotProductBetweenTwoVectors(playerForwardVector, directionToEntity);
 
-    // console.log(dotProduct)
+    return dotProduct <= -0.50;
+  
+  }
 
-    return dotProduct <= -0.70;
-  
-    // // Calculez l'angle en radians
-    // const angle = Math.acos(dotProduct);
-  
-    // // Convertissez l'angle en degrés;
-  
-    // console.log("Angle en degrés :", angle, "est inférieur ou égal à", fieldOfView / 2);
-  
-    // Vérifiez si l'angle est dans le champ de vision
-    // return angle <= fieldOfView / 2;
-}
+  // Marge for Size range setter
+  const threshold = 5;
+  const initialCoefficient = 0.05;
 
   useEffect(() => {
-    // console.log("Update logic")
-    const updateNPCs = async () => {
-      const NPCs = gameManagerInstance.gameData.NPCInstance.getNPCs();
-      const playerViewport = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+  const updateEntities = async (entityType) => {
+    const entities = entityType === 'NPC' ? gameManagerInstance.gameData.NPCInstance.getNPCs() : gameManagerInstance.gameData.pickupInstance.getPickups();
+    const playerViewport = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    
 
-      const updatedNPCs = [];
+    const updatedEntities = [];
 
-      let index = 0;
-      for (const npc of NPCs) {
-        const entityPosition = await gameManagerInstance.gameData.NPCInstance.npcs[index].position;
-        const playerTransform = await playerViewport[0].getTransform();
-        const playerPosition = playerTransform.position
-        const playerOrientation = playerTransform.orientation
-        const { isInViewport, position2D } = isEntityInViewport(entityPosition, playerViewport);
+    let index = 0;
+    for (const entity of entities) {
+      const entityPosition = await entity.position;
+      const playerTransform = await playerViewport[0].getTransform();
+      const playerPosition = playerTransform.position;
+      const playerOrientation = playerTransform.orientation;
+      const { isInViewport, position2D } = isEntityInViewport(entityPosition, playerViewport, [entity.offsetX,entity.offsetY,entity.offsetZ]);
 
+      if (isInViewport && isEntityInPlayerView(entityPosition, playerPosition, playerOrientation, 90)) {
+        const dx = entityPosition[0] - playerPosition[0];
+        const dz = entityPosition[2] - playerPosition[2];
+        const distance = Math.round(Math.sqrt(dx * dx + dz * dz));
 
-        // Test if in Range
+        const coefficient = initialCoefficient * Math.log(distance + 1) / Math.log(threshold + 1);
 
+        const adjustedY = position2D.y;
+        const fontSize = 700 / distance * coefficient;
 
-        
-
-
-        if (isInViewport) {
-          if (isEntityInPlayerView(entityPosition, playerPosition, playerOrientation, 90)) {
-            const dx = entityPosition[0] - playerPosition[0];
-            const dz = entityPosition[2] - playerPosition[2];
-            const distance = Math.round(Math.sqrt(dx * dx + dz * dz));
-
-            const adjustedY = position2D.y;
-            const fontSize = 250 / distance*0.1; 
-
-            if (distance <= 5) {
-              updatedNPCs.push({
-                name: npc.name,
-                position: { x: position2D.x, y: adjustedY },
-                fontSize: fontSize,
-            });
-          }
-          }
-          
+        if (distance <= 7) {
+          updatedEntities.push({
+            name: entity.name,
+            position: { x: position2D.x, y: adjustedY },
+            fontSize: fontSize,
+          });
         }
-        index++;
       }
+      index++;
+    }
 
-      setNPCs(updatedNPCs);
-    };
+    if (entityType === 'NPC') {
+      setNPCs(updatedEntities);
+    } else if (entityType === 'Pickup') {
+      setPickups(updatedEntities);
+    }
+  };
 
-    updateNPCs();
-  }, [gameManagerInstance, bool]);
+  updateEntities('NPC');
+  updateEntities('Pickup');
 
-  const isEntityInViewport = (entityPosition, playerViewport) => {
-    const posHead = [entityPosition[0], entityPosition[1] + 1.8, entityPosition[2]];
+}, [gameManagerInstance, bool]);
+
+  const isEntityInViewport = (entityPosition, playerViewport,offsetArray) => {
+    const posHead = [entityPosition[0] + offsetArray[0], entityPosition[1] + offsetArray[1], entityPosition[2] + offsetArray[2]];
 
     const [x, y, z] = playerViewport[0].project(posHead);
 
-    window.caca = playerViewport[0]
+
 
 
 
@@ -148,7 +135,8 @@ const EntityHeadLabelDisplayController = (bool) => {
       y >= 0 && y <= canvasHeight;
 
     
-
+    
+      
     const position2D = { x, y };
 
     return { isInViewport, position2D };
@@ -157,26 +145,29 @@ const EntityHeadLabelDisplayController = (bool) => {
 
 
   return (
-    <div>
-      {npcs.map((npc) => (
+    <div className="game-world">
+      {([...npcs, ...pickups]).map((entity) => (
         <div
-          key={npc.name}
+          key={entity.name}
+          className="npc"
           style={{
-            position: 'absolute',
-            left: npc.position.x + 'px',
-            top: npc.position.y + 'px',
-            zIndex: npc.position.z,
-            backgroundColor: 'black',
+            left: entity.position.x + 'px',
+            top: entity.position.y + 'px',
+            transform: `translate(-50%, -50%)`,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             color: 'white',
             borderRadius: '8px',
             padding: '8px',
-            fontSize: `${npc.fontSize}px`, // Utilisez la taille dynamique
+            fontSize: `${entity.fontSize}px`,
+            position: 'absolute',
+            boxShadow: '0 0 10px rgba(255, 255, 255, 0.7)', // Ajoute une lueur
+            transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out', // Ajoute une animation
+            cursor: 'pointer', // Curseur interactif
           }}
         >
-          <h1>{npc.name}</h1>
+          <h1 style={{ margin: 0 }}>{entity.name}</h1>
         </div>
       ))}
-      <p></p>
     </div>
   );
 };

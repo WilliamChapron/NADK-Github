@@ -4,12 +4,15 @@ class NPCManager {
     this.currentNpcIndex = 0;
   }
 
-  async addNPC(name, dialogs, position,actions) {
+  async addNPC(name, dialogs, position, offsetX, offsetY, offsetZ) {
     const newNPC = {
       name: name,
       dialogs: dialogs,
       currentDialog: "default",
       position: position,
+      offsetX: offsetX,
+      offsetY: offsetY,
+      offsetZ: offsetZ,
     };
     this.npcs.push(newNPC);
     await this.checkAndSpawnNPC(name, position);
