@@ -25,6 +25,8 @@ import gameManagerInstance from './GameManager';
 // Cinematic 
 import { StartCinematic, WritePositionToFile } from './CinematicWriter.js';
 
+import * as glMatrix from 'gl-matrix';
+
 // Config
 import {
   publicToken,
@@ -73,6 +75,8 @@ export const Canvas = () => {
       removeOnUnmount: false,
     }
   );
+
+  
   
   // UPDATE
   const update = async () => {
@@ -316,20 +320,26 @@ export const Canvas = () => {
       const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
       const transform = await camera[0].getTransform();
 
-      const canvasElement = document.getElementById('display-canvas');
-      const canvasRect = canvasElement.getBoundingClientRect();
+      // const canvasElement = document.getElementById('display-canvas');
+      // const canvasRect = canvasElement.getBoundingClientRect();
 
-      const centerX = canvasRect.left + canvasRect.width / 2;
-      const centerY = canvasRect.top + canvasRect.height / 2;
+      // const centerX = canvasRect.left + canvasRect.width / 2;
+      // const centerY = canvasRect.top + canvasRect.height / 2;
 
-      // Pick pos
-      const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
+      // // Pick pos
+      // const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
 
-      console.log(pickedPosition)
+      // console.log(pickedPosition)
+
+
+
+
+
+
 
       const textToPush = {
         position: transform.position,
-        orientation: pickedPosition
+        orientation: transform.orientation,
       };
       positionsAndOrientationToWrite.push(textToPush);
     }
@@ -339,7 +349,6 @@ export const Canvas = () => {
 
   // Update at PostFrameRender
   const updateRender = async () => {
-    StartCinematic()
     checkPlayerTransformChange()
     writeYourOwnCinematic()
   }
@@ -352,6 +361,7 @@ export const Canvas = () => {
         await handleInitialClick();
         await gameManagerInstance.initGame();
         setIsGameLoad(true)
+        // StartCinematic()
         SDK3DVerse.notifier.on('onFramePostRender', updateRender);
       }
     };
