@@ -142,9 +142,6 @@ async function MovePlayer() {
   requestAnimationFrame(() => Viewports[0].setGlobalTransform(transform, true, true));
 
 
-
-  console.log()
-
   const transformNPC = SDK3DVerse.utils.clone(positionsArray[currentIndex]);
   transformNPC.scale = [1, 1, 1];
   const rotateQuaternion = glMatrix.quat.create();

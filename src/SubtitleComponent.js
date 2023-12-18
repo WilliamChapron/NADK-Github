@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
-const SubtitleComponent = ({ text, duration }) => {
+const SubtitleComponent = ({ text, duration, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsVisible(false);
+      console.log("CLOSE")
+      onClose(); // Appel de la fonction onClose lorsque le composant se ferme
     }, duration);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [duration]);
+  }, [duration, onClose]); // Ajout de onClose comme dépendance
 
   return (
     <div

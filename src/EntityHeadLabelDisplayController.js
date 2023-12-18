@@ -117,14 +117,6 @@ const EntityHeadLabelDisplayController = (bool) => {
 
     const [x, y, z] = playerViewport[0].project(posHead);
 
-
-
-
-
-
-
-    // console.log(x, y,z)
-
     const canvasWidth = window.innerWidth;
     const canvasHeight = window.innerHeight;
 
@@ -134,9 +126,6 @@ const EntityHeadLabelDisplayController = (bool) => {
       x >= 0 && x <= canvasWidth &&
       y >= 0 && y <= canvasHeight;
 
-    
-    
-      
     const position2D = { x, y };
 
     return { isInViewport, position2D };

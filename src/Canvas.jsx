@@ -52,6 +52,10 @@ export const Canvas = () => {
   const [currentNPCName, setCurrentNPCName] = useState("");
   const [currentNPCDialog, setCurrentNPCDialog] = useState([]);
   const [currentNPCAction, setCurrentNPCAction] = useState(null);
+  // Subtitle values 
+
+  const [currentSubtitleText, setCurrentSubtitleText] = useState("");
+
   // Init Game
   const [isGameLoad, setIsGameLoad] = useState(false);
   const [isCameraOrientationChanged, setIsCameraOrientationChanged] = useState(null);
@@ -216,6 +220,10 @@ export const Canvas = () => {
   //
 
   // Reset INFO For interface
+  const resetCurrentSubtitle = () => {
+    gameManagerInstance.incrementSubtitleIndex()
+    setCurrentSubtitleText(gameManagerInstance.getCurrentSubtitle())
+  };
   const resetCurrentNPC = () => {
     SDK3DVerse.enableInputs()
     resetLastKeyPressed()
@@ -361,7 +369,8 @@ export const Canvas = () => {
         await handleInitialClick();
         await gameManagerInstance.initGame();
         setIsGameLoad(true)
-        StartCinematic()
+        setCurrentSubtitleText(gameManagerInstance.getCurrentSubtitle())
+        // StartCinematic()
         SDK3DVerse.notifier.on('onFramePostRender', updateRender);
       }
     };
@@ -457,7 +466,7 @@ export const Canvas = () => {
             onOpen={() => setIsPickupComponentOpen(true)} 
             onClose={resetCurrentPickup}
           />
-          <SubtitleComponent text={"Bonjour je suis le gerant du Globe"} duration={8000}/>
+          <SubtitleComponent text={currentSubtitleText} duration={2000} onClose={resetCurrentSubtitle}/>
           {!isPickupComponentOpen && (
             <ObjectiveController
               currentObjective={currentObjectiveDescription}

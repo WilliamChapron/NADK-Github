@@ -20,6 +20,8 @@ class GameManager {
       pickupInstance: new PickupManager(),
       NPCInstance: new NPCManager(),
       levelInstance: new Level(),
+      subtitleCurrentIndex: 0,
+      subtitleList: ["Subtitle1","Subtitle2","Subtitle3"],
       canWriteCinematic: false,
     };
 
@@ -75,15 +77,23 @@ class GameManager {
 
   }
 
+  incrementSubtitleIndex() {
+    this.gameData.subtitleCurrentIndex += 1
+  }
+
+  getCurrentSubtitle() {
+    return this.gameData.subtitleList[this.gameData.subtitleCurrentIndex];
+  }
+
   incrementScore(points) {
     this.gameData.score += points;
   }
 
-  addDiscoverCountry(country) {
-    if (!this.gameData.discoveredCountries.includes(country)) {
-      this.gameData.discoveredCountries.push(country);
-    }
-  }
+  // addDiscoverCountry(country) {
+  //   if (!this.gameData.discoveredCountries.includes(country)) {
+  //     this.gameData.discoveredCountries.push(country);
+  //   }
+  // }
 
   setGameMode(mode) {
     this.gameData.gameMode = mode;
