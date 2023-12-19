@@ -21,25 +21,26 @@ class NPCManager {
 
   async checkAndSpawnNPC(name, position) {
 
-    // En ligne, nous voulons vérifier que le NPC n'est pas déjà apparu car la logique est sur toutes les instances clients
-    const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ npcName: name }),
-    });
+    // // En ligne, nous voulons vérifier que le NPC n'est pas déjà apparu car la logique est sur toutes les instances clients
+    // const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ npcName: name }),
+    // });
   
-    if (!response.ok) {
-      throw new Error('Erreur lors de la vérification et du spawn du NPC');
-    }
+    // if (!response.ok) {
+    //   throw new Error('Erreur lors de la vérification et du spawn du NPC');
+    // }
   
-    const data = await response.json();
-    console.log(data)
+    // const data = await response.json();
+    // console.log(data)
   
-    if (data.action === 'SPAWN_NPC') {
-      await this.initNPC(name, position); 
-    }
+    // if (data.action === 'SPAWN_NPC') {
+    //   await this.initNPC(name, position); 
+    // }
+    await this.initNPC(name, position); 
   }
 
   async initNPC(name, position) {

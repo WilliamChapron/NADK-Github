@@ -242,7 +242,7 @@ async function animatePlayer() {
   }
 
   const transform = SDK3DVerse.utils.clone(positionsArray[currentIndexPlayer]);
-  transform.position = [transform.position[0], transform.position[1] - playerYSize, transform.position[2]];
+  transform.position = [transform.position[0], transform.position[1] - playerYSize + 0.13, transform.position[2]];
   transform.scale = [1, 1, 1];
 
   // requestAnimationFrame(() => Viewports[0].setGlobalTransform(transform, true, true));
@@ -316,7 +316,8 @@ async function StartCinematic() {
     hasSetupEntities = entitiesInitialized; 
 
     if (entitiesInitialized) {
-      // e83b0e8a-2363-406f-9935-c38084f7e647
+      NPCEntity.setComponent('scene_ref', { value: "e83b0e8a-2363-406f-9935-c38084f7e647" });
+      await new Promise(resolve => setTimeout(resolve, 1000));
       animateNPC()
 
       
