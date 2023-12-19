@@ -6,14 +6,15 @@ class ObjectiveManager {
   }
 
   // Ajouter un nouvel objectif
-  addObjective(description, position, hasPointToFollow) {
+  addObjective(description, position, hasPointToFollow, gamemode) {
     const newObjective = {
       description: description,
       position: position,
       meters: -1,
       heightMeters: -1,
       isCompleted: false,
-      hasPointToFollow: hasPointToFollow
+      hasPointToFollow: hasPointToFollow,
+      gamemode: gamemode,
     };
     this.objectives.push(newObjective);
   }

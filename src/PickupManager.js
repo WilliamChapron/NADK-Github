@@ -4,7 +4,7 @@ class PickupManager {
     this.currentPickupIndex = 0;
   }
 
-  async addPickup(name, description, score, position, offsetX, offsetY, offsetZ) {
+  async addPickup(name, description, score, position, offsetX, offsetY, offsetZ, gamemode) {
     const newPickup = {
       name: name,
       description: description,
@@ -13,6 +13,7 @@ class PickupManager {
       offsetX: offsetX,
       offsetY: offsetY,
       offsetZ: offsetZ,
+      gamemode: gamemode,
     };
     this.pickups.push(newPickup);
 

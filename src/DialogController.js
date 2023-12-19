@@ -2,35 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import DialogComponent from './DialogComponent';
 
-const DialogController = ({ isVisible, dialogMessages,  onClose, onOpen, shouldHaveActionButton, resetFPSCameraController, setFPSCameraController }) => {
+const DialogController = ({ isVisible, dialogMessages,  onClose, onAction, shouldHaveActionButton, resetFPSCameraController, setFPSCameraController }) => {
   const [dialogOpen, setDialogOpen] = useState(isVisible);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
 
-  // Store player orientation to enter in dialog interface and set orientation in interface because pointer lock move camera when it's setup
-  // let dialogOrientation = []
-
-  // async function getOpenDialogOrientation() {
-  //   // const clientUUID = await SDK3DVerse.getClientUUID();
-  //   // const player = await SDK3DVerse.engineAPI.findEntitiesByNames(`Player_${clientUUID}`);
-  //   // #TODO DONT WORK FOR MULTIPLAYER  BECAUSE WE DON'T HAVE ACCESS TO PLAYER VALUE
-  //   const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-  //   const orientation = await SDK3DVerse.utils.clone(camera[0].getTransform().orientation);
-  //   console.log("get", orientation)
-  //   dialogOrientation = orientation;
-  // }
-
-  // async function setOpenDialogOrientation() {
-
-  //   const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-  //   // const clientUUID = await SDK3DVerse.getClientUUID();
-  //   // const player = await SDK3DVerse.engineAPI.findEntitiesByNames(`Player_${clientUUID}`);
-  //   // console.log("set orient", dialogOrientation)
-  //   // player[0].setGlobalTransform({ orientation : dialogOrientation})
-  //   console.log("set", dialogOrientation)
-  //   camera[0].setGlobalTransform({ orientation : dialogOrientation})
-  //   dialogOrientation = []
-  // }
 
 
   useEffect(() => {
@@ -68,10 +44,6 @@ const DialogController = ({ isVisible, dialogMessages,  onClose, onOpen, shouldH
     }
   };
 
-  const handleActionButton = async () => {
-
-  };
-
   return (
     <div>
       {dialogOpen && (
@@ -83,7 +55,7 @@ const DialogController = ({ isVisible, dialogMessages,  onClose, onOpen, shouldH
           handleNextMessage={handleNextMessage}
           handlePreviousMessage={handlePreviousMessage}
           shouldHaveActionButton={shouldHaveActionButton}
-          handleActionButton={handleActionButton}
+          handleActionButton={onAction}
         />
       )}
     </div>
@@ -91,3 +63,29 @@ const DialogController = ({ isVisible, dialogMessages,  onClose, onOpen, shouldH
 };
 
 export default DialogController;
+
+
+  // Store player orientation to enter in dialog interface and set orientation in interface because pointer lock move camera when it's setup
+  // let dialogOrientation = []
+
+  // async function getOpenDialogOrientation() {
+  //   // const clientUUID = await SDK3DVerse.getClientUUID();
+  //   // const player = await SDK3DVerse.engineAPI.findEntitiesByNames(`Player_${clientUUID}`);
+  //   // #TODO DONT WORK FOR MULTIPLAYER  BECAUSE WE DON'T HAVE ACCESS TO PLAYER VALUE
+  //   const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+  //   const orientation = await SDK3DVerse.utils.clone(camera[0].getTransform().orientation);
+  //   console.log("get", orientation)
+  //   dialogOrientation = orientation;
+  // }
+
+  // async function setOpenDialogOrientation() {
+
+  //   const camera = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+  //   // const clientUUID = await SDK3DVerse.getClientUUID();
+  //   // const player = await SDK3DVerse.engineAPI.findEntitiesByNames(`Player_${clientUUID}`);
+  //   // console.log("set orient", dialogOrientation)
+  //   // player[0].setGlobalTransform({ orientation : dialogOrientation})
+  //   console.log("set", dialogOrientation)
+  //   camera[0].setGlobalTransform({ orientation : dialogOrientation})
+  //   dialogOrientation = []
+  // }

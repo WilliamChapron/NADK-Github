@@ -4,7 +4,7 @@ class NPCManager {
     this.currentNpcIndex = 0;
   }
 
-  async addNPC(name, dialogs, position, offsetX, offsetY, offsetZ) {
+  async addNPC(name, dialogs, position, offsetX, offsetY, offsetZ, gamemode) {
     const newNPC = {
       name: name,
       dialogs: dialogs,
@@ -13,6 +13,7 @@ class NPCManager {
       offsetX: offsetX,
       offsetY: offsetY,
       offsetZ: offsetZ,
+      gamemode: gamemode,
     };
     this.npcs.push(newNPC);
     await this.checkAndSpawnNPC(name, position);
@@ -43,7 +44,7 @@ class NPCManager {
 
   async initNPC(name, position) {
     let template = new SDK3DVerse.EntityTemplate();
-    template.attachComponent('scene_ref', { value: "e58390b7-01c0-42d6-9049-40d93ab3e4e2" });
+    template.attachComponent('scene_ref', { value: "3fb0fce3-eefb-4bdf-8545-2f10bddce478" });
     template.attachComponent('local_transform', { position: position });
     await template.instantiateTransientEntity(`NPC_${name}`, null, false);
   }
@@ -69,7 +70,9 @@ class NPCManager {
     // Find dialog item for current dialog name
     const currentDialog = this.npcs[this.currentNpcIndex].dialogs.find(dialog => dialog.dialogName === currentDialogName);
   
-    return currentDialog ? currentDialog.sentences : null;
+    if (currentDialog) {
+      return currentDialog;
+    }
   }
 
   async setCurrentDialog(name) {

@@ -4,33 +4,34 @@ const SubtitleComponent = ({ text, duration, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    setIsVisible(true);
+
     const timeout = setTimeout(() => {
       setIsVisible(false);
-      console.log("CLOSE")
-      onClose(); // Appel de la fonction onClose lorsque le composant se ferme
+      onClose(); // Appel de la fonction onClose lorsque le composant se ferme automatiquement
     }, duration);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [duration, onClose]); // Ajout de onClose comme dépendance
+  }, [text]);
 
-  return (
+  return isVisible && (
     <div
       style={{
         position: 'fixed',
         bottom: '20px',
         left: '50%',
         transform: 'translateX(-50%)',
-        padding: '15px', // Augmentation de la taille du padding
-        background: 'rgba(0, 0, 0, 0.7)', // Fond plus sombre
+        padding: '15px',
+        background: 'rgba(0, 0, 0, 0.7)',
         color: '#fff',
-        borderRadius: '8px', // Coins plus arrondis
-        display: isVisible ? 'flex' : 'none', // Utilisation de flex pour centrer le texte
-        flexDirection: 'column', // Afficher le texte en colonnes
-        alignItems: 'center', // Centrer le texte horizontalement
+        borderRadius: '8px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         zIndex: '1000',
-        animation: 'fadeInOut 1s ease-in-out', // Ajout d'une animation de fondu
+        animation: 'fadeInOut 1s ease-in-out',
       }}
     >
       <div style={{ margin: '0', fontSize: '18px', fontWeight: 'bold', fontStyle: 'italic' }}>{text} ...</div>

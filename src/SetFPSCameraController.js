@@ -9,7 +9,7 @@ async function SetFPSCameraController(canvas){
     SDK3DVerse.actionMap.values["LOOK_UP"][0] = ["MOUSE_AXIS_Y_POS"];
     SDK3DVerse.actionMap.propagate();
 
-    console.log("We set moving mouse")
+    // console.log("We set moving mouse")
 
     // Lock the mouse pointer.
     canvas.requestPointerLock = (
@@ -24,8 +24,8 @@ async function SetFPSCameraController(canvas){
 
 async function ResetFPSCameraController(canvas) {
     const SDK3DVerse = window.SDK3DVerse
-    // console.log(SDK3DVerse)
-    console.log("We set moving stay")
+    // // console.log(SDK3DVerse)
+    // console.log("We set moving stay")
     // Restore the default actions for LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and LOOK_DOWN.
 
     SDK3DVerse.actionMap.values["LOOK_LEFT"][0] = ["MOUSE_BTN_LEFT"];

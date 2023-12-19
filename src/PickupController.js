@@ -11,7 +11,6 @@ const PickupController = ({ pickupInfo, isVisible, onOpen, onClose }) => {
     if (isVisible) {
       onOpen()
       const newTimeoutId = setTimeout(() => {
-        console.log("on ferme le Popup")
         setPickupVisible(false);
         onClose();
       }, 1000);

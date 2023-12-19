@@ -22,6 +22,9 @@ import CrossHair from './CrossHair';
 // Game Controller
 import gameManagerInstance from './GameManager'; 
 
+// Scenario 
+import scenarioScriptFunctions from './scenarioScriptFunctions.js'; 
+
 // Cinematic 
 import { StartCinematic, WritePositionToFile } from './CinematicWriter.js';
 
@@ -84,7 +87,10 @@ export const Canvas = () => {
   
   // UPDATE
   const update = async () => {
-    await gameManagerInstance.gameUpdate();
+    // const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    // const position = viewports[0].getTransform().position
+    // console.log(position)
+    // await gameManagerInstance.gameUpdate(is3DVerseLoad);
     // Only logic correspond to interface // all logic, condition variable specific to game logic is contain in Game Manager / Or in some specific fonctionnalities controller
     setCurrentScore(gameManagerInstance.gameData.score)
     setCurrentObjectiveDescription(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].description)
@@ -100,13 +106,19 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 1); 
+    const intervalId = setInterval(updateLoop, 2); 
 
     return () => {
       clearInterval(intervalId); // Clear on unmount
     };
 
   }, [is3DVerseLoad]);
+  //
+
+
+  // useEffect(() => {
+  //   console.log(currentSubtitleText)
+  // }, [currentSubtitleText]);
   //
 
 
@@ -186,9 +198,10 @@ export const Canvas = () => {
           // console.log(NPC)
           const currentNPCdialog = await gameManagerInstance.gameData.NPCInstance.getCurrentNPCDialog()
 
+          console.log(currentNPCdialog)
           setCurrentNPCName(NPC.name);
-          setCurrentNPCDialog(currentNPCdialog)
-          // setCurrentNPCAction(currentNPCdialog.action)
+          setCurrentNPCDialog(currentNPCdialog.sentences)
+          setCurrentNPCAction(currentNPCdialog.action)
 
           SDK3DVerse.disableInputs()
 
@@ -217,12 +230,31 @@ export const Canvas = () => {
       lastKeyPressTime = currentTime;
     }
   };
-  //
+
+  // Call functions for interface
+  const handleDialogAction = async () => {
+    console.log(currentNPCAction)
+    if (currentNPCAction) {
+      const actionFunction = scenarioScriptFunctions.find(func => func.name === currentNPCAction);
+      
+      if (actionFunction && typeof actionFunction.func === 'function') {
+        await actionFunction.func();
+      } else {
+        console.error(`La fonction correspondant à ${currentNPCAction} n'a pas été trouvée ou n'est pas une fonction.`);
+      }
+    }
+  };
+
+
 
   // Reset INFO For interface
-  const resetCurrentSubtitle = () => {
-    gameManagerInstance.incrementSubtitleIndex()
-    setCurrentSubtitleText(gameManagerInstance.getCurrentSubtitle())
+  const wait = (timeout) => new Promise(resolve => setTimeout(resolve, timeout));
+  const resetCurrentSubtitle = async () => {
+    if (gameManagerInstance.gameData.subtitleCurrentIndex < gameManagerInstance.gameData.subtitleList.length - 1) {
+      await wait(4000);
+      gameManagerInstance.incrementSubtitleIndex();
+      setCurrentSubtitleText(gameManagerInstance.getCurrentSubtitle());
+    }
   };
   const resetCurrentNPC = () => {
     SDK3DVerse.enableInputs()
@@ -370,7 +402,7 @@ export const Canvas = () => {
         await gameManagerInstance.initGame();
         setIsGameLoad(true)
         setCurrentSubtitleText(gameManagerInstance.getCurrentSubtitle())
-        // StartCinematic()
+        StartCinematic()
         SDK3DVerse.notifier.on('onFramePostRender', updateRender);
       }
     };
@@ -456,7 +488,8 @@ export const Canvas = () => {
             isVisible={currentNPCDialog && currentNPCDialog.length > 0}
             dialogMessages={currentNPCDialog}
             onClose={resetCurrentNPC}
-            shouldHaveActionButton={true}
+            onAction={handleDialogAction}
+            shouldHaveActionButton={currentNPCAction !== null}
             resetFPSCameraController={ResetFPSCameraController}
             setFPSCameraController={SetFPSCameraController}
           />
@@ -466,7 +499,13 @@ export const Canvas = () => {
             onOpen={() => setIsPickupComponentOpen(true)} 
             onClose={resetCurrentPickup}
           />
-          <SubtitleComponent text={currentSubtitleText} duration={2000} onClose={resetCurrentSubtitle}/>
+          {currentSubtitleText !== "" && (
+            <SubtitleComponent 
+              text={currentSubtitleText} 
+              onClose={resetCurrentSubtitle}
+              duration={2000} 
+            />
+          )}
           {!isPickupComponentOpen && (
             <ObjectiveController
               currentObjective={currentObjectiveDescription}
