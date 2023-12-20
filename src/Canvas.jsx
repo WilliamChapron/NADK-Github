@@ -38,6 +38,9 @@ import {
 } from "./config.js";
 
 
+window.lastPickupComponentState = 0
+
+
 // Canva / Main
 export const Canvas = () => {
 
@@ -50,7 +53,9 @@ export const Canvas = () => {
   // Pickup values 
   const [currentPickupName, setCurrentPickupName] = useState("");
   const [currentPickupDescription, setCurrentPickupDescription] = useState("");
+  const [currentPickupText, setCurrentPickupText] = useState("");
   const [currentPickupScore, setCurrentPickupScore] = useState(0);
+
   // Npc values
   const [currentNPCName, setCurrentNPCName] = useState("");
   const [currentNPCDialog, setCurrentNPCDialog] = useState([]);
@@ -83,10 +88,13 @@ export const Canvas = () => {
     }
   );
 
+
+
   
   
   // UPDATE
   const update = async () => {
+    console.log(window.lastPickupComponentState)
     // const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
     // const position = viewports[0].getTransform().position
     // console.log(position)
@@ -106,7 +114,7 @@ export const Canvas = () => {
       }
     };
 
-    const intervalId = setInterval(updateLoop, 2); 
+    const intervalId = setInterval(updateLoop, 1); 
 
     return () => {
       clearInterval(intervalId); // Clear on unmount
@@ -127,11 +135,9 @@ export const Canvas = () => {
     const ancestors = await entity.getAncestors();
   
     if (ancestors && ancestors.length > 0) {
-      // Récupère le dernier ancêtre dans la liste (le plus haut dans la hiérarchie)
       const highestAncestor = ancestors[ancestors.length - 1];
       return highestAncestor;
     } else {
-      // Si l'entité n'a pas d'ancêtres, elle est déjà la plus haute
       return entity;
     }
   }
@@ -144,13 +150,7 @@ export const Canvas = () => {
   const handleKeyDown = async (event) => {
     const currentTime = new Date().getTime();
     if (currentTime - lastKeyPressTime > 200) {
-
-      // console.log(currentTime, "", lastKeyPressTime)
-
-
       const key = event.key.toLowerCase();
-
-
       if (key) {
         setLastKeyPressed(key);
       }
@@ -181,24 +181,28 @@ export const Canvas = () => {
         // Pick pos
         const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
 
+        if (!entity) {
+          return null; 
+        }
+
         const highestAncestor = await getHighestAncestor(entity);
         const nameOfEntity = await highestAncestor.getName();
 
-        console.log(nameOfEntity);
+        // console.log(nameOfEntity);
 
 
 
         if (nameOfEntity.match(/^NPC/)) {
 
           // Set current npc for dialog interface
-          await gameManagerInstance.gameData.NPCInstance.setCurrentNpc(nameOfEntity);
+          gameManagerInstance.gameData.NPCInstance.setCurrentNpc(nameOfEntity);
           // Get current npc to set use state var
-          const NPC = await gameManagerInstance.gameData.NPCInstance.getCurrentNpc()
+          const NPC = gameManagerInstance.gameData.NPCInstance.getCurrentNpc()
 
           // console.log(NPC)
-          const currentNPCdialog = await gameManagerInstance.gameData.NPCInstance.getCurrentNPCDialog()
+          const currentNPCdialog = gameManagerInstance.gameData.NPCInstance.getCurrentNPCDialog()
 
-          console.log(currentNPCdialog)
+          // console.log(currentNPCdialog)
           setCurrentNPCName(NPC.name);
           setCurrentNPCDialog(currentNPCdialog.sentences)
           setCurrentNPCAction(currentNPCdialog.action)
@@ -207,19 +211,43 @@ export const Canvas = () => {
 
           
         } else if (nameOfEntity.match(/^Object/)) {
-          
           // Set current npc for dialog interface
-          await gameManagerInstance.gameData.pickupInstance.setCurrentPickup(nameOfEntity);
+          gameManagerInstance.gameData.pickupInstance.setCurrentPickup(nameOfEntity);
           // Get current npc to set use state var
-          const Pickup = await gameManagerInstance.gameData.pickupInstance.getCurrentPickup()
+
+          if (!gameManagerInstance.gameData.pickupInstance.checkInteractLimit()) {
+
+            const Pickup = gameManagerInstance.gameData.pickupInstance.getCurrentPickup()
+            setCurrentPickupName(Pickup.name);
+            setCurrentPickupDescription(Pickup.description);
+            setCurrentPickupScore(Pickup.score)
+            setCurrentPickupText(Pickup.pickupText)
+            
+
+            if (nameOfEntity.match(/^Drapeau/)) {
+              if (gameManagerInstance.gameData.pickupInstance.checkFlags() == "Good Flag") {
+                gameManagerInstance.gameData.NPCInstance.setCurrentDialog("success")
+                gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(4)
+              }
+              else if (gameManagerInstance.gameData.pickupInstance.checkFlags() == "Bad Flag") {
+                gameManagerInstance.gameData.NPCInstance.setCurrentDialog("defeat")
+                gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(4)
+              }
+            }
+            
+            gameManagerInstance.gameData.pickupInstance.incrementInteract()
+          }
+          else {
+            setCurrentPickupName("already have interact");
+            setCurrentPickupDescription("it is no longer possible to interact with this object");
+            setCurrentPickupText("You already have interact");
+            setCurrentPickupScore(0)
+          }
+
+          window.lastPickupComponentState = 1
 
 
-          setCurrentPickupName(Pickup.name);
-          setCurrentPickupDescription(Pickup.description);
-          setCurrentPickupScore(Pickup.score)
 
-          
-          // setCurrentNPCAction(currentNPCdialog.action)
 
         } else {
           console.log("Le nom de l'entité ne commence ni par 'NPC' ni par 'Object'");
@@ -264,10 +292,12 @@ export const Canvas = () => {
     setCurrentNPCAction(null)
   };
   const resetCurrentPickup = () => {
+    window.lastPickupComponentState = 0
     resetLastKeyPressed()
     setIsPickupComponentOpen(false) // Don't display objective when pickup popup is active
     setCurrentPickupName("")
     setCurrentPickupDescription("")
+    setCurrentPickupText("")
     setCurrentPickupScore(0)
 
   };
@@ -446,7 +476,7 @@ export const Canvas = () => {
       window.removeEventListener('click', handleInitialClick);
       if (!is3DVerseLoad) {
         await initApp();
-        window.addEventListener('keydown', handleKeyDown); // Catch all key press
+        window.addEventListener('keypress', handleKeyDown); // Catch all key press
         window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
         // SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
         //   console.log("TRIGGER");
@@ -493,12 +523,13 @@ export const Canvas = () => {
             resetFPSCameraController={ResetFPSCameraController}
             setFPSCameraController={SetFPSCameraController}
           />
-          <PickupController
-            pickupInfo={[currentPickupName, currentPickupDescription, currentPickupScore]}
-            isVisible={currentPickupName !== "" && currentPickupDescription !== ""}
-            onOpen={() => setIsPickupComponentOpen(true)} 
-            onClose={resetCurrentPickup}
-          />
+          {currentPickupName !== "" && currentPickupDescription !== "" && window.lastPickupComponentState == 1 && (
+            <PickupController
+              pickupInfo={[currentPickupName, currentPickupDescription, currentPickupText, currentPickupScore]}
+              onOpen={() => setIsPickupComponentOpen(true)} 
+              onClose={resetCurrentPickup}
+            />
+          )}
           {currentSubtitleText !== "" && (
             <SubtitleComponent 
               text={currentSubtitleText} 
@@ -532,14 +563,6 @@ export const Canvas = () => {
   );
 };
 
-// const clickEvent = new MouseEvent('click', {
-//   bubbles: true,
-//   cancelable: true,
-//   view: window,
-// });
-// // Lancer l'événement de clic sur l'élément approprié
-// const element = document.getElementById('display-canvas');
-// element.dispatchEvent(clickEvent);
 
 
 

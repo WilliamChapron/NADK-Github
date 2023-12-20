@@ -4,16 +4,19 @@ class PickupManager {
     this.currentPickupIndex = 0;
   }
 
-  async addPickup(name, description, score, position, offsetX, offsetY, offsetZ, gamemode) {
+  async addPickup(name, description, pickupText, score, position, offsetX, offsetY, offsetZ, gamemode, interactLimit) {
     const newPickup = {
       name: name,
       description: description,
+      pickupText: pickupText,
       score: score,
       position: position,
       offsetX: offsetX,
       offsetY: offsetY,
       offsetZ: offsetZ,
       gamemode: gamemode,
+      interactLimit: interactLimit,
+      interactNumber: 0,
     };
     this.pickups.push(newPickup);
 
@@ -42,6 +45,17 @@ class PickupManager {
     }
   }
 
+  checkInteractLimit() {
+    if (this.pickups[this.currentPickupIndex].interactNumber >= this.pickups[this.currentPickupIndex].interactLimit) {
+      return true;
+    }
+    return false
+  }
+
+  incrementInteract() {
+    this.pickups[this.currentPickupIndex].interactNumber += 1
+  }
+
   async initPickup(name, position) {
     let template = new SDK3DVerse.EntityTemplate();
     template.attachComponent('scene_ref', { value: "13bb84dd-d6d2-48fc-add4-b5a6ff632cfc" }); 
@@ -49,18 +63,24 @@ class PickupManager {
     await template.instantiateTransientEntity(`Object_${name}`, null, false);
   }
 
-  async setCurrentPickup(name) {
+  setCurrentPickup(name) {
     const pickupIndex = this.pickups.findIndex(pickup => `Object_${pickup.name}` === name);
-    console.log("Pickups array:", this.pickups);
-    console.log("Searching for pickup:", `Object_${name}`);
-    console.log("Found pickup index:", pickupIndex);
+    // console.log("Pickups array:", this.pickups);
+    // console.log("Searching for pickup:", `Object_${name}`);
+    // console.log("Found pickup index:", pickupIndex);
 
     if (pickupIndex !== -1) {
       this.currentPickupIndex = pickupIndex;  
-      console.log(`Le Pickup actuel a été défini sur ${name}`);
+      // console.log(`Le Pickup actuel a été défini sur ${name}`);
     } else {
       console.error(`Aucun Pickup trouvé avec le nom ${name}`);
     }
+  }
+
+  setCurrentPickupInfo(updatedValues) {
+    const existingPickup = { ...this.pickups[this.currentPickupIndex] };
+    const updatedPickup = { ...existingPickup, ...updatedValues };
+    this.pickups[this.currentPickupIndex] = updatedPickup;
   }
 
   getCurrentPickup() {
@@ -69,6 +89,26 @@ class PickupManager {
 
   getPickups() {
     return this.pickups;
+  }
+
+  // Check success flags
+  checkFlags() {
+    const flagName = this.pickups[this.currentPickupIndex].name
+    if (flagName == "Drapeau de la chine") {
+      return "Good Flag";
+    }
+    else {
+      return "Bad Flag";
+    }
+  }
+
+  // check trophy get
+  checkTrophy() {
+    const currentName = this.pickups[this.currentPickupIndex].name
+    if (currentName.match(/^Trophée/)) {
+      this.setCurrentPickupInfo({name: "Trophée de la chine", description: "ce trophée t'appartient"})
+    }
+    return "No Flag"
   }
 }
 

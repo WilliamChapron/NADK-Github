@@ -37,9 +37,8 @@ class GameManager {
     this.gameData.objectiveInstance.addObjective("Allez parler a louis de chine pour valider le drapeau", [-1, 4.8, 6], true, "Level");
     this.gameData.objectiveInstance.addObjective("Aller discuter de nouveau avec Louis devant vous", [5, 3, 5], true, "Game");
 
-    await this.gameData.pickupInstance.addPickup("Trophée de découverte du pays 1", "Vous ne l'avez pas encore découvert, continuez votre aventure", 0, [5, 0, 5], 0.5, 1.5, 0.5, "Game");
+    await this.gameData.pickupInstance.addPickup("Trophée pays 1", "Vous ne l'avez pas encore découvert, continuez votre aventure","Trophée de découverte du pays 1", 0, [5, 0, 5], 0.5, 1.5, 0.5, "Game", 1000);
     // système de changement de text durant 
-
 
     await this.gameData.NPCInstance.addNPC("Louis mort", [
       {
@@ -70,9 +69,13 @@ class GameManager {
 
     // Level
 
-    await this.gameData.pickupInstance.addPickup("Item 1", "Description 1", 10, [7, 4.8, 39], 0.5, 1.5, 0.5, "Level"); 
-    await this.gameData.pickupInstance.addPickup("Item 2", "Description 1", 10, [7, 4.8, 40], 0.5, 1.5, 0.5, "Level"); 
-    await this.gameData.pickupInstance.addPickup("Item 3", "Description 1", 10, [7, 4.8, 41], 0.5, 1.5, 0.5, "Level"); 
+    await this.gameData.pickupInstance.addPickup("Item 1", "Description 1", "Vous venez de récuperer l'item1 !", 10, [7, 4.8, 39], 0.5, 1.5, 0.5, "Level", 1); 
+    await this.gameData.pickupInstance.addPickup("Item 2", "Description 1", "Vous venez de récuperer l'item2 !", 10, [7, 4.8, 40], 0.5, 1.5, 0.5, "Level", 1); 
+    await this.gameData.pickupInstance.addPickup("Item 3", "Description 1", "Vous venez de récuperer l'item3 !", 10, [7, 4.8, 41], 0.5, 1.5, 0.5, "Level", 1); 
+
+    await this.gameData.pickupInstance.addPickup("Drapeau de la chine", "Description 1", "Vous venez de récuperer le drapeau de la chine !", 10, [5, 4.8, 39], 0.5, 1.5, 0.5, "Level", 1); 
+    await this.gameData.pickupInstance.addPickup("Drapeau de la corée du sud", "Description 1", "Vous venez de récuperer le drapeau de la corée !", 10, [5, 4.8, 40], 0.5, 1.5, 0.5, "Level", 1); 
+    await this.gameData.pickupInstance.addPickup("Drapeau du japon", "Description 1", "Vous venez de récuperer le drapeau du japon !s", 10, [5, 4.8, 41], 0.5, 1.5, 0.5, "Level", 1); 
 
 
   

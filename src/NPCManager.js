@@ -36,7 +36,7 @@ class NPCManager {
     }
   
     const data = await response.json();
-    console.log(data)
+    // console.log(data)
   
     if (data.action === 'SPAWN_NPC') {
       await this.initNPC(name, position, orientation); 
@@ -54,7 +54,7 @@ class NPCManager {
     return this.npcs[this.currentNpcIndex];
   }
 
-  async setCurrentNpc(name) {
+  setCurrentNpc(name) {
     const npcIndex = this.npcs.findIndex(npc => `NPC_${npc.name}` === name);
     
     if (npcIndex !== -1) {
@@ -65,7 +65,7 @@ class NPCManager {
     }
   }
 
-  async getCurrentNPCDialog() {
+  getCurrentNPCDialog() {
     const currentDialogName = this.npcs[this.currentNpcIndex].currentDialog;
     
     // Find dialog item for current dialog name
@@ -76,7 +76,7 @@ class NPCManager {
     }
   }
 
-  async setCurrentDialog(name) {
+  setCurrentDialog(name) {
     this.npcs[this.currentNpcIndex].currentDialog = name
   }
 
