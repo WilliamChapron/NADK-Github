@@ -341,23 +341,27 @@ export const Canvas = () => {
     const mainCaméra = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
     const sceneGlobe = await SDK3DVerse.engineAPI.findEntitiesByEUID('1490c755-1566-4a94-a27e-cef78a566687')
     SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
+      //SDK3DVerse.disableInputs();
+      SDK3DVerse.engineAPI.detachClientFromScripts(cameraEntity);
       console.log('trigger')
-    //SDK3DVerse.engineAPI.detachClientFromScripts(cameraEntity);
-      //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
-      SDK3DVerse.setMainCamera(cinématique[0])
-      SDK3DVerse.engineAPI.playAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', { playbackSpeed : 0.2 }, sceneGlobe[0]);
       const transform =
       {
-        position : [8.591446,45.89827,0.688442],
+        position : [-1.536395,46.227108,-1.54766],
         orientation : [0,0,0,1],
         scale : [1,1,1]
       };
       cameraEntity.setGlobalTransform(transform);
+      
+      //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
+      SDK3DVerse.setMainCamera(cinématique[0])
+      SDK3DVerse.engineAPI.playAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', { playbackSpeed : 0.2 }, sceneGlobe[0]);
+      
       setTimeout(() => {
         SDK3DVerse.setMainCamera(mainCaméra[0])
-        SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4')
+        SDK3DVerse.engineAPI.assignClientToScripts(cameraEntity);
+        SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
         console.log("Retardée d'une seconde.");
-      }, 40000);
+      }, 37000);
       //SDK3DVerse.cameraControllerType.none;
       
       //console.log(cameraEntity);
@@ -371,7 +375,7 @@ export const Canvas = () => {
     StartCinematic()
     checkPlayerTransformChange()
     writeYourOwnCinematic()
-    cinematiqueGlobe()
+    
   }
 
 
@@ -432,7 +436,7 @@ export const Canvas = () => {
         await initApp();
         window.addEventListener('keydown', handleKeyDown); // Catch all key press
         window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
-        
+        cinematiqueGlobe()
       }
     }
   };
