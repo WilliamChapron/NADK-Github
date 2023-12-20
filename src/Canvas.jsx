@@ -336,12 +336,42 @@ export const Canvas = () => {
 
   }
 
+  const cinematiqueGlobe = async()=>{
+    const cinématique = await SDK3DVerse.engineAPI.findEntitiesByEUID('23070c0a-7587-4243-af89-962aa007af91')
+    const mainCaméra = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
+    const sceneGlobe = await SDK3DVerse.engineAPI.findEntitiesByEUID('1490c755-1566-4a94-a27e-cef78a566687')
+    SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
+      console.log('trigger')
+    //SDK3DVerse.engineAPI.detachClientFromScripts(cameraEntity);
+      //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
+      SDK3DVerse.setMainCamera(cinématique[0])
+      SDK3DVerse.engineAPI.playAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', { playbackSpeed : 0.2 }, sceneGlobe[0]);
+      const transform =
+      {
+        position : [8.591446,45.89827,0.688442],
+        orientation : [0,0,0,1],
+        scale : [1,1,1]
+      };
+      cameraEntity.setGlobalTransform(transform);
+      setTimeout(() => {
+        SDK3DVerse.setMainCamera(mainCaméra[0])
+        SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4')
+        console.log("Retardée d'une seconde.");
+      }, 40000);
+      //SDK3DVerse.cameraControllerType.none;
+      
+      //console.log(cameraEntity);
+    // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
+    });
+  }
+
 
   // Update at PostFrameRender
   const updateRender = async () => {
     StartCinematic()
     checkPlayerTransformChange()
     writeYourOwnCinematic()
+    cinematiqueGlobe()
   }
 
 
@@ -403,31 +433,6 @@ export const Canvas = () => {
         window.addEventListener('keydown', handleKeyDown); // Catch all key press
         window.addEventListener('click', handleClickForFPSController); // Single click to active FPS Controller
         
-        
-        const cinématique = await SDK3DVerse.engineAPI.findEntitiesByEUID('b5b98ad6-7343-4343-bce0-c2021ab1d82b')
-        const mainCaméra = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
-        SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
-          //SDK3DVerse.engineAPI.detachClientFromScripts(cameraEntity);
-            //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
-            SDK3DVerse.setMainCamera(cinématique[0])
-            SDK3DVerse.engineAPI.playAnimationSequence('fdfae4d7-6703-4ab6-9e38-a64bf36b6e01', { playbackSpeed : 0.2 });
-            const transform =
-            {
-                position : [8.591446,45.89827,0.688442],
-                orientation : [0,0,0,1],
-                scale : [1,1,1]
-            };
-            cameraEntity.setGlobalTransform(transform);
-          setTimeout(() => {
-            SDK3DVerse.setMainCamera(mainCaméra[0])
-            SDK3DVerse.engineAPI.stopAnimationSequence('fdfae4d7-6703-4ab6-9e38-a64bf36b6e01')
-            console.log("Retardée d'une seconde.");
-          }, 40000);
-          //SDK3DVerse.cameraControllerType.none;
-          
-          console.log('trigger');
-          // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
-        });
       }
     }
   };
