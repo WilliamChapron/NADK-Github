@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import DialogComponent from './DialogComponent';
 
-const DialogController = ({ isVisible, dialogMessages,  onClose, onAction, shouldHaveActionButton, resetFPSCameraController, setFPSCameraController }) => {
+const DialogController = ({ isVisible, dialogMessages,  onClose, onAction, currentActionName, shouldHaveActionButton, resetFPSCameraController, setFPSCameraController }) => {
   const [dialogOpen, setDialogOpen] = useState(isVisible);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
@@ -18,6 +18,10 @@ const DialogController = ({ isVisible, dialogMessages,  onClose, onAction, shoul
     };
 
     handleVisibilityChange();
+
+    return () => {
+      setCurrentMessageIndex(0); // Reset message index when component is unmounted
+    };
   }, [isVisible]);
 
   const openDialog = async () => {
@@ -56,6 +60,7 @@ const DialogController = ({ isVisible, dialogMessages,  onClose, onAction, shoul
           handlePreviousMessage={handlePreviousMessage}
           shouldHaveActionButton={shouldHaveActionButton}
           handleActionButton={onAction}
+          currentActionName={currentActionName}
         />
       )}
     </div>

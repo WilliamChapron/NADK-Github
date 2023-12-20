@@ -1,7 +1,7 @@
 // DialogComponent.js
 import React from 'react';
 
-const DialogComponent = ({ dialogOpen, onClose, messages, currentMessageIndex, handleNextMessage, handlePreviousMessage, shouldHaveActionButton, handleActionButton }) => {
+const DialogComponent = ({ dialogOpen, onClose, messages, currentMessageIndex, handleNextMessage, handlePreviousMessage, shouldHaveActionButton, handleActionButton, currentActionName }) => {
   const overlayStyle = {
     position: 'fixed',
     top: '50%',
@@ -88,7 +88,7 @@ const DialogComponent = ({ dialogOpen, onClose, messages, currentMessageIndex, h
             )}
             {shouldHaveActionButton && currentMessageIndex === messages.length - 1 && (
               <button onClick={handleActionButton} style={actionButtonStyle}>
-                Action
+                {currentActionName}
               </button>
             )}
           </div>

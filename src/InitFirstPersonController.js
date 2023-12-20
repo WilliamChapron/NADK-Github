@@ -1,4 +1,4 @@
-async function InitFirstPersonController(charCtlSceneUUID) {
+async function InitFirstPersonController(charCtlSceneUUID, startPosition, startOrientation) {
     // To spawn an entity we need to create an EntityTempllate and specify the
     // components we want to attach to it. In this case we only want a scene_ref
     // that points to the character controller scene.
@@ -28,8 +28,7 @@ async function InitFirstPersonController(charCtlSceneUUID) {
       deleteOnClientDisconnection
     );
 
-    // Quentin help to know transform of camera
-    // playerSceneEntity.setComponent('local_transform', { position: [-3, 0, 0] })
+
   
     // The character controller scene is setup as having a single entity at its
     // root which is the first person controller itself.
@@ -47,6 +46,14 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   
     // Finally set the first person camera as the main camera.
     SDK3DVerse.setMainCamera(firstPersonCamera);
+
+    const entities = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
+    const player = entities && entities[0];
+    console.log(player.getGlobalTransform().position)
+    player.setGlobalTransform({position: startPosition});
+
+    // Quentin help to know transform of camera
+    // playerSceneEntity.setComponent('local_transform', { position: startPosition})
 }
 
 export { InitFirstPersonController  };

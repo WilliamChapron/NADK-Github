@@ -90,7 +90,7 @@ export const Canvas = () => {
     // const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
     // const position = viewports[0].getTransform().position
     // console.log(position)
-    // await gameManagerInstance.gameUpdate(is3DVerseLoad);
+    await gameManagerInstance.gameUpdate(is3DVerseLoad);
     // Only logic correspond to interface // all logic, condition variable specific to game logic is contain in Game Manager / Or in some specific fonctionnalities controller
     setCurrentScore(gameManagerInstance.gameData.score)
     setCurrentObjectiveDescription(gameManagerInstance.gameData.objectiveInstance.objectives[gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex].description)
@@ -233,7 +233,7 @@ export const Canvas = () => {
 
   // Call functions for interface
   const handleDialogAction = async () => {
-    console.log(currentNPCAction)
+    // console.log(currentNPCAction)
     if (currentNPCAction) {
       const actionFunction = scenarioScriptFunctions.find(func => func.name === currentNPCAction);
       
@@ -402,7 +402,6 @@ export const Canvas = () => {
         await gameManagerInstance.initGame();
         setIsGameLoad(true)
         setCurrentSubtitleText(gameManagerInstance.getCurrentSubtitle())
-        StartCinematic()
         SDK3DVerse.notifier.on('onFramePostRender', updateRender);
       }
     };
@@ -420,7 +419,7 @@ export const Canvas = () => {
         createDefaultCamera: false,
         startSimulation: "on-assets-loaded",
       });
-      await InitFirstPersonController(characterControllerSceneUUID);
+      await InitFirstPersonController(characterControllerSceneUUID, [-3,0,0], [0,0,0,1]);
       const joysticksElement = document.getElementById('joysticks');
       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
       setIs3DVerseLoad(true);
@@ -489,6 +488,7 @@ export const Canvas = () => {
             dialogMessages={currentNPCDialog}
             onClose={resetCurrentNPC}
             onAction={handleDialogAction}
+            currentActionName={currentNPCAction}
             shouldHaveActionButton={currentNPCAction !== null}
             resetFPSCameraController={ResetFPSCameraController}
             setFPSCameraController={SetFPSCameraController}

@@ -2,6 +2,9 @@
 
 import * as glMatrix from 'gl-matrix';
 
+import { InitFirstPersonController } from './InitFirstPersonController';
+import { SetFPSCameraController, ResetFPSCameraController } from './SetFPSCameraController';
+
 async function MoveCamera() {
 
   // Set position de la caméra
@@ -27,12 +30,12 @@ async function InitCamera() {
 }
 
 
+async function GetPositions(fileName) {
+  console.log("get positions");
+  const apiUrl = `http://localhost:4444/api/data/${fileName}`;
 
-async function GetPositions() {
-  console.log("get positions")
-  const apiUrl = 'http://localhost:4444/api/data';
-
-  try {
+  try 
+  {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
@@ -41,27 +44,28 @@ async function GetPositions() {
 
     const data = await response.json();
     return data;
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error('Erreur lors de la récupération des positions :', error);
     throw error;
   }
 }
 
-
 function WritePositionToFile(positions) {
   const apiUrl = 'http://localhost:4444/api/data';
 
-  console.log("write")
+  console.log("write");
 
+  const fileName = "npc"
 
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(positions),
+    body: JSON.stringify({ fileName, data: positions }),
   };
-
 
   fetch(apiUrl, options)
     .then(response => {
@@ -76,107 +80,12 @@ function WritePositionToFile(positions) {
 }
 
 
-// const positionsArray = await GetPositions();
-// let currentIndex = 0;
-// let Viewports = null;
-// let NPCEntity = null;
-// let player = null;
 
 
-
-// async function MovePlayer() {
-
-//   if (currentIndex == 0) {
-//     Viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()
-//     let entities = await SDK3DVerse.engineAPI.findEntitiesByNames("NPC_Louis mort");
-//     NPCEntity = entities && entities[0];
-//     console.log(`npc`, NPCEntity);
-//     if(!NPCEntity) {
-//       console.warn("NPC not found");
-//       requestAnimationFrame(MovePlayer);
-//       return;
-//     }
-
-//     const clientUUID = SDK3DVerse.getClientUUID() 
-//     const playerName = `Player_${clientUUID}`;
-//     entities = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
-//     player = entities && entities[0];
-//     console.log(`player`, player);    
-//     if(!player) {
-//       console.warn("player not found");
-//       requestAnimationFrame(MovePlayer);
-//       return;
-//     }
-
-//     const children = await player.getChildren();
-//     const charCtl = children && children[0];
-//     console.log(`player children`, children);
-//     if(!charCtl || !charCtl.isAttached('script_map')) {
-//       console.warn("Character controller not found or script not attached");
-//       requestAnimationFrame(MovePlayer);
-//       return;
-//     }
-
-//     console.log("detach script map from character controller entity");
-//     charCtl.detachComponent("script_map")
-//   }
-
-  
-
-//   console.log(currentIndex, "currentIndex");
-//   console.log(positionsArray.length, "pos array length");
-//   if (currentIndex >= positionsArray.length) {
-//     console.log("Move player animation done!");
-//     return;
-//   }
-
-//   const transform = SDK3DVerse.utils.clone(positionsArray[currentIndex]);
-//   transform.scale = [1, 1, 1]
-
-//   // // # TODO CAN'T GET ROTATION / Orientation of player
-  
-
-//   // 3 point (orientation)
-//   // await player.lookAt(positionsArray[currentIndex].orientation)
-//   // viewports[0].lookAt(positionsArray[currentIndex].orientation)
-
-//   //await viewports[0].setComponent("local_transform", transform);
-//   requestAnimationFrame(() => Viewports[0].setGlobalTransform(transform, true, true));
-
-
-//   const transformNPC = SDK3DVerse.utils.clone(positionsArray[currentIndex]);
-//   transformNPC.scale = [1, 1, 1];
-//   const rotateQuaternion = glMatrix.quat.create();
-//   glMatrix.quat.rotateY(rotateQuaternion, transformNPC.orientation, Math.PI);
-//   transformNPC.orientation = Array.from(rotateQuaternion)
-
-//   console.log([...Viewports[0].getTransform().position])
-
-//   NPCEntity.setGlobalTransform(transformNPC);
-//   const eulerOrientation = [0, NPCEntity.getComponent('local_transform').eulerOrientation[1], 0];
-//   NPCEntity.setGlobalTransform({ eulerOrientation });
-
-//   console.log(...Viewports[0].getTransform().position)
-
-//   currentIndex++;
-//   requestAnimationFrame(MovePlayer);
-// }
-
-
-
-// async function StartCinematic() {
-//   // SDK3DVerse.disableInputs();
-
-//   //await new Promise(resolve => setTimeout(resolve, 3000));
-//   console.log("************** start cinematic");
-//   await MovePlayer();
-  
-//   // await InitCamera();
-//   // await MoveCamera();
-// }
-
-
-let positionsArray = await GetPositions();;
+let positionsNPCArray = await GetPositions("npc");
+let positionsPlayerArray = await GetPositions("player");
+// let positionsNPCArray = 0;
+// let positionsPlayerArray = 0;
 let currentIndexNPC = 0;
 let currentIndexPlayer = 0;
 let hasSetupEntities = false;
@@ -207,6 +116,7 @@ async function setupEntities() {
     console.warn("Player not found");
     return false;
   }
+
 
   const children = await player.getChildren();
   const charCtl = children && children[0];
@@ -241,7 +151,7 @@ async function animatePlayer() {
     return;
   }
 
-  const transform = SDK3DVerse.utils.clone(positionsArray[currentIndexPlayer]);
+  const transform = SDK3DVerse.utils.clone(positionsPlayerArray[currentIndexPlayer]);
   transform.position = [transform.position[0], transform.position[1] - playerYSize + 0.13, transform.position[2]];
   transform.scale = [1, 1, 1];
 
@@ -262,15 +172,16 @@ async function animatePlayer() {
 
   currentIndexPlayer++;
 
-  if (currentIndexPlayer < positionsArray.length) {
+  if (currentIndexPlayer < positionsPlayerArray.length) {
     requestAnimationFrame(animatePlayer);
   } else {
     console.log("Player animation done!");
 
-    // Re attach script map 
-    // const meshUUID = 'b9936cb6-0e73-4398-a06f-0355d8a96fca';
-    // const meshRefComponent = { value : meshUUID, submeshIndex : 0 };
-    // entity.attachComponent('mesh_ref', meshRefComponent);
+    await InitFirstPersonController("0b262353-3440-4f49-93f1-bf815d1bdfba", transform.position, [0, -0.7071, 0, 0.7071]);
+    await SDK3DVerse.engineAPI.deleteEntities([player]);
+
+
+
   }
 }
 
@@ -281,10 +192,10 @@ async function animateNPC() {
     return;
   }
 
-  const transformNPC = SDK3DVerse.utils.clone(positionsArray[currentIndexNPC]);
+  const transformNPC = SDK3DVerse.utils.clone(positionsNPCArray[currentIndexNPC]);
   transformNPC.scale = [1, 1, 1];
   // Remove offset because this is the position of the camera 
-  transformNPC.position = [transformNPC.position[0], transformNPC.position[1] - npcYSize, transformNPC.position[2]];
+  transformNPC.position = [transformNPC.position[0], transformNPC.position[1] - npcYSize + 0.13, transformNPC.position[2]];
   const rotateQuaternion = glMatrix.quat.create();
   glMatrix.quat.rotateY(rotateQuaternion, transformNPC.orientation, Math.PI);
   transformNPC.orientation = Array.from(rotateQuaternion);
@@ -300,10 +211,12 @@ async function animateNPC() {
 
   currentIndexNPC++;
 
-  if (currentIndexNPC < positionsArray.length) {
+  if (currentIndexNPC < positionsNPCArray.length) {
     requestAnimationFrame(animateNPC);
   } else {
     console.log("NPC animation done!");
+    NPCEntity.setComponent('scene_ref', { value: "3fb0fce3-eefb-4bdf-8545-2f10bddce478" });
+
   }
 }
 
@@ -319,9 +232,7 @@ async function StartCinematic() {
       NPCEntity.setComponent('scene_ref', { value: "e83b0e8a-2363-406f-9935-c38084f7e647" });
       await new Promise(resolve => setTimeout(resolve, 1000));
       animateNPC()
-
-      
-      setTimeout(() => animatePlayer(), 4000)
+      setTimeout(() => animatePlayer(), 0)
       
     }
   }

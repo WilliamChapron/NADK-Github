@@ -4,53 +4,53 @@ class NPCManager {
     this.currentNpcIndex = 0;
   }
 
-  async addNPC(name, dialogs, position, offsetX, offsetY, offsetZ, gamemode) {
+  async addNPC(name, dialogs, position, orientation, offsetX, offsetY, offsetZ, gamemode) {
     const newNPC = {
       name: name,
       dialogs: dialogs,
       currentDialog: "default",
       position: position,
+      orientation: orientation,
       offsetX: offsetX,
       offsetY: offsetY,
       offsetZ: offsetZ,
       gamemode: gamemode,
     };
     this.npcs.push(newNPC);
-    await this.checkAndSpawnNPC(name, position);
+    await this.checkAndSpawnNPC(name, position, orientation);
   }
 
-  async checkAndSpawnNPC(name, position) {
+  async checkAndSpawnNPC(name, position, orientation) {
 
-    // // En ligne, nous voulons vérifier que le NPC n'est pas déjà apparu car la logique est sur toutes les instances clients
-    // const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ npcName: name }),
-    // });
+    // En ligne, nous voulons vérifier que le NPC n'est pas déjà apparu car la logique est sur toutes les instances clients
+    const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ npcName: name }),
+    });
   
-    // if (!response.ok) {
-    //   throw new Error('Erreur lors de la vérification et du spawn du NPC');
-    // }
+    if (!response.ok) {
+      throw new Error('Erreur lors de la vérification et du spawn du NPC');
+    }
   
-    // const data = await response.json();
-    // console.log(data)
+    const data = await response.json();
+    console.log(data)
   
-    // if (data.action === 'SPAWN_NPC') {
-    //   await this.initNPC(name, position); 
-    // }
-    await this.initNPC(name, position); 
+    if (data.action === 'SPAWN_NPC') {
+      await this.initNPC(name, position, orientation); 
+    }
   }
 
-  async initNPC(name, position) {
+  async initNPC(name, position, orientation) {
     let template = new SDK3DVerse.EntityTemplate();
     template.attachComponent('scene_ref', { value: "3fb0fce3-eefb-4bdf-8545-2f10bddce478" });
-    template.attachComponent('local_transform', { position: position });
+    template.attachComponent('local_transform', { position: position, orientation: orientation });
     await template.instantiateTransientEntity(`NPC_${name}`, null, false);
   }
 
-  async getCurrentNpc() {
+  getCurrentNpc() {
     return this.npcs[this.currentNpcIndex];
   }
 
