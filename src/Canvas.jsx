@@ -94,7 +94,7 @@ export const Canvas = () => {
   
   // UPDATE
   const update = async () => {
-    console.log(window.lastPickupComponentState)
+    // console.log(window.lastPickupComponentState)
     // const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
     // const position = viewports[0].getTransform().position
     // console.log(position)
@@ -223,16 +223,17 @@ export const Canvas = () => {
             setCurrentPickupScore(Pickup.score)
             setCurrentPickupText(Pickup.pickupText)
             
-
-            if (nameOfEntity.match(/^Drapeau/)) {
-              if (gameManagerInstance.gameData.pickupInstance.checkFlags() == "Good Flag") {
+            console.log("IT's DRAPEAU DDD", nameOfEntity)
+            if (nameOfEntity.includes("Drapeau")) {
+              console.log("IT's DRAPEAU")
+              const flagState = gameManagerInstance.gameData.pickupInstance.checkFlags()
+              if (flagState == "Good Flag") {
                 gameManagerInstance.gameData.NPCInstance.setCurrentDialog("success")
-                gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(4)
               }
-              else if (gameManagerInstance.gameData.pickupInstance.checkFlags() == "Bad Flag") {
+              else if (flagState == "Bad Flag") {
                 gameManagerInstance.gameData.NPCInstance.setCurrentDialog("defeat")
-                gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(4)
               }
+              gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(4)
             }
             
             gameManagerInstance.gameData.pickupInstance.incrementInteract()
@@ -442,13 +443,20 @@ export const Canvas = () => {
   // Init Session and Player Controller And mobile extension
   const initApp = async () => {
     if (status === 'ready') {
-      await SDK3DVerse.joinOrStartSession({
-        userToken: publicToken,
-        sceneUUID: mainSceneUUID,
-        canvas: document.getElementById("display-canvas"),
-        createDefaultCamera: false,
-        startSimulation: "on-assets-loaded",
-      });
+      try {
+        await SDK3DVerse.joinOrStartSession({
+          userToken: publicToken,
+          sceneUUID: mainSceneUUID,
+          canvas: document.getElementById("display-canvas"),
+          createDefaultCamera: false,
+          startSimulation: "on-assets-loaded",
+        });
+      }
+      catch {
+        console.log("hello")
+      }
+      
+
       await InitFirstPersonController(characterControllerSceneUUID, [-3,0,0], [0,0,0,1]);
       const joysticksElement = document.getElementById('joysticks');
       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);

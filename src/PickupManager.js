@@ -71,7 +71,6 @@ class PickupManager {
 
     if (pickupIndex !== -1) {
       this.currentPickupIndex = pickupIndex;  
-      // console.log(`Le Pickup actuel a été défini sur ${name}`);
     } else {
       console.error(`Aucun Pickup trouvé avec le nom ${name}`);
     }
@@ -105,7 +104,7 @@ class PickupManager {
   // check trophy get
   checkTrophy() {
     const currentName = this.pickups[this.currentPickupIndex].name
-    if (currentName.match(/^Trophée/)) {
+    if (currentName.includes("Trophée")) {
       this.setCurrentPickupInfo({name: "Trophée de la chine", description: "ce trophée t'appartient"})
     }
     return "No Flag"

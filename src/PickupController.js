@@ -9,7 +9,6 @@ const PickupController = ({ pickupInfo, onOpen, onClose }) => {
     onOpen();
 
     const timeoutPromise = new Promise(resolve => { setTimeout(() => {
-        console.log('PickupController - useEffect: Timeout completed, closing...');
         onClose();
       }, 2000);
     });
@@ -17,7 +16,6 @@ const PickupController = ({ pickupInfo, onOpen, onClose }) => {
     
   }, [onClose, onOpen, pickupInfo]);
 
-  console.log('PickupController: Render');
 
   return <PickupComponent pickupInfo={pickupInfo} />;
 };
