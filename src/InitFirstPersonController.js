@@ -27,6 +27,7 @@ async function InitFirstPersonController(charCtlSceneUUID) {
       parentEntity,
       deleteOnClientDisconnection
     );
+    
 
     // Quentin help to know transform of camera
     // playerSceneEntity.setComponent('local_transform', { position: [-3, 0, 0] })
@@ -46,6 +47,13 @@ async function InitFirstPersonController(charCtlSceneUUID) {
     SDK3DVerse.engineAPI.assignClientToScripts(firstPersonController);
   
     // Finally set the first person camera as the main camera.
+    const transform =
+      {
+        position : [30,0,20],
+        orientation : [ 0, 0.8509035, 0, 0.525322 ],
+        scale : [1,1,1]
+      };
+      firstPersonController.setGlobalTransform(transform);
     SDK3DVerse.setMainCamera(firstPersonCamera);
 }
 

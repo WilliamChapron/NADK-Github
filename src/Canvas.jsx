@@ -337,29 +337,31 @@ export const Canvas = () => {
   }
 
   const cinematiqueGlobe = async()=>{
-    const cinématique = await SDK3DVerse.engineAPI.findEntitiesByEUID('23070c0a-7587-4243-af89-962aa007af91')
-    const mainCaméra = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
+    
+    const cinematique = await SDK3DVerse.engineAPI.findEntitiesByEUID('23070c0a-7587-4243-af89-962aa007af91')
+    const mainCamera = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
     const sceneGlobe = await SDK3DVerse.engineAPI.findEntitiesByEUID('1490c755-1566-4a94-a27e-cef78a566687')
+    SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
     SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
       //SDK3DVerse.disableInputs();
       SDK3DVerse.engineAPI.detachClientFromScripts(cameraEntity);
       console.log('trigger')
       const transform =
       {
-        position : [-1.536395,46.227108,-1.54766],
+        position : [0,47,-0.03593],
         orientation : [0,0,0,1],
         scale : [1,1,1]
       };
-      cameraEntity.setGlobalTransform(transform);
       
       //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
-      SDK3DVerse.setMainCamera(cinématique[0])
+      SDK3DVerse.setMainCamera(cinematique[0])
       SDK3DVerse.engineAPI.playAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', { playbackSpeed : 0.2 }, sceneGlobe[0]);
       
       setTimeout(() => {
-        SDK3DVerse.setMainCamera(mainCaméra[0])
+        SDK3DVerse.setMainCamera(mainCamera[0])
         SDK3DVerse.engineAPI.assignClientToScripts(cameraEntity);
         SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
+        cameraEntity.setGlobalTransform(transform);
         console.log("Retardée d'une seconde.");
       }, 37000);
       //SDK3DVerse.cameraControllerType.none;
