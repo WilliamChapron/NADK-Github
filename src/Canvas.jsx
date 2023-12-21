@@ -41,6 +41,7 @@ import {
 window.lastPickupComponentState = 0
 window.drawObjectives = true
 window.drawLabels = true
+window.drawSubtitle = false
 
 
 // Canva / Main
@@ -544,7 +545,7 @@ export const Canvas = () => {
             <SubtitleComponent 
               text={currentSubtitleText} 
               onClose={resetCurrentSubtitle}
-              duration={2000} 
+              duration={10000} 
             />
           )}
           {!isPickupComponentOpen && window.drawLabels && (

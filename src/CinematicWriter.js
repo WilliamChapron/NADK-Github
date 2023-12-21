@@ -58,7 +58,7 @@ function WritePositionToFile(positions) {
 
   console.log("write");
 
-  const fileName = "npc"
+  const fileName = "player"
 
   const options = {
     method: 'POST',
@@ -294,23 +294,24 @@ async function GlobeCinematic() {
 
 async function StartCinematic() {
   console.log("************** Start cinematic");
-  GlobeCinematic()
+
 
 
   if (!hasSetupEntities) {
     const entitiesInitialized = await setupEntities();
+    window.drawSubtitle = true
     hasSetupEntities = entitiesInitialized; 
-
     if (entitiesInitialized) {
-      // NPCEntity.setComponent('scene_ref', { value: "e83b0e8a-2363-406f-9935-c38084f7e647" });
-      // await new Promise(resolve => setTimeout(resolve, 1000));
-      // animateNPC()
-      // setTimeout(() => animatePlayer(), 0)
+      
+      NPCEntity.setComponent('scene_ref', { value: "e83b0e8a-2363-406f-9935-c38084f7e647" });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await animateNPC()
+      setTimeout(() => animatePlayer(), 0)
       
       
 
       // if(isAnimatePlayerEnd && isAnimateNPCEnd) {
-
+      //   GlobeCinematic()
       // }
 
       

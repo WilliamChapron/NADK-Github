@@ -18,7 +18,7 @@ class GameManager {
       pickupInstance: new PickupManager(),
       NPCInstance: new NPCManager(),
       subtitleCurrentIndex: 0,
-      subtitleList: ["Le globe a ete cree en 1900","Les regles du jeu sont","Suis moi !"],
+      subtitleList: ["J'ai imaginé ce globe à la fin du XIXe siècle pour répondre aux attentes de mon ami Elisee Reclus qui voulait faire entrer la géographie dans la cité. C'est pour cela que j'ai inventé une architecture qui puisse mettre en valeur ce merveilleux globe","Les regles du jeu sont simples mais je n'en suis pas le maître, l'incroyable force que possède le Globe à pris possession des lieux, allons donc intéragir avec lui pour voir ce qu'il attends de vous","Suis-moi !"],
       canWriteCinematic: false,
     };
   }
@@ -62,7 +62,7 @@ class GameManager {
         sentences: ["Pour t'aider à comprendre ta mission, laisse-moi te révéler une partie de l'histoire de ce bâtiment \"magique\",", "A l'origine, c'était l'idée d'un vieil ami à moi qui voulait permettre à tous les habitants de Paris de voyager, au moins dans leur esprit, en les laissant profiter d'un globe d'une envergure titanesque mais aussi truffé de fins détails", "Mais depuis mon premier essai à réaliser ce projet, il y a plus d'un siècle, le globe a réussi à canaliser une énergie inconnue qui lui permet de faire voyager réellement les quelques chanceux qui réussissent à venir jusqu'ici"],
         action: null,
       },
-    ], [0, 0, 5], [0, 1, 0, 0], 0, 1.8, 0.3, "Game", "b0d0aad6-cba6-4d0f-90fe-3133544c66c8");
+    ], [-21.999155044555664,0,4.39353609085083], [0, -0.7071, 0, 0.7071], 0, 1.8, 0.3, "Game", "b0d0aad6-cba6-4d0f-90fe-3133544c66c8");
 
     this.gameData.NPCInstance.setCurrentDialog("start")
 
