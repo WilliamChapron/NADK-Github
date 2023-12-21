@@ -11,7 +11,8 @@ const scenarioScriptFunctions = [
     { 
       name: 'startCinematic',
       func: async () => {
-        // StartCinematic()
+        StartCinematic()
+        // 
         gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(1)
         gameManagerInstance.gameData.NPCInstance.setCurrentDialog("explanation")
       }

@@ -4,6 +4,7 @@ import * as glMatrix from 'gl-matrix';
 
 import { InitFirstPersonController } from './InitFirstPersonController';
 import { SetFPSCameraController, ResetFPSCameraController } from './SetFPSCameraController';
+import gameInstance from "./GameManager"
 
 async function MoveCamera() {
 
@@ -96,6 +97,9 @@ let player = null;
 let playerYSize = 0;
 let npcYSize = 0;
 
+let isAnimateNPCEnd = false;
+let isAnimatePlayerEnd = false;
+
 
 async function setupEntities() {
   Viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
@@ -177,8 +181,10 @@ async function animatePlayer() {
   } else {
     console.log("Player animation done!");
 
-    await InitFirstPersonController("0b262353-3440-4f49-93f1-bf815d1bdfba", transform.position, [0, -0.7071, 0, 0.7071]);
+    await InitFirstPersonController("ff0b5223-75dc-48ad-ae0d-d710012c3a80", transform.position, [0, -0.7071, 0, 0.7071]);
     await SDK3DVerse.engineAPI.deleteEntities([player]);
+
+    isAnimatePlayerEnd = true
 
 
 
@@ -209,6 +215,8 @@ async function animateNPC() {
   const eulerOrientation = [0, NPCEntity.getComponent('local_transform').eulerOrientation[1], 0];
   NPCEntity.setGlobalTransform({ eulerOrientation });
 
+  gameInstance.gameData.NPCInstance.npcs[0].position = transformNPC.position
+
   currentIndexNPC++;
 
   if (currentIndexNPC < positionsNPCArray.length) {
@@ -216,12 +224,77 @@ async function animateNPC() {
   } else {
     console.log("NPC animation done!");
     NPCEntity.setComponent('scene_ref', { value: "3fb0fce3-eefb-4bdf-8545-2f10bddce478" });
-
+    isAnimateNPCEnd = true;
   }
 }
 
+
+async function GlobeCinematic() {
+  console.log("Start globe")
+  const cinematique = await SDK3DVerse.engineAPI.findEntitiesByEUID('23070c0a-7587-4243-af89-962aa007af91')
+  const mainCamera = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
+  const sceneGlobe = await SDK3DVerse.engineAPI.findEntitiesByEUID('1490c755-1566-4a94-a27e-cef78a566687')
+  const clientUUID = SDK3DVerse.getClientUUID();
+  const playerName = `Player_${clientUUID}`;
+  const entities = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
+  const player = entities && entities[0];
+  // SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
+  //SDK3DVerse.disableInputs();
+  // SDK3DVerse.engineAPI.detachClientFromScripts(player);
+  console.log('trigger')
+  const transform =
+  {
+    position : [0,47,-0.03593],
+    orientation : [0,0,0,1],
+    scale : [1,1,1]
+  };
+
+
+  await SDK3DVerse.engineAPI.deleteEntities([player]);
+
+
+  //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
+  SDK3DVerse.setMainCamera(cinematique[0])
+  SDK3DVerse.engineAPI.playAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', { playbackSpeed : 0.2 }, sceneGlobe[0]);
+
+  // Don't display few things when cinematic is on 
+
+  window.drawObjectives = false;
+  window.drawLabels = false;
+
+  setTimeout( async () => {
+    // SDK3DVerse.setMainCamera(mainCamera[0])
+    // SDK3DVerse.engineAPI.assignClientToScripts(player);
+
+    // store old camera position
+    SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
+    const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0]
+    const viewportPosition = viewport.getTransform()
+    // and set player position 
+    await InitFirstPersonController("ff0b5223-75dc-48ad-ae0d-d710012c3a80", transform.position, viewportPosition);
+    // player.setGlobalTransform(transform);
+    // console.log("Retardée d'une seconde."); 
+    window.drawObjectives = true;
+    window.drawLabels = true;
+  }, 37000);
+  //SDK3DVerse.cameraControllerType.none;
+  
+  // SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
+    
+
+  //   //console.log(cameraEntity);
+  // // console.log(player.components.debug_name.value, " entered trigger of ", block.components.debug_name.value);
+  // });
+}
+
+
+
+
+
+
 async function StartCinematic() {
   console.log("************** Start cinematic");
+  GlobeCinematic()
 
 
   if (!hasSetupEntities) {
@@ -229,10 +302,17 @@ async function StartCinematic() {
     hasSetupEntities = entitiesInitialized; 
 
     if (entitiesInitialized) {
-      NPCEntity.setComponent('scene_ref', { value: "e83b0e8a-2363-406f-9935-c38084f7e647" });
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      animateNPC()
-      setTimeout(() => animatePlayer(), 0)
+      // NPCEntity.setComponent('scene_ref', { value: "e83b0e8a-2363-406f-9935-c38084f7e647" });
+      // await new Promise(resolve => setTimeout(resolve, 1000));
+      // animateNPC()
+      // setTimeout(() => animatePlayer(), 0)
+      
+      
+
+      // if(isAnimatePlayerEnd && isAnimateNPCEnd) {
+
+      // }
+
       
     }
   }

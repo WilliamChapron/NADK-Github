@@ -4,7 +4,7 @@ class PickupManager {
     this.currentPickupIndex = 0;
   }
 
-  async addPickup(name, description, pickupText, score, position, offsetX, offsetY, offsetZ, gamemode, interactLimit) {
+  async addPickup(name, description, pickupText, score, position, offsetX, offsetY, offsetZ, gamemode, interactLimit, assetUUID) {
     const newPickup = {
       name: name,
       description: description,
@@ -21,10 +21,10 @@ class PickupManager {
     this.pickups.push(newPickup);
 
     // Ajoutez la vérification et le spawn du côté du serveur
-    await this.checkAndSpawnPickup(name, position);
+    await this.checkAndSpawnPickup(name, position, assetUUID);
   }
 
-  async checkAndSpawnPickup(name, position) {
+  async checkAndSpawnPickup(name, position, assetUUID) {
     // En ligne, vérifiez si le Pickup n'est pas déjà apparu
     const response = await fetch(`http://localhost:4444/api/check-and-spawn-pickup`, {
       method: 'POST',
@@ -41,7 +41,7 @@ class PickupManager {
     const data = await response.json();
 
     if (data.action === 'SPAWN_PICKUP') {
-      await this.initPickup(name, position);
+      await this.initPickup(name, position, assetUUID);
     }
   }
 
@@ -56,9 +56,10 @@ class PickupManager {
     this.pickups[this.currentPickupIndex].interactNumber += 1
   }
 
-  async initPickup(name, position) {
+  async initPickup(name, position, assetUUID) {
+    console.log(assetUUID)
     let template = new SDK3DVerse.EntityTemplate();
-    template.attachComponent('scene_ref', { value: "13bb84dd-d6d2-48fc-add4-b5a6ff632cfc" }); 
+    template.attachComponent('scene_ref', { value: assetUUID }); 
     template.attachComponent('local_transform', { position: position });
     await template.instantiateTransientEntity(`Object_${name}`, null, false);
   }

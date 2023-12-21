@@ -10,7 +10,7 @@ const PickupController = ({ pickupInfo, onOpen, onClose }) => {
 
     const timeoutPromise = new Promise(resolve => { setTimeout(() => {
         onClose();
-      }, 2000);
+      }, 6000);
     });
     
     

@@ -30,38 +30,39 @@ class GameManager {
 
 
     // State d'objectifs
-    this.gameData.objectiveInstance.addObjective("Aller discuter avec Louis en bas du globe", [5, 3, 5], true, "Game");
-    this.gameData.objectiveInstance.addObjective("Aller discuter avec Louis en haut de l'architecture", [5, 3, 5], true, "Game");
-    this.gameData.objectiveInstance.addObjective("Allez parler a louis de chine pour qu'il vous dise ou vous êtes", [-1, 4.8, 6], true, "Level");
+    this.gameData.objectiveInstance.addObjective("Rencontrer le guide du batiment", [5, 3, 5], true, "Game");
+    this.gameData.objectiveInstance.addObjective("Discuter avec Louis en haut de l'architecture", [5, 3, 5], true, "Game");
+    this.gameData.objectiveInstance.addObjective("Questionner le guide pour qu'il vous informe de vos missions", [-1, 4.8, 6], true, "Level");
     this.gameData.objectiveInstance.addObjective("Choisir le bon drapeau", [5, 3, 5], true, "Level");
-    this.gameData.objectiveInstance.addObjective("Allez parler a louis de chine pour valider le drapeau", [-1, 4.8, 6], true, "Level");
-    this.gameData.objectiveInstance.addObjective("Aller discuter de nouveau avec Louis devant vous", [5, 3, 5], true, "Game");
+    this.gameData.objectiveInstance.addObjective("Parler a louis pour valider le drapeau", [-1, 4.8, 6], true, "Level");
+    this.gameData.objectiveInstance.addObjective("Reparler à Louis devant vous pour la suite de vos missions", [5, 3, 5], true, "Game");
 
-    await this.gameData.pickupInstance.addPickup("Trophée pays 1", "Vous ne l'avez pas encore découvert, continuez votre aventure","Trophée de découverte du pays 1", 0, [5, 0, 5], 0.5, 1.5, 0.5, "Game", 1000);
+
+    await this.gameData.pickupInstance.addPickup("Trophée pays 1", "Vous ne l'avez pas encore découvert, continuez votre aventure","Trophée de découverte du pays 1", 0, [5, 0, 5], 0.5, 1.5, 0.5, "Game", 1000,"3bc2f8af-3e7a-4001-9dc1-2d163742f3dc");
     // système de changement de text durant 
 
     await this.gameData.NPCInstance.addNPC("Louis mort", [
       {
         dialogName: "default",
-        sentences: ["Bonjour, je n'ai rien a raconter pour le moment", "Au revoie et à bientôt"],
-        action: null
+        sentences: ["Bonjour, je n'ai rien à raconter pour le moment", "Au revoir et à bientôt"],
+        action: null,
       },
       {
         dialogName: "start",
-        sentences: ["Bonjour, tu peux me suivre si tu le souhaite je peux te faire decouvrir mon architecture", "Suis moi"],
-        action: "startCinematic"
+        sentences: ["Bonjour jeune aventurier, bienvenue dans \"Le Globe\", un lieu aussi mystérieux que fascinant. Si tu penses être prêt à prouver ta valeur en résolvant les énigmes que cet endroit te réserve, sois attentif et prépare-toi à vivre la meilleure visite guidée de ta vie.", "Ne perdons pas de temps", "Suis-moi"],
+        action: "startCinematic",
       },
       {
         dialogName: "explanation",
-        sentences: ["Salut, comment ça va?", "Bienvenue", "Je t'explique le jeu, teleport toi au premier niveau"],
-        action: "teleportCountry"
+        sentences: ["Oh te revoilà, ravi de voir que la puissante aura que dégage cette orbe ne t'a pas fait fuir", "Je te souhaite la bienvenue", "Si tu es déterminé à affronter les épreuves du Globe, accepte de te rendre sur le premier territoire inconnu qui te sera proposé, je t'expliquerai ta mission une fois que nous y serons"],
+        action: "teleportCountry",
       },
       {
         dialogName: "explanation2",
-        sentences: ["Je vais t'en dire plus à propos de cette architecture", "sdjkdskjjskjdkj"],
-        action: null
+        sentences: ["Pour t'aider à comprendre ta mission, laisse-moi te révéler une partie de l'histoire de ce bâtiment \"magique\",", "A l'origine, c'était l'idée d'un vieil ami à moi qui voulait permettre à tous les habitants de Paris de voyager, au moins dans leur esprit, en les laissant profiter d'un globe d'une envergure titanesque mais aussi truffé de fins détails", "Mais depuis mon premier essai à réaliser ce projet, il y a plus d'un siècle, le globe a réussi à canaliser une énergie inconnue qui lui permet de faire voyager réellement les quelques chanceux qui réussissent à venir jusqu'ici"],
+        action: null,
       },
-    ], [0, 0, 5], [0,1,0,0], 0, 1.8, 0.3, "Game");
+    ], [0, 0, 5], [0, 1, 0, 0], 0, 1.8, 0.3, "Game", "b0d0aad6-cba6-4d0f-90fe-3133544c66c8");
 
     this.gameData.NPCInstance.setCurrentDialog("start")
 
@@ -69,41 +70,42 @@ class GameManager {
 
     // Level
 
-    await this.gameData.pickupInstance.addPickup("Item 1", "Description 1", "Vous venez de récuperer l'item1 !", 10, [7, 4.8, 39], 0.5, 1.5, 0.5, "Level", 1); 
-    await this.gameData.pickupInstance.addPickup("Item 2", "Description 1", "Vous venez de récuperer l'item2 !", 10, [7, 4.8, 40], 0.5, 1.5, 0.5, "Level", 1); 
-    await this.gameData.pickupInstance.addPickup("Item 3", "Description 1", "Vous venez de récuperer l'item3 !", 10, [7, 4.8, 41], 0.5, 1.5, 0.5, "Level", 1); 
+    await this.gameData.pickupInstance.addPickup("Guandao", "Une arme de combat rapproché traditionnelle, originellement appelée [ lame de lune inclinée ] qui servait notamment dans les arts martiaux. Elle est très difficile à manier car elle mesurait généralement plus de 2 mètres et pesait plus de 10 kilogrammes", "Vous venez de récuperer le premier objet rare !", 10, [7, 4.8, 39], 0.5, 1.5, 0.5, "Level", 1, "60dfd22d-607a-403b-90e3-599b5e25e013"); 
+    await this.gameData.pickupInstance.addPickup("Tête de guerrier en terre cuite", "Une armée entière de soldat en terre cuite fut découverte dans ce pays, c'est une façon de rendre honneur aux grands guerriers", "Vous venez de récuperer le second objet rare !", 10, [7, 4.8, 40], 0.5, 1.5, 0.5, "Level", 1, "97924e1f-3cc0-4df3-b2cc-d614df5661df"); 
+    await this.gameData.pickupInstance.addPickup("Set de thé", "Un set d'une élégance magistrale, une chose tout à fait logique puisque la légende veut que ce soit le pays dans lequel le thé fut découvert pour la première fois", "Vous venez de récuperer le troisième objet rare !", 10, [7, 4.8, 41], 0.5, 1.5, 0.5, "Level", 1, "012fc761-a0b7-45c9-ad70-5293992075be"); 
 
-    await this.gameData.pickupInstance.addPickup("Drapeau de la chine", "Description 1", "Vous venez de récuperer le drapeau de la chine !", 10, [5, 4.8, 39], 0.5, 1.5, 0.5, "Level", 1); 
-    await this.gameData.pickupInstance.addPickup("Drapeau de la corée du sud", "Description 1", "Vous venez de récuperer le drapeau de la corée !", 10, [5, 4.8, 40], 0.5, 1.5, 0.5, "Level", 1); 
-    await this.gameData.pickupInstance.addPickup("Drapeau du japon", "Description 1", "Vous venez de récuperer le drapeau du japon !s", 10, [5, 4.8, 41], 0.5, 1.5, 0.5, "Level", 1); 
+    
+    await this.gameData.pickupInstance.addPickup("Drapeau de la chine", "Vous avez choisi un drapeau, est-ce le bon ?", "Vous venez de récuperer le drapeau de la Chine !", 10, [5, 4.8, 39], 0.5, 1.5, 0.5, "Level", 1, "51a71d16-b791-4e71-9b7f-5ff57c79371a"); 
+    await this.gameData.pickupInstance.addPickup("Drapeau de la corée du sud", "Vous avez choisi un drapeau, est-ce le bon ?", "Vous venez de récuperer le drapeau de la Corée du sud !", 10, [5, 4.8, 40], 0.5, 1.5, 0.5, "Level", 1, "edb58234-13b3-44a4-a3ed-cd797f06859a"); 
+    await this.gameData.pickupInstance.addPickup("Drapeau du japon", "Vous avez choisi un drapeau, est-ce le bon ?", "Vous venez de récuperer le drapeau du Japon !", 10, [5, 4.8, 41], 0.5, 1.5, 0.5, "Level", 1, "1e2036ec-ea58-44f7-9231-fad25d97ba88"); 
 
 
-  
   
 
     await this.gameData.NPCInstance.addNPC("Louis de chine", [
       {
         dialogName: "default",
-        sentences: ["Bonjour, je n'ai rien a raconter pour le moment", "Au revoie et à bientôt"],
-        action: null
+        sentences: ["On vient juste d'arriver voyageur, concentre toi sur la mission que le Globe t'a confiée", "Reviens me voir lorsque tu auras découvert quelque chose"],
+        action: null,
       },
       {
         dialogName: "explanation",
-        sentences: ["Tu est maintenant dans le level", "tu vas devoir choisir le bon drapeaux","tu va pouvoir aussi récuperer des objets pour du score bonus"],
-        action: "activeLevel"
+        sentences: ["Et voilà ! Nous sommes arrivés à destination. Laquelle ? Pour être honnête je n'en sais pas plus que toi, et c'est justement pour ça que le globe t'a choisi.", "Il a su déceler la curiosité et le courage que tu renfermes et te demande de lui remettre les idées en place.", "Cela fait tellement de temps qu'il s'amuse avec une énergie aussi puissante, il en a perdu les pédales", "Comme tu peux le remarquer, il y a plétore de drapeaux autour de toi, à mon humble avis, il doit y avoir un lien entre eux et l'environnement dans lequel nous nous trouvons","Je remarque aussi différents objets qui sortent du lot dans cet endroit, j'imagine que ce bon vieux Globe ne serait pas contre quelques élements de contexte sur l'endroit dans lequel nous sommes.", "Essayez donc d'en collecter pour lui, il saura vous récompenser"],
+        action: "activeLevel",
       },
       {
         dialogName: "success",
-        sentences: ["Tu a réussi le niveau car tu a trouvé le bon pays", "je t'explique l'histoire du pays, du décor","téleporte toi pour revenir a l'architecture"],
-        action: "returnGlobe"
+        sentences: ["Incroyable, tu as réussi à te repérer dans ce dédale, je n'en attendais pas moins de toi !", "Nous sommes effectivement en Chine, telle qu'elle était en 1900 sous la dynastie Qing. Il y avait de forts conflits internes à cette période et et pays était très affaibli, malgré une économie très développée grâce à la soie ou la navigation marchande notamment.","Maintenant que l'épreuve est réussie, nous pouvons retourner dans le monde réel ahahah"],
+        action: "returnGlobe",
       },
       {
         dialogName: "defeat",
-        sentences: ["Tu n'a pas réussi le niveau car tu n'a pas trouvé le bon pays", "je t'explique quand meme l'histoire du pays, du décor","téleporte toi pour revenir a l'architecture"],
-        action: "returnGlobe"
+        sentences: ["Apparement tu as échoué dans ta mission, le drapeau que tu as selectionné ne corresponds pas au l'environnement qui nous entoure. Ce n'est pas aujourd'hui que les pensées du Globe seront remises à leur place", "Nous sommes effectivement en Chine, telle qu'elle était en 1900 sous la dynastie Qing. Il y avait de forts conflits internes à cette période et et pays était très affaibli, malgré une économie très développée grâce à la soie ou la navigation marchande notamment.","Maintenant que l'épreuve est terminée, nous pouvons retourner dans le monde réel ahahah"],
+        action: "returnGlobe",
       },
-    ], [3, 0, 5], [0,0,0,1], 0, 1.8, 0.3, "Level");
+    ], [3, 0, 5], [0,0,0,1], 0, 1.8, 0.3, "Level", "b0d0aad6-cba6-4d0f-90fe-3133544c66c8");
   }
+  
 
   incrementSubtitleIndex() {
     this.gameData.subtitleCurrentIndex += 1

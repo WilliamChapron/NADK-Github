@@ -39,6 +39,8 @@ import {
 
 
 window.lastPickupComponentState = 0
+window.drawObjectives = true
+window.drawLabels = true
 
 
 // Canva / Main
@@ -519,7 +521,7 @@ export const Canvas = () => {
       {is3DVerseLoad && isPointerLockInitialWasClick && (
         <>
           <CrossHair/>
-          {isGameLoad && <EntityHeadLabelDisplayController isCameraOrientationChanged={isCameraOrientationChanged} />} {/*  Send position When Mouse move to refresh component, but this var is not use*/}
+          {isGameLoad && window.drawObjectives && <EntityHeadLabelDisplayController isCameraOrientationChanged={isCameraOrientationChanged} />} {/*  Send position When Mouse move to refresh component, but this var is not use*/}
           
           <DialogController
             isVisible={currentNPCDialog && currentNPCDialog.length > 0}
@@ -545,7 +547,7 @@ export const Canvas = () => {
               duration={2000} 
             />
           )}
-          {!isPickupComponentOpen && (
+          {!isPickupComponentOpen && window.drawLabels && (
             <ObjectiveController
               currentObjective={currentObjectiveDescription}
               score={currentScore}

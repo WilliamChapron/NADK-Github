@@ -4,7 +4,7 @@ class NPCManager {
     this.currentNpcIndex = 0;
   }
 
-  async addNPC(name, dialogs, position, orientation, offsetX, offsetY, offsetZ, gamemode) {
+  async addNPC(name, dialogs, position, orientation, offsetX, offsetY, offsetZ, gamemode, assetUUID) {
     const newNPC = {
       name: name,
       dialogs: dialogs,
@@ -17,10 +17,10 @@ class NPCManager {
       gamemode: gamemode,
     };
     this.npcs.push(newNPC);
-    await this.checkAndSpawnNPC(name, position, orientation);
+    await this.checkAndSpawnNPC(name, position, orientation, assetUUID);
   }
 
-  async checkAndSpawnNPC(name, position, orientation) {
+  async checkAndSpawnNPC(name, position, orientation, assetUUID) {
 
     // En ligne, nous voulons vérifier que le NPC n'est pas déjà apparu car la logique est sur toutes les instances clients
     const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc`, {
@@ -39,13 +39,14 @@ class NPCManager {
     // console.log(data)
   
     if (data.action === 'SPAWN_NPC') {
-      await this.initNPC(name, position, orientation); 
+      await this.initNPC(name, position, orientation, assetUUID); 
     }
   }
 
-  async initNPC(name, position, orientation) {
+  async initNPC(name, position, orientation, assetUUID) {
+    console.log(assetUUID)
     let template = new SDK3DVerse.EntityTemplate();
-    template.attachComponent('scene_ref', { value: "3fb0fce3-eefb-4bdf-8545-2f10bddce478" });
+    template.attachComponent('scene_ref', { value: assetUUID });
     template.attachComponent('local_transform', { position: position, orientation: orientation });
     await template.instantiateTransientEntity(`NPC_${name}`, null, false);
   }
