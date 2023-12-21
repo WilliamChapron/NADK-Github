@@ -155,6 +155,8 @@ async function animatePlayer() {
     return;
   }
 
+
+
   const transform = SDK3DVerse.utils.clone(positionsPlayerArray[currentIndexPlayer]);
   transform.position = [transform.position[0], transform.position[1] - playerYSize + 0.13, transform.position[2]];
   transform.scale = [1, 1, 1];
@@ -170,7 +172,6 @@ async function animatePlayer() {
   player.setGlobalTransform({ eulerOrientation });
 
 
-  // player.setGlobalTransform(transform, true, true);
 
   
 
