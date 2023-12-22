@@ -1,56 +1,100 @@
-// Dialog.js
+// DialogComponent.js
 import React from 'react';
 
-const DialogComponent = ({ onClose, messages, currentMessageIndex, handleNextMessage }) => {
+const DialogComponent = ({ dialogOpen, onClose, messages, currentMessageIndex, handleNextMessage, handlePreviousMessage, shouldHaveActionButton, handleActionButton, currentActionName }) => {
   const overlayStyle = {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    width: '100%',
-    height: '100%',
-    borderRadius: '3px',
-    backdropFilter: 'blur(2px)', // Augmentation du flou
-    background: 'rgba(0, 0, 0, 0.8)', // Fond plus sombre
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '10px',
+    background: 'rgba(0, 0, 0, 0.8)',
     display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'column',
     alignItems: 'center',
     zIndex: '1000',
+    padding: '20px',
+    border: '2px solid #3498db', // Bordure bleue
+    boxShadow: '0px 0px 20px rgba(52, 152, 219, 0.8)', // Ombre bleue
   };
 
   const dialogStyle = {
-    padding: '60px 120px', // Augmentation de la taille du padding
-    border: '2px solid #fff', // Augmentation de l'épaisseur de la bordure
-    background: '#000',
-    color: '#fff',
-    maxWidth: '600px', // Augmentation de la largeur maximale
+    width: '100%',
+    maxWidth: '600px',
     textAlign: 'center',
-    position: 'relative',
   };
 
   const closeButtonStyle = {
     position: 'absolute',
-    top: '10px', // Augmentation de la distance par rapport au haut
-    right: '10px', // Augmentation de la distance par rapport à la droite
+    top: '10px',
+    right: '10px',
     cursor: 'pointer',
-    fontSize: '18px', // Augmentation de la taille de la police
+    fontSize: '18px',
     color: '#fff',
     background: 'none',
     border: 'none',
   };
 
   const messageStyle = {
-    fontSize: '24px', // Augmentation de la taille du texte
-    marginBottom: '20px', // Augmentation de la marge en bas
+    fontSize: '24px',
+    marginBottom: '20px',
+    color: '#fff',
+  };
+
+  const buttonStyle = {
+    fontSize: '20px',
+    margin: '10px',
+    padding: '10px 20px',
+    cursor: 'pointer',
+    background: '#3498db', // Couleur de fond bleue
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    outline: 'none',
+    transition: 'background 0.3s ease', // Animation de transition
+  };
+
+  const actionButtonStyle = {
+    fontSize: '20px',
+    margin: '10px',
+    padding: '10px 20px',
+    cursor: 'pointer',
+    background: '#e74c3c', // Couleur de fond rouge pour le bouton d'action
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    outline: 'none',
+    transition: 'background 0.3s ease', // Animation de transition
   };
 
   return (
-    <div style={overlayStyle}>
-      <div style={dialogStyle}>
-        <button style={closeButtonStyle} onClick={onClose}>X</button>
-        <p style={messageStyle}>{messages[currentMessageIndex]}</p>
-        <button onClick={handleNextMessage} style={{ fontSize: '20px' }}>Next</button> {/* Ajustement de la taille du bouton Next */}
-      </div>
-    </div>
+    <>
+      {dialogOpen && (
+        <div style={overlayStyle}>
+          <div style={dialogStyle}>
+            <button style={closeButtonStyle} onClick={onClose}>
+              X
+            </button>
+            <p style={messageStyle}>{messages[currentMessageIndex]}</p>
+            {currentMessageIndex > 0 && (
+              <button onClick={handlePreviousMessage} style={buttonStyle}>
+                Previous
+              </button>
+            )}
+            {currentMessageIndex < messages.length - 1 && (
+              <button onClick={handleNextMessage} style={buttonStyle}>
+                Next
+              </button>
+            )}
+            {shouldHaveActionButton && currentMessageIndex === messages.length - 1 && (
+              <button onClick={handleActionButton} style={actionButtonStyle}>
+                Continuer l'aventure
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
