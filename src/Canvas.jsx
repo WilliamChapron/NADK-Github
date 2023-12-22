@@ -258,7 +258,7 @@ export const Canvas = () => {
               else if (flagState == "Bad Flag") {
                 gameManagerInstance.gameData.NPCInstance.setCurrentDialog("defeat")
               }
-              gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(4)
+              gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex = 4
             }
             
             gameManagerInstance.gameData.pickupInstance.incrementInteract()
