@@ -27,7 +27,7 @@ const scenarioScriptFunctions = [
         player.setGlobalTransform({position: [5705.29296875, 1.0095393657684326, 3251.810791015625]});
 
         // Set old npc to next dialog and change objective
-        gameManagerInstance.gameData.NPCInstance.setCurrentDialog("explanation2")
+        gameManagerInstance.gameData.NPCInstance.npcs[0].currentDialog = "explanation2";
         gameManagerInstance.gameData.objectiveInstance.setCurrentObjective(2)
 
         // Set new npc / level npc to his dialog 
@@ -63,7 +63,7 @@ const scenarioScriptFunctions = [
         const playerName = `Player_${clientUUID}`;
         const entities = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
         const player = entities && entities[0];
-        player.setPosition([6.231548, 37.005726, 5.69087]);
+        player.setPosition([9.008907, 7.758502, 13.295341]);
         
       }
     },

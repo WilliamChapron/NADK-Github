@@ -42,6 +42,15 @@ window.lastPickupComponentState = 0
 window.drawObjectives = true
 window.drawLabels = true
 window.drawSubtitle = false
+let timeSeconds = 0
+
+// Fonction pour incrémenter le temps
+function incrementTime() {
+  timeSeconds += 1;
+  // console.log(timeSeconds)
+}
+
+const timer = setInterval(incrementTime, 1000);
 
 
 // Canva / Main
@@ -97,10 +106,10 @@ export const Canvas = () => {
   
   // UPDATE
   const update = async () => {
-    console.log(window.lastPickupComponentState)
-    const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-    const position = viewports[0].getTransform().position
-    console.log(position)
+    // console.log(window.lastPickupComponentState)
+    // const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    // const position = viewports[0].getTransform().position
+    // console.log(position)
     await gameManagerInstance.gameUpdate(is3DVerseLoad);
     // Only logic correspond to interface // all logic, condition variable specific to game logic is contain in Game Manager / Or in some specific fonctionnalities controller
     setCurrentScore(gameManagerInstance.gameData.score)
@@ -218,7 +227,17 @@ export const Canvas = () => {
           gameManagerInstance.gameData.pickupInstance.setCurrentPickup(nameOfEntity);
           // Get current npc to set use state var
 
+
           if (!gameManagerInstance.gameData.pickupInstance.checkInteractLimit()) {
+
+
+            // Only on time execute this interact
+            if (nameOfEntity.includes("Set") ) {
+              gameManagerInstance.gameData.score += 20
+            }
+            if (nameOfEntity.includes("Guandao")) {
+              gameManagerInstance.gameData.score += 20
+            }
 
             const Pickup = gameManagerInstance.gameData.pickupInstance.getCurrentPickup()
             setCurrentPickupName(Pickup.name);
@@ -231,6 +250,10 @@ export const Canvas = () => {
               if (flagState == "Good Flag") {
                 gameManagerInstance.gameData.NPCInstance.setCurrentDialog("success")
                 gameManagerInstance.gameData.pickupInstance.setCurrentPickupInfo({name: "Trophée de la chine", description: "ce trophée t'appartient"})
+                setCurrentPickupName("Trophée de la chine");
+                setCurrentPickupDescription("ce trophée t'appartient");
+                setCurrentPickupText("Trophée de la chine");
+                gameManagerInstance.gameData.score += 50
               }
               else if (flagState == "Bad Flag") {
                 gameManagerInstance.gameData.NPCInstance.setCurrentDialog("defeat")
@@ -241,6 +264,7 @@ export const Canvas = () => {
             gameManagerInstance.gameData.pickupInstance.incrementInteract()
           }
           else {
+            
             setCurrentPickupName("Tu as déja intéragit");
             setCurrentPickupDescription("ce n'est plus possible d'interagir avec cet objet");
             setCurrentPickupText("Tu as déja intéragit");
@@ -533,14 +557,14 @@ export const Canvas = () => {
             resetFPSCameraController={ResetFPSCameraController}
             setFPSCameraController={SetFPSCameraController}
           />
-          {currentPickupName !== "" && currentPickupDescription !== "" && window.lastPickupComponentState == 1 && (
+          {currentPickupName !== "" && currentPickupDescription !== "" && (
             <PickupController
               pickupInfo={[currentPickupName, currentPickupDescription, currentPickupText, currentPickupScore]}
               onOpen={() => setIsPickupComponentOpen(true)} 
               onClose={resetCurrentPickup}
             />
           )}
-          {currentSubtitleText !== "" && (
+          {currentSubtitleText !== "" && window.drawSubtitle && (
             <SubtitleComponent 
               text={currentSubtitleText} 
               onClose={resetCurrentSubtitle}
@@ -551,6 +575,7 @@ export const Canvas = () => {
             <ObjectiveController
               currentObjective={currentObjectiveDescription}
               score={currentScore}
+              time={timeSeconds}
               distanceToGoal={currentObjectiveMeters}
               distanceToGoalInHeight={currentObjectiveMetersHeight}
             />

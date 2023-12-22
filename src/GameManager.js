@@ -46,7 +46,7 @@ class GameManager {
     this.gameData.objectiveInstance.addObjective("Suivez le guide du batiment", [5, 3, 5], false, "Game");
 
 
-    await this.gameData.pickupInstance.addPickup("Trophée pays 1", "Vous ne l'avez pas encore découvert, continuez votre aventure","Trophée de découverte du pays 1", 0,  [-2.306919, 37.005726, 0.294224], 0, 2, 0, "Game", 1000,"3bc2f8af-3e7a-4001-9dc1-2d163742f3dc");
+    await this.gameData.pickupInstance.addPickup("Trophée du pays 1", "Vous ne l'avez pas encore découvert, continuez votre aventure","Trophée de découverte du pays 1", 0,  [10.008907, 7.758502, 15.295341], 0, 2, 0, "Game", 1000,"3bc2f8af-3e7a-4001-9dc1-2d163742f3dc");
     // système de changement de text durant 
 
     await this.gameData.NPCInstance.addNPC("Guide du globe", [
@@ -78,9 +78,9 @@ class GameManager {
 
     // Level
 
-    await this.gameData.pickupInstance.addPickup("Guandao", "Une arme de combat rapproché traditionnelle, originellement appelée [ lame de lune inclinée ] qui servait notamment dans les arts martiaux. Elle est très difficile à manier car elle mesurait généralement plus de 2 mètres et pesait plus de 10 kilogrammes", "Vous venez de récuperer le premier objet rare !", 10, [5683.073242,5.134306,3268.407227], 0.5, 1.5, 0.5, "Level", 1, "60dfd22d-607a-403b-90e3-599b5e25e013"); 
+    await this.gameData.pickupInstance.addPickup("Guandao", "Une arme de combat rapproché traditionnelle, originellement appelée [ lame de lune inclinée ] qui servait notamment dans les arts martiaux. Elle est très difficile à manier car elle mesurait généralement plus de 2 mètres et pesait plus de 10 kilogrammes", "Vous venez de récuperer le premier objet rare !", 10, [5683.073242,5.134306,3268.407227], 0.3, 0.5, 0.5, "Level", 1, "60dfd22d-607a-403b-90e3-599b5e25e013"); 
     // await this.gameData.pickupInstance.addPickup("Tête de guerrier en terre cuite", "Une armée entière de soldat en terre cuite fut découverte dans ce pays, c'est une façon de rendre honneur aux grands guerriers", "Vous venez de récuperer le second objet rare !", 10, [7, 4.8, 40], 0.5, 1.5, 0.5, "Level", 1, "97924e1f-3cc0-4df3-b2cc-d614df5661df"); 
-    await this.gameData.pickupInstance.addPickup("Set de thé", "Un set d'une élégance magistrale, une chose tout à fait logique puisque la légende veut que ce soit le pays dans lequel le thé fut découvert pour la première fois", "Vous venez de récuperer le troisième objet rare !", 10, [5678.638184,4.731987,3257.64502], 0.5, 1.5, 0.5, "Level", 1, "012fc761-a0b7-45c9-ad70-5293992075be"); 
+    await this.gameData.pickupInstance.addPickup("Set de thé", "Un set d'une élégance magistrale, une chose tout à fait logique puisque la légende veut que ce soit le pays dans lequel le thé fut découvert pour la première fois", "Vous venez de récuperer le troisième objet rare !", 10, [5678.638184,4.731987,3257.64502], 0.5, 1.5, 0.5, "Level", 1, "97924e1f-3cc0-4df3-b2cc-d614df5661df"); 
 
     
     await this.gameData.pickupInstance.addPickup("Drapeau de la chine", "Vous avez choisi un drapeau, est-ce le bon ?", "Vous venez de récuperer le drapeau de la Chine !", 10, [5671.388672,4.134436,3267.318848], 1.2, 0.1, 0.5, "Level", 1, "51a71d16-b791-4e71-9b7f-5ff57c79371a"); 

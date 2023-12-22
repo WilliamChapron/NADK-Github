@@ -8,7 +8,7 @@ class NPCManager {
     const newNPC = {
       name: name,
       dialogs: dialogs,
-      currentDialog: "default",
+      currentDialog: "explanation",
       position: position,
       orientation: orientation,
       offsetX: offsetX,

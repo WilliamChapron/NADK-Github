@@ -2,9 +2,9 @@
 import React from 'react';
 import ObjectiveComponent from './ObjectiveComponent';
 
-const ObjectiveController = ({ currentObjective, score, distanceToGoal, distanceToGoalInHeight }) => {
+const ObjectiveController = ({ currentObjective, score, time,  distanceToGoal, distanceToGoalInHeight }) => {
   return (
-    <ObjectiveComponent currentObjective={currentObjective} score={score} distanceToGoal={distanceToGoal} distanceToGoalInHeight={distanceToGoalInHeight}/>
+    <ObjectiveComponent currentObjective={currentObjective} score={score} time={time} distanceToGoal={distanceToGoal} distanceToGoalInHeight={distanceToGoalInHeight}/>
   );
 };
 

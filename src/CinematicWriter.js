@@ -318,7 +318,7 @@ async function StartCinematic() {
 
           const transformNPC =
           {
-            position : [0,45.75,-2],
+            position : [0,45.85,-2],
             orientation : [0,0,0,1],
             scale : [1,1,1]
           };  

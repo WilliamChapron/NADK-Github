@@ -29,7 +29,7 @@ const PickupComponent = ({ pickupInfo }) => {
           <p style={headingStyle}>{pickupInfo[2]}</p>
           <p style={headingStyle}>Description : {pickupInfo[1]}</p>
           {pickupInfo[2] > 0 && (
-            <p style={headingStyle}>You just earned {pickupInfo[3]} score points</p>
+            <p style={headingStyle}>Vous venez de gagner {pickupInfo[3]} points de score</p>
           )}
         </div>
       )}

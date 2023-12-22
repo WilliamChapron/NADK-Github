@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ObjectiveComponent = ({ currentObjective, score, distanceToGoal, distanceToGoalInHeight }) => {
+const ObjectiveComponent = ({ currentObjective, score, time, distanceToGoal, distanceToGoalInHeight }) => {
   const objectiveStyle = {
     position: 'fixed',
     top: '20px',
@@ -36,10 +36,12 @@ const ObjectiveComponent = ({ currentObjective, score, distanceToGoal, distanceT
 
   return (
     <div style={objectiveStyle}>
-      <p style={headingStyle}>Objectif en cours:</p>
+      <p style={headingStyle}>Objectif en cours :</p>
       <p style={infoStyle}>{currentObjective}</p>
-      <p style={headingStyle}>Score:</p>
+      <p style={headingStyle}>Score :</p>
       <p style={infoStyle}>{score}</p>
+      <p style={headingStyle}>Temps écoulé :</p>
+      <p style={infoStyle}>{time} s</p>
       {distanceToGoal !== -1 && (
         <>
           {distanceToGoal >= 0 && distanceToGoal <= 2 ? (

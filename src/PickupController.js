@@ -6,18 +6,22 @@ const PickupController = ({ pickupInfo, onOpen, onClose }) => {
 
   useEffect(() => {
 
-    onOpen();
+    if (window.lastPickupComponentState == 1) {
+      onOpen();
+      const timeoutPromise = new Promise(resolve => { setTimeout(() => {
+          onClose();
+        }, 8000);
+      });
 
-    const timeoutPromise = new Promise(resolve => { setTimeout(() => {
-        onClose();
-      }, 6000);
-    });
+    }
+
+    
     
     
   }, [onClose, onOpen, pickupInfo]);
 
 
-  return <PickupComponent pickupInfo={pickupInfo} />;
+  return window.lastPickupComponentState && <PickupComponent pickupInfo={pickupInfo} />;
 };
 
 export default PickupController;
