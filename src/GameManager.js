@@ -90,7 +90,7 @@ class GameManager {
 
   
 
-    await this.gameData.NPCInstance.addNPC("Louis Boullée", [
+    await this.gameData.NPCInstance.addNPC("Louis Bonnier", [
       {
         dialogName: "default",
         sentences: ["On vient juste d'arriver voyageur, concentre toi sur la mission que le Globe t'a confiée", "Reviens me voir lorsque tu auras découvert quelque chose"],
