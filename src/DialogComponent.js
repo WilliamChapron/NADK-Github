@@ -88,7 +88,7 @@ const DialogComponent = ({ dialogOpen, onClose, messages, currentMessageIndex, h
             )}
             {shouldHaveActionButton && currentMessageIndex === messages.length - 1 && (
               <button onClick={handleActionButton} style={actionButtonStyle}>
-                {currentActionName}
+                Continuer l'aventure
               </button>
             )}
           </div>

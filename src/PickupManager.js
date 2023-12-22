@@ -102,14 +102,6 @@ class PickupManager {
     }
   }
 
-  // check trophy get
-  checkTrophy() {
-    const currentName = this.pickups[this.currentPickupIndex].name
-    if (currentName.includes("Trophée")) {
-      this.setCurrentPickupInfo({name: "Trophée de la chine", description: "ce trophée t'appartient"})
-    }
-    return "No Flag"
-  }
 }
 
 export default PickupManager;

@@ -97,10 +97,10 @@ export const Canvas = () => {
   
   // UPDATE
   const update = async () => {
-    // console.log(window.lastPickupComponentState)
-    // const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-    // const position = viewports[0].getTransform().position
-    // console.log(position)
+    console.log(window.lastPickupComponentState)
+    const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    const position = viewports[0].getTransform().position
+    console.log(position)
     await gameManagerInstance.gameUpdate(is3DVerseLoad);
     // Only logic correspond to interface // all logic, condition variable specific to game logic is contain in Game Manager / Or in some specific fonctionnalities controller
     setCurrentScore(gameManagerInstance.gameData.score)
@@ -225,13 +225,12 @@ export const Canvas = () => {
             setCurrentPickupDescription(Pickup.description);
             setCurrentPickupScore(Pickup.score)
             setCurrentPickupText(Pickup.pickupText)
-            
-            console.log("IT's DRAPEAU DDD", nameOfEntity)
+          
             if (nameOfEntity.includes("Drapeau")) {
-              console.log("IT's DRAPEAU")
               const flagState = gameManagerInstance.gameData.pickupInstance.checkFlags()
               if (flagState == "Good Flag") {
                 gameManagerInstance.gameData.NPCInstance.setCurrentDialog("success")
+                gameManagerInstance.gameData.pickupInstance.setCurrentPickupInfo({name: "Trophée de la chine", description: "ce trophée t'appartient"})
               }
               else if (flagState == "Bad Flag") {
                 gameManagerInstance.gameData.NPCInstance.setCurrentDialog("defeat")
@@ -242,9 +241,9 @@ export const Canvas = () => {
             gameManagerInstance.gameData.pickupInstance.incrementInteract()
           }
           else {
-            setCurrentPickupName("already have interact");
-            setCurrentPickupDescription("it is no longer possible to interact with this object");
-            setCurrentPickupText("You already have interact");
+            setCurrentPickupName("Tu as déja intéragit");
+            setCurrentPickupDescription("ce n'est plus possible d'interagir avec cet objet");
+            setCurrentPickupText("Tu as déja intéragit");
             setCurrentPickupScore(0)
           }
 
@@ -460,7 +459,7 @@ export const Canvas = () => {
       }
       
 
-      await InitFirstPersonController(characterControllerSceneUUID, [-3,0,0], [0,0,0,1]);
+      await InitFirstPersonController(characterControllerSceneUUID, [-30,1,4]);
       const joysticksElement = document.getElementById('joysticks');
       SDK3DVerse.installExtension(window.SDK3DVerse_VirtualJoystick_Ext, null, joysticksElement);
       setIs3DVerseLoad(true);

@@ -103,7 +103,7 @@ let isAnimatePlayerEnd = false;
 
 async function setupEntities() {
   Viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-  let entities = await SDK3DVerse.engineAPI.findEntitiesByNames("NPC_Louis mort");
+  let entities = await SDK3DVerse.engineAPI.findEntitiesByNames("NPC_Guide du globe");
   NPCEntity = entities && entities[0];
 
   if (!NPCEntity) {
@@ -130,7 +130,7 @@ async function setupEntities() {
     return false;
   }
 
-  charCtl.detachComponent("script_map");
+  // charCtl.detachComponent("script_map");
 
   // Find size with aabb
 
@@ -224,60 +224,21 @@ async function animateNPC() {
     requestAnimationFrame(animateNPC);
   } else {
     console.log("NPC animation done!");
-    NPCEntity.setComponent('scene_ref', { value: "3fb0fce3-eefb-4bdf-8545-2f10bddce478" });
+    NPCEntity.setComponent('scene_ref', { value: "b0d0aad6-cba6-4d0f-90fe-3133544c66c8" });
     isAnimateNPCEnd = true;
   }
 }
 
 
 async function GlobeCinematic() {
-  console.log("Start globe")
-  const cinematique = await SDK3DVerse.engineAPI.findEntitiesByEUID('23070c0a-7587-4243-af89-962aa007af91')
-  const mainCamera = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
-  const sceneGlobe = await SDK3DVerse.engineAPI.findEntitiesByEUID('1490c755-1566-4a94-a27e-cef78a566687')
-  const clientUUID = SDK3DVerse.getClientUUID();
-  const playerName = `Player_${clientUUID}`;
-  const entities = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
-  const player = entities && entities[0];
-  // SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
-  //SDK3DVerse.disableInputs();
-  // SDK3DVerse.engineAPI.detachClientFromScripts(player);
-  console.log('trigger')
-  const transform =
-  {
-    position : [0,47,-0.03593],
-    orientation : [0,0,0,1],
-    scale : [1,1,1]
-  };
 
 
-  await SDK3DVerse.engineAPI.deleteEntities([player]);
+  
 
 
-  //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
-  SDK3DVerse.setMainCamera(cinematique[0])
-  SDK3DVerse.engineAPI.playAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', { playbackSpeed : 0.2 }, sceneGlobe[0]);
 
-  // Don't display few things when cinematic is on 
 
-  window.drawObjectives = false;
-  window.drawLabels = false;
-
-  setTimeout( async () => {
-    // SDK3DVerse.setMainCamera(mainCamera[0])
-    // SDK3DVerse.engineAPI.assignClientToScripts(player);
-
-    // store old camera position
-    SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
-    const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0]
-    const viewportPosition = viewport.getTransform()
-    // and set player position 
-    await InitFirstPersonController("ff0b5223-75dc-48ad-ae0d-d710012c3a80", transform.position, viewportPosition);
-    // player.setGlobalTransform(transform);
-    // console.log("Retardée d'une seconde."); 
-    window.drawObjectives = true;
-    window.drawLabels = true;
-  }, 37000);
+  
   //SDK3DVerse.cameraControllerType.none;
   
   // SDK3DVerse.engineAPI.onEnterTrigger((cameraEntity, block) => {
@@ -294,6 +255,8 @@ async function GlobeCinematic() {
 
 
 async function StartCinematic() {
+
+  
   console.log("************** Start cinematic");
 
 
@@ -304,15 +267,95 @@ async function StartCinematic() {
     hasSetupEntities = entitiesInitialized; 
     if (entitiesInitialized) {
       
-      NPCEntity.setComponent('scene_ref', { value: "e83b0e8a-2363-406f-9935-c38084f7e647" });
+      NPCEntity.setComponent('scene_ref', { value: "aed581dd-008b-4d71-bfa0-65558a4cf94a" });
       await new Promise(resolve => setTimeout(resolve, 1000));
       await animateNPC()
-      setTimeout(() => animatePlayer(), 0)
+      // setTimeout(() => animatePlayer(), 0)
+
+      SDK3DVerse.engineAPI.onEnterTrigger( async (cameraEntity, block) => {
+
+
+        console.log("Start globe")
+        const cinematique = await SDK3DVerse.engineAPI.findEntitiesByEUID('6661d67a-70ad-4989-8e15-27c651d1e64c')
+        // const mainCamera = await SDK3DVerse.engineAPI.findEntitiesByEUID('e4f95f27-2495-4ca2-9180-336c90105a3e')
+        const sceneGlobe = await SDK3DVerse.engineAPI.findEntitiesByEUID('435e063b-c037-44f5-b8ed-cbed043f855d')
+        const clientUUID = SDK3DVerse.getClientUUID();
+        const playerName = `Player_${clientUUID}`;
+        const entities = await SDK3DVerse.engineAPI.findEntitiesByNames(playerName);
+        const player = entities && entities[0];
+        let npcEntity = await SDK3DVerse.engineAPI.findEntitiesByNames("NPC_Louis mort");
+        // SDK3DVerse.engineAPI.stopAnimationSequence('e0da36a6-2f28-4ae7-92b1-4651f4bad0c4', sceneGlobe[0])
+        //SDK3DVerse.disableInputs();
+        // SDK3DVerse.engineAPI.detachClientFromScripts(player);
+
+
+        await SDK3DVerse.engineAPI.deleteEntities([player]);
+
+        //SDK3DVerse.engineAPI.detachClientFromScripts(cinématique[0]);
+        SDK3DVerse.setMainCamera(cinematique[0])
+        SDK3DVerse.engineAPI.playAnimationSequence('faa12b0d-ed4d-445d-b734-51825bf53ee4', { playbackSpeed : 0.2 }, sceneGlobe[0]);
+    
+        // Don't display few things when cinematic is on 
+    
+        window.drawObjectives = false;
+        window.drawLabels = false;
+    
+        setTimeout( async () => {
+          // SDK3DVerse.setMainCamera(mainCamera[0])
+          // SDK3DVerse.engineAPI.assignClientToScripts(player);
+    
+          const transform =
+          {
+            position : [0,47,-0.03593],
+            orientation : [0,0,0,1],
+            scale : [1,1,1]
+          };
+
+          SDK3DVerse.engineAPI.stopAnimationSequence('faa12b0d-ed4d-445d-b734-51825bf53ee4', sceneGlobe[0])
+          await InitFirstPersonController("ff0b5223-75dc-48ad-ae0d-d710012c3a80", transform.position, transform.orientation);
+
+
+
+          const transformNPC =
+          {
+            position : [0,45.75,-2],
+            orientation : [0,0,0,1],
+            scale : [1,1,1]
+          };  
+
+
+          let template = new SDK3DVerse.EntityTemplate();
+          template.attachComponent('scene_ref', { value: "0160f8e2-8bdd-4c92-ab01-eb090ec5319e" });
+          template.attachComponent('local_transform', transformNPC);
+          await template.instantiateTransientEntity(`NPC_${"Guide du globe"}`, null, false);
+          gameInstance.gameData.NPCInstance.npcs[0].position = transformNPC.position
+
+          // npcEntity[0].setGlobalTransform(transformNPC)
+          // store old camera position
+
+          // const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0]
+          // const viewportPosition = viewport.getTransform()
+          // and set player position 
+
+
+          // player.setGlobalTransform(transform);
+          // console.log("Retardée d'une seconde."); 
+          gameInstance.gameData.objectiveInstance.setCurrentObjective(1)
+          window.drawObjectives = true;
+          window.drawLabels = true;
+          window.drawSubtitle = false;
+        }, 37000);
+      })
       
       
 
-      // if(isAnimatePlayerEnd && isAnimateNPCEnd) {
-      //   GlobeCinematic()
+      // if(isAnimateNPCEnd) {
+      //   // GlobeCinematic()
+
+        
+        
+
+        
       // }
 
       
