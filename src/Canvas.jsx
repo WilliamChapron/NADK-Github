@@ -13,6 +13,8 @@ import PickupController from './PickupController';
 import ObjectiveController from './ObjectiveController';
 import EntityHeadLabelDisplayController from "./EntityHeadLabelDisplayController"
 
+import InteractMobileComponent from './InteractMobileComponent';
+
 // Component
 import LoadingScreen from './LoadingScreen';
 import ClickMessagePointerLockOverlay from './ClickMessagePointerLockOverlay';
@@ -51,6 +53,7 @@ function incrementTime() {
 }
 
 const timer = setInterval(incrementTime, 1000);
+let isMobile = false
 
 
 // Canva / Main
@@ -153,7 +156,115 @@ export const Canvas = () => {
       return entity;
     }
   }
-  //
+  // Interact Function
+
+  async function interactLogic() {
+    // ResetFPSCameraController(document.getElementById('display-canvas'))
+    const canvasElement = document.getElementById('display-canvas');
+    const canvasRect = canvasElement.getBoundingClientRect();
+
+    const centerX = canvasRect.left + canvasRect.width / 2;
+    const centerY = canvasRect.top + canvasRect.height / 2;
+
+
+    // Pick pos
+    const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
+
+    if (!entity) {
+      return null; 
+    }
+
+    
+    console.log(pickedPosition)
+
+    const highestAncestor = await getHighestAncestor(entity);
+    const nameOfEntity = await highestAncestor.getName();
+
+    console.log(nameOfEntity);
+
+
+
+    if (nameOfEntity.match(/^NPC/)) {
+
+      // Set current npc for dialog interface
+      gameManagerInstance.gameData.NPCInstance.setCurrentNpc(nameOfEntity);
+      // Get current npc to set use state var
+      const NPC = gameManagerInstance.gameData.NPCInstance.getCurrentNpc()
+
+      // console.log(NPC)
+      const currentNPCdialog = gameManagerInstance.gameData.NPCInstance.getCurrentNPCDialog()
+
+      // console.log(currentNPCdialog)
+      setCurrentNPCName(NPC.name);
+      setCurrentNPCDialog(currentNPCdialog.sentences)
+      setCurrentNPCAction(currentNPCdialog.action)
+
+      SDK3DVerse.disableInputs()
+
+      
+    } else if (nameOfEntity.match(/^Object/)) {
+      // Set current npc for dialog interface
+      gameManagerInstance.gameData.pickupInstance.setCurrentPickup(nameOfEntity);
+      // Get current npc to set use state var
+
+
+      if (!gameManagerInstance.gameData.pickupInstance.checkInteractLimit()) {
+
+
+        // Only on time execute this interact
+        if (nameOfEntity.includes("Set") ) {
+          gameManagerInstance.gameData.score += 20
+        }
+        if (nameOfEntity.includes("Guandao")) {
+          gameManagerInstance.gameData.score += 20
+        }
+
+        const Pickup = gameManagerInstance.gameData.pickupInstance.getCurrentPickup()
+        setCurrentPickupName(Pickup.name);
+        setCurrentPickupDescription(Pickup.description);
+        setCurrentPickupScore(Pickup.score)
+        setCurrentPickupText(Pickup.pickupText)
+      
+        if (nameOfEntity.includes("Drapeau")) {
+          const flagState = gameManagerInstance.gameData.pickupInstance.checkFlags()
+          if (flagState == "Good Flag") {
+            gameManagerInstance.gameData.NPCInstance.setCurrentDialog("success")
+            gameManagerInstance.gameData.pickupInstance.setCurrentPickupInfo({name: "Trophée de la chine", description: "ce trophée t'appartient"})
+            setCurrentPickupName("Trophée de la chine");
+            setCurrentPickupDescription("ce trophée t'appartient");
+            setCurrentPickupText("Trophée de la chine");
+            gameManagerInstance.gameData.score += 50
+          }
+          else if (flagState == "Bad Flag") {
+            gameManagerInstance.gameData.NPCInstance.setCurrentDialog("defeat")
+          }
+          gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex = 4
+        }
+        
+        gameManagerInstance.gameData.pickupInstance.incrementInteract()
+      }
+      else {
+        
+        setCurrentPickupName("Tu as déja intéragit");
+        setCurrentPickupDescription("ce n'est plus possible d'interagir avec cet objet");
+        setCurrentPickupText("Tu as déja intéragit");
+        setCurrentPickupScore(0)
+      }
+
+      window.lastPickupComponentState = 1
+
+
+
+
+    } else {
+      console.log("Le nom de l'entité ne commence ni par 'NPC' ni par 'Object'");
+    }
+    resetLastKeyPressed();
+    // SetFPSCameraController(document.getElementById('display-canvas'))
+    
+  }
+
+
 
 
   // Var Time wait to press any key
@@ -181,105 +292,7 @@ export const Canvas = () => {
 
       // Interaction with npc and objects
       if (key === "e") {
-
-
-
-        const canvasElement = document.getElementById('display-canvas');
-        const canvasRect = canvasElement.getBoundingClientRect();
-
-        const centerX = canvasRect.left + canvasRect.width / 2;
-        const centerY = canvasRect.top + canvasRect.height / 2;
-
-        // Pick pos
-        const { entity, pickedPosition, pickedNormal } = await SDK3DVerse.engineAPI.castScreenSpaceRay(centerX, centerY, false);
-
-        if (!entity) {
-          return null; 
-        }
-
-        const highestAncestor = await getHighestAncestor(entity);
-        const nameOfEntity = await highestAncestor.getName();
-
-        // console.log(nameOfEntity);
-
-
-
-        if (nameOfEntity.match(/^NPC/)) {
-
-          // Set current npc for dialog interface
-          gameManagerInstance.gameData.NPCInstance.setCurrentNpc(nameOfEntity);
-          // Get current npc to set use state var
-          const NPC = gameManagerInstance.gameData.NPCInstance.getCurrentNpc()
-
-          // console.log(NPC)
-          const currentNPCdialog = gameManagerInstance.gameData.NPCInstance.getCurrentNPCDialog()
-
-          // console.log(currentNPCdialog)
-          setCurrentNPCName(NPC.name);
-          setCurrentNPCDialog(currentNPCdialog.sentences)
-          setCurrentNPCAction(currentNPCdialog.action)
-
-          SDK3DVerse.disableInputs()
-
-          
-        } else if (nameOfEntity.match(/^Object/)) {
-          // Set current npc for dialog interface
-          gameManagerInstance.gameData.pickupInstance.setCurrentPickup(nameOfEntity);
-          // Get current npc to set use state var
-
-
-          if (!gameManagerInstance.gameData.pickupInstance.checkInteractLimit()) {
-
-
-            // Only on time execute this interact
-            if (nameOfEntity.includes("Set") ) {
-              gameManagerInstance.gameData.score += 20
-            }
-            if (nameOfEntity.includes("Guandao")) {
-              gameManagerInstance.gameData.score += 20
-            }
-
-            const Pickup = gameManagerInstance.gameData.pickupInstance.getCurrentPickup()
-            setCurrentPickupName(Pickup.name);
-            setCurrentPickupDescription(Pickup.description);
-            setCurrentPickupScore(Pickup.score)
-            setCurrentPickupText(Pickup.pickupText)
-          
-            if (nameOfEntity.includes("Drapeau")) {
-              const flagState = gameManagerInstance.gameData.pickupInstance.checkFlags()
-              if (flagState == "Good Flag") {
-                gameManagerInstance.gameData.NPCInstance.setCurrentDialog("success")
-                gameManagerInstance.gameData.pickupInstance.setCurrentPickupInfo({name: "Trophée de la chine", description: "ce trophée t'appartient"})
-                setCurrentPickupName("Trophée de la chine");
-                setCurrentPickupDescription("ce trophée t'appartient");
-                setCurrentPickupText("Trophée de la chine");
-                gameManagerInstance.gameData.score += 50
-              }
-              else if (flagState == "Bad Flag") {
-                gameManagerInstance.gameData.NPCInstance.setCurrentDialog("defeat")
-              }
-              gameManagerInstance.gameData.objectiveInstance.currentObjectiveIndex = 4
-            }
-            
-            gameManagerInstance.gameData.pickupInstance.incrementInteract()
-          }
-          else {
-            
-            setCurrentPickupName("Tu as déja intéragit");
-            setCurrentPickupDescription("ce n'est plus possible d'interagir avec cet objet");
-            setCurrentPickupText("Tu as déja intéragit");
-            setCurrentPickupScore(0)
-          }
-
-          window.lastPickupComponentState = 1
-
-
-
-
-        } else {
-          console.log("Le nom de l'entité ne commence ni par 'NPC' ni par 'Object'");
-        }
-        resetLastKeyPressed();
+        interactLogic()
       }
 
       lastKeyPressTime = currentTime;
@@ -481,6 +494,8 @@ export const Canvas = () => {
       catch {
         console.log("hello")
       }
+
+      isMobile = window.innerWidth <= 768;
       
 
       await InitFirstPersonController(characterControllerSceneUUID, [-30,1,4]);
@@ -523,6 +538,7 @@ export const Canvas = () => {
   // Ajoutez l'événement click à la fenêtre
   // window.addEventListener('click', handleInitialClick);
   // window.addEventListener('load', handleInitialClick);
+
 
   // # TODO Pickup doesn't work
   return (
@@ -580,6 +596,7 @@ export const Canvas = () => {
               distanceToGoalInHeight={currentObjectiveMetersHeight}
             />
           )}
+          {isMobile && <InteractMobileComponent interactLogic={interactLogic} />}
         </>
       )}
   
