@@ -26,7 +26,7 @@ class PickupManager {
 
   async checkAndSpawnPickup(name, position, assetUUID) {
     // En ligne, vérifiez si le Pickup n'est pas déjà apparu
-    const response = await fetch(`http://localhost:4444/api/check-and-spawn-pickup`, {
+    const response = await fetch(`https://w3xklm-4444.csb.app/api/check-and-spawn-pickup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

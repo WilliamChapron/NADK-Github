@@ -23,7 +23,7 @@ class NPCManager {
   async checkAndSpawnNPC(name, position, orientation, assetUUID) {
 
     // En ligne, nous voulons vérifier que le NPC n'est pas déjà apparu car la logique est sur toutes les instances clients
-    const response = await fetch(`http://localhost:4444/api/check-and-spawn-npc`, {
+    const response = await fetch(`https://w3xklm-4444.csb.app/api/check-and-spawn-npc`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

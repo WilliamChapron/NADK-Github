@@ -33,7 +33,7 @@ async function InitCamera() {
 
 async function GetPositions(fileName) {
   console.log("get positions");
-  const apiUrl = `http://localhost:4444/api/data/${fileName}`;
+  const apiUrl = `https://w3xklm-4444.csb.app/api/data/${fileName}`;
 
   try 
   {
@@ -54,7 +54,7 @@ async function GetPositions(fileName) {
 }
 
 function WritePositionToFile(positions) {
-  const apiUrl = 'http://localhost:4444/api/data';
+  const apiUrl = 'https://w3xklm-4444.csb.app/api/data';
 
   console.log("write");
 
