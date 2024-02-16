@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/NADK-Github/static/css/main.f855e6bc.css",
-    "main.js": "/NADK-Github/static/js/main.4a2340f5.js",
+    "main.js": "/NADK-Github/static/js/main.80b514f8.js",
     "static/js/787.8c0669fe.chunk.js": "/NADK-Github/static/js/787.8c0669fe.chunk.js",
     "static/media/metaverse.jpg": "/NADK-Github/static/media/metaverse.20ae6af3eab1c9dda8fd.jpg",
     "index.html": "/NADK-Github/index.html",
     "main.f855e6bc.css.map": "/NADK-Github/static/css/main.f855e6bc.css.map",
-    "main.4a2340f5.js.map": "/NADK-Github/static/js/main.4a2340f5.js.map",
+    "main.80b514f8.js.map": "/NADK-Github/static/js/main.80b514f8.js.map",
     "787.8c0669fe.chunk.js.map": "/NADK-Github/static/js/787.8c0669fe.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.4a2340f5.js"
+    "static/js/main.80b514f8.js"
   ]
 }
