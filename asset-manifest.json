@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/NADK-Github/static/css/main.2e9f2817.css",
-    "main.js": "/NADK-Github/static/js/main.815c2bb4.js",
+    "main.css": "/NADK-Github/static/css/main.bb69b544.css",
+    "main.js": "/NADK-Github/static/js/main.e5de2154.js",
     "static/js/787.8c0669fe.chunk.js": "/NADK-Github/static/js/787.8c0669fe.chunk.js",
     "static/media/metaverse.jpg": "/NADK-Github/static/media/metaverse.20ae6af3eab1c9dda8fd.jpg",
     "index.html": "/NADK-Github/index.html",
-    "main.2e9f2817.css.map": "/NADK-Github/static/css/main.2e9f2817.css.map",
-    "main.815c2bb4.js.map": "/NADK-Github/static/js/main.815c2bb4.js.map",
+    "main.bb69b544.css.map": "/NADK-Github/static/css/main.bb69b544.css.map",
+    "main.e5de2154.js.map": "/NADK-Github/static/js/main.e5de2154.js.map",
     "787.8c0669fe.chunk.js.map": "/NADK-Github/static/js/787.8c0669fe.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2e9f2817.css",
-    "static/js/main.815c2bb4.js"
+    "static/css/main.bb69b544.css",
+    "static/js/main.e5de2154.js"
   ]
 }
