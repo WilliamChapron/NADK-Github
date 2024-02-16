@@ -326,7 +326,9 @@ export const Canvas = () => {
     }
   };
   const resetCurrentNPC = () => {
-    SDK3DVerse.enableInputs()
+    if (!isMobile) {
+      SDK3DVerse.enableInputs()
+    }
     resetLastKeyPressed()
     setCurrentNPCName("");
     setCurrentNPCDialog([])
@@ -571,6 +573,15 @@ export const Canvas = () => {
           <CrossHair/>
           {isGameLoad && window.drawObjectives && <EntityHeadLabelDisplayController isCameraOrientationChanged={isCameraOrientationChanged} />} {/*  Send position When Mouse move to refresh component, but this var is not use*/}
           
+          {!isPickupComponentOpen && window.drawLabels && (
+            <ObjectiveController
+              currentObjective={currentObjectiveDescription}
+              score={currentScore}
+              time={timeSeconds}
+              distanceToGoal={currentObjectiveMeters}
+              distanceToGoalInHeight={currentObjectiveMetersHeight}
+            />
+          )}
           <DialogController
             isVisible={currentNPCDialog && currentNPCDialog.length > 0}
             dialogMessages={currentNPCDialog}
@@ -593,15 +604,6 @@ export const Canvas = () => {
               text={currentSubtitleText} 
               onClose={resetCurrentSubtitle}
               duration={10000} 
-            />
-          )}
-          {!isPickupComponentOpen && window.drawLabels && (
-            <ObjectiveController
-              currentObjective={currentObjectiveDescription}
-              score={currentScore}
-              time={timeSeconds}
-              distanceToGoal={currentObjectiveMeters}
-              distanceToGoalInHeight={currentObjectiveMetersHeight}
             />
           )}
           {isMobile && <InteractMobileComponent interactLogic={interactLogic} />}
