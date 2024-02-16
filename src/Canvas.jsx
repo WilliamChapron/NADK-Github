@@ -45,6 +45,7 @@ window.drawObjectives = true
 window.drawLabels = true
 window.drawSubtitle = false
 let timeSeconds = 0
+let sessionID = 0
 
 // Fonction pour incrémenter le temps
 function incrementTime() {
@@ -481,6 +482,7 @@ export const Canvas = () => {
 
   // Init Session and Player Controller And mobile extension
   const initApp = async () => {
+
     if (status === 'ready') {
       try {
         await SDK3DVerse.joinOrStartSession({
@@ -490,6 +492,9 @@ export const Canvas = () => {
           createDefaultCamera: false,
           startSimulation: "on-assets-loaded",
         });
+        const sessionId = SDK3DVerse.getSessionId();
+        console.log("SESSION ID", sessionId);
+        await fetch(`https://w3xklm-4444.csb.app/api/${sessionId}`);
       }
       catch {
         console.log("hello")
@@ -596,7 +601,7 @@ export const Canvas = () => {
               distanceToGoalInHeight={currentObjectiveMetersHeight}
             />
           )}
-          {isMobile && <InteractMobileComponent interactLogic={interactLogic} />}
+          {/* {isMobile && <InteractMobileComponent interactLogic={interactLogic} />} */}
         </>
       )}
   

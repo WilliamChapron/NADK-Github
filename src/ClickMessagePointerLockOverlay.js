@@ -28,11 +28,14 @@ const ClickMessagePointerLockOverlay = ({ onClick }) => {
     flexDirection: 'column',
     alignItems: 'center',
     padding: '20px',
-    backgroundColor: '#333',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: '10px',
     marginTop: '20px',
   };
 
+  const clickStyle = {
+    fontSize: '30px',
+  };
 
 
   const toggleUserGuide = () => {
@@ -41,16 +44,16 @@ const ClickMessagePointerLockOverlay = ({ onClick }) => {
 
   return (
     <div style={overlayStyle} onClick={onClick}>
-      Cliquez pour jouer
+
 
       <div style={guideStyle}>
         <h2>Guide Utilisateur</h2>
-        <p>Utilisez les touches fléchées pour vous déplacer :</p>
-        <p>↑ (haut), ↓ (bas), ← (gauche), → (droite)</p>
-        <p>Appuyez sur la barre d'espace pour sauter.</p>
+        <p>Utilisez Z-Q-S-D ou W-A-S-D pour vous déplacer </p>
         <p>Utilisez la souris pour changer la direction de la caméra.</p>
-        <p>Cliquez sur des objets interactifs pour les utiliser.</p>
+        <p>Intéragissez avec les objets en pressant la touche E</p>
+        <p>Cliquez pour passer les messages de dialogue.</p>
       </div>
+      <p style={clickStyle}> Cliquez pour jouer</p>
     </div>
   );
 };
