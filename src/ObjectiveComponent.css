@@ -1,0 +1,49 @@
+/* ObjectiveComponent.css */
+
+.objective-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px;
+    background: linear-gradient(to right, #1a1a1a, #333, #1a1a1a);
+    color: #fff;
+    border-radius: 8px;
+    border: 2px solid #fff;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+  
+  .heading-style {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .info-style {
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: rgb(225, 225, 225, 255);
+  }
+  
+  .goal-reached-style {
+    color: green;
+    font-weight: bold;
+  }
+  
+  /* Media query for landscape mode */
+  @media screen and (orientation: landscape) {
+    .heading-style {
+      font-size: 5px;
+    }
+  
+    .info-style {
+        font-size: 5px;
+    }
+  
+    .goal-reached-style {
+        font-size: 5px;
+    }
+  }
+  

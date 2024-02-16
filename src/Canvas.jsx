@@ -501,6 +501,9 @@ export const Canvas = () => {
       }
 
       isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        SDK3DVerse.disableInputs();
+      }
       
 
       await InitFirstPersonController(characterControllerSceneUUID, [-30,1,4]);
@@ -601,7 +604,7 @@ export const Canvas = () => {
               distanceToGoalInHeight={currentObjectiveMetersHeight}
             />
           )}
-          {/* {isMobile && <InteractMobileComponent interactLogic={interactLogic} />} */}
+          {isMobile && <InteractMobileComponent interactLogic={interactLogic} />}
         </>
       )}
   
